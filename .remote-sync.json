@@ -1,0 +1,16 @@
+{
+  "transport": "ftp",
+  "uploadOnSave": true,
+  "useAtomicWrites": false,
+  "deleteLocal": false,
+  "hostname": "tpv.elbrasilia.com",
+  "port": "21",
+  "target": "app_tpv/",
+  "ignore": [
+    ".remote-sync.json",
+    ".git/**"
+  ],
+  "username": "valletpv",
+  "password": "nitrogeno",
+  "watch": []
+}
