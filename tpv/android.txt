@@ -1,0 +1,3 @@
+title=TpvB3
+author=valleapp.com
+orientation=landscape

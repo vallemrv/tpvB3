@@ -1,0 +1,26 @@
+[
+  {
+    "text": "Aros cebolla",
+    "color": "#58D68D",
+    "tipo": "grupo",
+    "precio1": "3,50"
+  },
+  {
+    "text": "Alitas",
+    "color": "#3498DB",
+    "tipo": "grupo",
+    "precio1": "3,50"
+    },
+  {
+    "text": "Ensalada mixta",
+    "color": "#27AE60",
+    "tipo": "grupo",
+    "precio1": "3,50"
+    },
+   {
+    "text": "Patatas",
+    "color": "#F5B7B1",
+    "id": "grupo",
+    "precio1": "3,50"
+    }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "text": "Normal",
+    "color": "#3498DB",
+    "tipo": "diametro"
+  },
+  {
+    "text": "Familiar",
+    "color": "#27AE60",
+    "tipo": "diametro"
+  }
+]

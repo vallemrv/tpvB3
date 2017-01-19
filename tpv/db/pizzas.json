@@ -1,0 +1,10 @@
+{"titulo": {"text": "Pizzas"},  "db": {"lista": [{
+  "text": "Margarita",
+  "color": "#58D68D",
+  "tipo": "pizza",
+  "precio": "7,50",
+  "incremento": "0.00",
+  "modificadores": [],
+  "preguntas": [],
+  "impresora": ""
+}] }}

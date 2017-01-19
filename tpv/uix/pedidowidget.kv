@@ -1,0 +1,73 @@
+#:import Botonera shared.botonera.Botonera
+<PedidoWidget>:
+  orientation: 'horizontal'
+  spacing: 5
+  AnchorLayout:
+    anchor_x: 'center'
+    anchor_y: 'center'
+    size_hint_x: .6
+    Botonera:
+      size_hint: .9, .9
+      completo: False
+      onPress: root.onPress
+      font_size: 20
+      id: _botonera
+  BoxLayout:
+    spacing: 5
+    padding: 5
+    size_hint_x: .4
+    orientation: 'vertical'
+    Label:
+      canvas.before:
+        Color:
+          rgba: 0,0,0,1
+        Rectangle:
+          size: self.size
+          pos: self.pos
+      font_size: 20
+      size_hint_y: .1
+      text: 'Pedido'
+    AnchorLayout:
+      canvas.before:
+        Color:
+          rgba: 0,0,0,1
+        Rectangle:
+          size: self.size
+          pos: self.pos
+      anchor_x: 'center'
+      anchor_y: 'top'
+      size_hint_y: .6
+      ScrollView:
+        id: _scroll
+        size_hint: 1, 1
+        GridLayout:
+          cols: 1
+          spacing: 5
+          padding: 5
+          size_hint: 1, None
+          height: len(self.children) * 70
+          id: _contenido_pedido
+    BoxLayout:
+      canvas.before:
+        Color:
+          rgba: 0,0,0,1
+        Rectangle:
+          size: self.size
+          pos: self.pos
+      orientation: 'horizontal'
+      size_hint_y: .1
+      Label:
+        font_size: 20
+        text: 'Total:'
+      Label:
+        font_size: 20
+        text: "{0:.2f} €".format(root.precio)
+    BoxLayout:
+      size_hint_y: .2
+      Button:
+        size_hint_x: .7
+        text: 'Hacer Pedido'
+        on_press: root.hacer_pedido()
+      Button:
+        size_hint_x: .3
+        text: 'Cancelar'

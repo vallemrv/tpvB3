@@ -1,0 +1,106 @@
+[
+  {
+    "text": "Margarita",
+    "color": "#58D68D",
+    "tipo": "pizza",
+    "precio1": "7,50",
+    "precio2": "8,50",
+    "precio3": "9,50"
+  },
+  {
+    "text": "Jamón",
+    "color": "#3498DB",
+    "tipo": "pizza",
+    "precio1": "7,50",
+    "precio2": "8,50",
+    "precio3": "9,50"
+  },
+  {
+    "text": "Jamón\nchampiñon",
+    "color": "#27AE60",
+    "tipo": "pizza",
+    "precio1": "7,50",
+    "precio2": "8,50",
+    "precio3": "9,50"
+  },
+  {
+    "text": "Verde",
+    "color": "#F5B7B1",
+    "tipo": "pizza",
+    "precio1": "7,50",
+    "precio2": "8,50",
+    "precio3": "9,50"
+  },
+  {
+    "text": "4 quesos",
+    "color": "#EDBB99",
+    "tipo": "pizza",
+    "precio1": "7,50",
+    "precio2": "8,50",
+    "precio3": "9,50"
+  },
+  {
+    "text": "Ranchera",
+    "color": "#34495E",
+    "tipo": "pizza",
+    "precio1": "7,50",
+    "precio2": "8,50",
+    "precio3": "9,50"
+  },
+  {
+    "text": "Diablo",
+    "color": "#B2BABB",
+    "tipo": "pizza",
+    "precio1": "7,50",
+    "precio2": "8,50",
+    "precio3": "9,50"
+  },
+  {
+    "text": "Roquefort",
+    "color": "#B2BABB",
+    "tipo": "pizza",
+    "precio1": "7,50",
+    "precio2": "8,50",
+    "precio3": "9,50"
+  },
+  {
+    "text": "Carbonara",
+    "color": "#B2BABB",
+    "tipo": "pizza",
+    "precio1": "7,50",
+    "precio2": "8,50",
+    "precio3": "9,50"
+  },
+  {
+    "text": "Barbacoa",
+    "color": "#B2BABB",
+    "tipo": "pizza",
+    "precio1": "7,50",
+    "precio2": "8,50",
+    "precio3": "9,50"
+  },
+  {
+    "text": "Atunera",
+    "color": "#B2BABB",
+    "tipo": "pizza",
+    "precio1": "7,50",
+    "precio2": "8,50",
+    "precio3": "9,50"
+  },
+  {
+    "text": "Caribe",
+    "color": "#B2BABB",
+    "tipo": "pizza",
+    "precio1": "7,50",
+    "precio2": "8,50",
+    "precio3": "9,50"
+  },
+  {
+    "text": "Caprichosa",
+    "color": "#B2BABB",
+    "tipo": "pizza",
+    "precio1": "7,50",
+    "precio2": "8,50",
+    "precio3": "9,50"
+  }
+]
