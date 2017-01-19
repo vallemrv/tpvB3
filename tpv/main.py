@@ -9,6 +9,9 @@ from kivy.app import App
 from uix.tpv import Tpv
 from kivy.config import Config
 import os
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)

@@ -1,6 +1,6 @@
-[
+{"titulo": {"text":"Cobros"},  "db": {"lista": [
   {
-    "text": "Efectiovo",
+    "text": "Efectivo",
     "color": "#3498DB",
     "tipo": "cobros"
   },
@@ -9,4 +9,4 @@
     "color": "#27AE60",
     "tipo": "cobros"
   }
-]
+]}}

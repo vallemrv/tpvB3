@@ -65,9 +65,11 @@
     BoxLayout:
       size_hint_y: .2
       Button:
+        id: _btnPedido
         size_hint_x: .7
         text: 'Hacer Pedido'
         on_press: root.hacer_pedido()
       Button:
         size_hint_x: .3
         text: 'Cancelar'
+        on_press: root.cancelar_pedido()

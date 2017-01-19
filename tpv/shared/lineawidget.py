@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*
 from kivy.uix.boxlayout import BoxLayout
-from kivy.properties import StringProperty, ObjectProperty
+from kivy.properties import StringProperty, ObjectProperty, NumericProperty
 from kivy.lang import Builder
 
 Builder.load_string('''
@@ -16,10 +16,10 @@ Builder.load_string('''
   Label:
     color: .9,.9,.9,1
     size_hint_x: .8
-    text: root.texto
+    text: "{0}  {1:.2f}".format(root.texto, root.total)
   Button:
     size_hint_x: .2
-    onPress: root.borrar(root)
+    on_press: root.borrar(root, root.tag)
     Image:
       source: './img/papelera.png'
       allow_stretch: True
@@ -28,6 +28,7 @@ Builder.load_string('''
 ''')
 
 class LineaWidget(BoxLayout):
-    UID = StringProperty("")
+    tag = ObjectProperty(None, allownone=True)
     borrar = ObjectProperty(None, allownone=True)
     texto = StringProperty("")
+    total = NumericProperty(0.0)

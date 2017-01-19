@@ -1,0 +1,21 @@
+{"titulo": {"text": "Diametro"},  "db": {"lista": [
+  {
+  "text": "Normal",
+  "color": "#58D68D",
+  "tipo": "diametro",
+  "precio": "0.00",
+  "modificadores": [],
+  "preguntas": ["db/preguntas/menupizza.json"],
+  "impresora": ""
+},
+{
+"text": "Familiar",
+"color": "#58D68D",
+"tipo": "diametro",
+"precio": "1.00",
+"modificadores": [],
+"preguntas": ["db/preguntas/menupizzaf.json"],
+"impresora": ""
+}
+
+] }}

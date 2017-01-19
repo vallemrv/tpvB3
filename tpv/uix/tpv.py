@@ -5,6 +5,7 @@ from kivy.properties import ObjectProperty
 from shared.botonera import Botonera
 from shared.utils import json_to_list
 from uix.pedidowidget import PedidoWidget
+from kivy.clock import Clock
 
 
 
@@ -33,6 +34,7 @@ class Tpv(AnchorLayout):
         self.inicio = Inicio(onPress=self.onPress_seccion)
         self.pedido = PedidoWidget(tpv=self)
         self.add_widget(self.inicio)
+        Clock.schedule_interval(self.enviar_pedido, .5)
 
     def onPress_seccion(self, boton):
         tipo = boton.tag.get('tipo')
@@ -40,13 +42,15 @@ class Tpv(AnchorLayout):
             self.remove_widget(self.inicio)
             self.add_widget(self.pedido)
             self.pedido.nuevo_pedido(boton.tag)
+        elif tipo == "abrir_cajon":
+            self.abrir_cajon()
 
-    def open_cash(self):
+    def abrir_cajon(self):
         pass
 
-    def hacer_pedido(self, pd):
-        self.exit_pedido()
+    def enviar_pedido(self, pd):
+        pass
 
-    def exit_pedido(self):
+    def mostrar_inicio(self):
         self.remove_widget(self.pedido)
         self.add_widget(self.inicio)
