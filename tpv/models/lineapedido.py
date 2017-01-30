@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from kivy.event import EventDispatcher
 from kivy.properties import (StringProperty, ObjectProperty,
-                             ListProperty, NumericProperty,
-                             BooleanProperty)
+                             ListProperty, BooleanProperty)
 from shared.utils import parse_float
 
+
 class Linea():
-    def __init__(self, obj):
-        self.puntero = 0
+
+    def __init__(self, obj, pun=0):
+        self.puntero = pun
         self.obj = obj
 
     def get_pregunta(self):
@@ -25,12 +26,16 @@ class Linea():
     def add_modificador(self, obj):
         self.obj['modificadores'].append(obj)
 
+    def remove_modificador(self):
+        if len(self.obj['modificadores']) > 0:
+            self.obj['modificadores'].pop()
+
     def getTotal(self):
         total = parse_float(self.obj.get('precio'))
         for i in range(len(self.obj.get('modificadores'))):
             mod = self.obj['modificadores'][i]
             total = total + self._getPrecioMod(mod)
-        return total
+        return total * self.obj['cant']
 
     def _getPrecioMod(self, mod):
         total = parse_float(mod.get('precio'))
@@ -44,7 +49,7 @@ class Linea():
         for i in range(len(self.obj.get('modificadores'))):
             mod = self.obj['modificadores'][i]
             texto = texto + " " + self._getTextoMod(mod)
-        return texto
+        return '{0: >3} {1}'.format(self.obj['cant'], texto)
 
     def _getTextoMod(self, mod):
         texto = mod.get('text')
@@ -52,6 +57,9 @@ class Linea():
             aux = mod['modificadores'][i]
             texto = texto + " " + self._getTextoMod(aux)
         return texto
+
+    def getNumMod(self):
+        return len(self.obj['modificadores'])
 
 
 
@@ -70,7 +78,8 @@ class Constructor(EventDispatcher):
             db = mod.get_pregunta()
             self.pila_modificadores.append(mod)
         else:
-            mod = self.pila_modificadores.pop()
+            num = len(self.pila_modificadores)
+            mod = None if num == 0 else self.pila_modificadores.pop()
             if mod:
                 mod.add_modificador(obj)
                 if mod.hay_preguntas():
@@ -79,6 +88,6 @@ class Constructor(EventDispatcher):
                 else:
                     self.producto.add_modificador(mod.obj)
             else:
-                self.producto.add_modificador(mod.obj)
+                self.producto.add_modificador(obj)
 
         return db

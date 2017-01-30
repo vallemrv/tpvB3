@@ -2,8 +2,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.storage.jsonstore import JsonStore
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty
-from shared.utils import json_to_list
-from uix.tools import ToolsClases
+from uix.toolsclases import ToolsClases
 
 Builder.load_string('''
 #:import Botonera shared.botonera.Botonera
@@ -22,6 +21,7 @@ Builder.load_string('''
             id: _botonera
 
     AnchorLayout:
+        size_hint_x: .3
         anchor_x: 'center'
         anchor_y: 'center'
         id: _tools
@@ -29,31 +29,33 @@ Builder.load_string('''
 
 class Editor(BoxLayout):
     exit = ObjectProperty(None, allownone=True)
+
     def onPress(self, btn):
-        self.tools.editar(btn.tag)
-
-    def show_editor(self, code):
-        self.storage = JsonStore('db/{0}.json'.format(code))
-        if not self.storage.exists(code):
-            self.storage.put(code, lista=[])
-        self.ids._botonera.titulo = code.upper()
-        self.refres_botones(code)
-        self.show_tools(code)
-
-    def refres_botones(self, code):
-        self.ids._botonera.botones = [] 
-        self.ids._botonera.botones = json_to_list(
-                                    self.storage[code].get('lista'))
+        self.tools.editar(btn[0].tag)
 
 
-    def show_tools(self, code):
+    def show_editor(self, db):
+        self.storage = JsonStore(db)
+        if not self.storage.exists('titulo'):
+            self.crear_db()
+        self.ids._botonera.titulo = str(self.storage['titulo'].get('text'))
+        self.refresh_botones()
+        self.show_tools()
+
+    def crear_db(self):
+        self.storage.put('titulo', text='Nuevo')
+        self.storage.put('db', lista=[])
+
+    def refresh_botones(self):
+        self.ids._botonera.botones = []
+        self.ids._botonera.botones = self.storage['db'].get('lista')
+        self.ids._botonera.titulo = str(self.storage['titulo'].get('text'))
+
+
+    def show_tools(self):
         self.ids._tools.clear_widgets()
-        if code == 'clases':
-            self.tools = ToolsClases(modificar=self.modificar,
-                                     exit=self.exit,
-                                     lista=self.storage[code].get('lista'))
-            self.ids._tools.add_widget(self.tools)
-
-    def modificar(self, code, lista):
-        self.storage.put(code, lista=lista)
-        self.refres_botones(code)
+        self.tools = ToolsClases(refresh=self.refresh_botones,
+                                 exit=self.exit,
+                                 storage=self.storage,
+                                 show=self.show_editor)
+        self.ids._tools.add_widget(self.tools)

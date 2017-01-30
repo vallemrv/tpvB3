@@ -5,17 +5,21 @@
     Licencia: Apache v2.0
 
 """
+import init
 from kivy.app import App
 from uix.gestor import Gestor
 from kivy.config import Config
-import os
 
-abspath = os.path.abspath(__file__)
-dname = os.path.dirname(abspath)
-os.chdir(dname)
 
-Config.set("graphics", 'width', '1024')
-Config.set("graphics", 'height', '600')
+try: # this is only for pygame window if pygame is avaliable
+    import pygame
+    pygame.display.init()
+    info = pygame.display.Info()
+    width, height = info.current_w, info.current_h
+    Config.set('graphics', 'width', str(int(width * .95)))
+    Config.set('graphics', 'height', str(int(height * .95)))
+except:
+    pass
 
 
 class GestorApp(App):

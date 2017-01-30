@@ -18,25 +18,24 @@ Builder.load_string('''
         cols: 3
         spacing: 5
         Button:
-            text: 'Crear clases'
-            on_press: root.show_editor('clases')
+            text: 'Familias'
+            on_press: root.edit_clases()
         Button:
-            text: 'Crear produtos'
+            text: 'Productos'
+            on_press: root.edit_productos()
         Button:
-            text: 'Crear menú'
+            text: 'No implenetado'
         Button:
-            opacity: 0
-            text: 'Crear secciones'
+            text: 'No implenetado'
         Button:
-            opacity: 0
-            text: 'Crear secciones'
+            text: 'No implenetado'
         Button:
-            opacity:  0
-            text: 'Crear secciones'
+            text: 'No implenetado'
 
 ''')
 
 class Menu(GridLayout):
-    show_editor = ObjectProperty(None, allownone=True)
+    edit_clases = ObjectProperty(None, allownone=True)
+    edit_productos = ObjectProperty(None, allownone=True)
     def __init__(self, **kargs):
         super(Menu, self).__init__(**kargs)

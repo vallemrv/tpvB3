@@ -57,13 +57,13 @@
       orientation: 'horizontal'
       size_hint_y: .1
       Label:
-        font_size: 20
+        font_size: 35
         text: 'Total:'
       Label:
-        font_size: 20
+        font_size: 35
         text: "{0:.2f} €".format(root.precio)
     BoxLayout:
-      size_hint_y: .2
+      size_hint_y: .15
       Button:
         id: _btnPedido
         size_hint_x: .7
@@ -71,5 +71,11 @@
         on_press: root.hacer_pedido()
       Button:
         size_hint_x: .3
-        text: 'Cancelar'
+        id: _btnAtras
+        text: 'Atras'
+        on_press: root.atras()
+    BoxLayout:
+      size_hint_y: .1
+      Button:
+        text: 'Cancelar el pedido'
         on_press: root.cancelar_pedido()
