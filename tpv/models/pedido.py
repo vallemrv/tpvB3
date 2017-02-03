@@ -70,6 +70,12 @@ class Pedido(EventDispatcher):
 
         return borrar
 
+    def getNumArt(self):
+        num = 0
+        for item in self.lineas_pedido:
+            num = num + item.getNumArt()
+        return num
+
     def sumar(self, linea):
         linea.obj['cant'] = linea.obj['cant'] + 1
         self.total = 0.0
@@ -87,8 +93,8 @@ class Pedido(EventDispatcher):
         return lista
 
     def guardar_pedido(self):
-        nombre = time.strftime("db/pd/%y_%m_%d_%H_%M_%S.00.json")
-        self.fecha = time.strftime("%y/%m/%d_%H:%M:%S")
+        nombre = time.strftime("db/pd/%Y_%m_%d_%H_%M_%S.00.json")
+        self.fecha = time.strftime("%d/%m/%Y_%H:%M:%S")
         db = JsonStore(nombre)
         db.put('tk', reg={'total': self.total,
                           'modo_pago': self.modo_pago,
@@ -96,6 +102,6 @@ class Pedido(EventDispatcher):
                           'fecha': self.fecha,
                           'num_avisador': self.num_avisador,
                           'enviado': 'False',
-                          'numTicket': time.strftime("%y%H%M%S"),
+                          'numTicket': time.strftime("%y%m%d%H%M%S"),
                           'lineas': self.get_list_pedidos()})
         return db

@@ -2,7 +2,7 @@
 from kivy.event import EventDispatcher
 from kivy.properties import (StringProperty, ObjectProperty,
                              ListProperty, BooleanProperty)
-from shared.utils import parse_float
+from valle.utils import parse_float
 
 
 class Linea():
@@ -60,6 +60,10 @@ class Linea():
 
     def getNumMod(self):
         return len(self.obj['modificadores'])
+
+
+    def getNumArt(self):
+        return self.obj['cant']
 
 
 

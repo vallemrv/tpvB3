@@ -7,7 +7,7 @@
 """
 import init
 from kivy.app import App
-from uix.tpv import Tpv
+from controllers.tpv import Tpv
 from kivy.config import Config
 
 try: # this is only for pygame window if pygame is avaliable

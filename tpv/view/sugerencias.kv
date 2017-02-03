@@ -1,0 +1,78 @@
+#:import Botonera valle.component.botonera.Botonera
+#:import VTeclado valle.component.vteclado.VTeclado
+#:import CustomListView valle.component.listview.CustomListView
+<Sugerencias>:
+    lista: _lista
+    txtSug: _txtInput
+    dock: _dock
+    canvas:
+        Color:
+            rgba: 1,1,1,1
+        Rectangle:
+            size: root.size
+            pos: root.pos
+    des: 'Descrpicion'
+    GridLayout:
+        cols: 1
+        padding: 20
+        Label:
+            text: "Sugerencias"
+            size_hint_y: None
+            height: 40
+            font_size: 30
+            color: 0,0,0,1
+        BoxLayout:
+            spacing: 5
+            orientation: 'horizontal'
+            CustomListView:
+                id: _lista
+                bColor: "#FFFFFF"
+            GridLayout:
+                cols: 1
+                spacing: 5
+                size_hint_x: .3
+                Label:
+                    text: "Descrpicion"
+                    size_hint_y: None
+                    height: 40
+                    font_size: 30
+                    color: 0,0,0,1
+                AnchorLayout:
+                    anchor_y: 'center'
+                    anchor_x: 'center'
+                    size_hint_y: None
+                    height: 90
+                    canvas.before:
+                        Color:
+                            rgba: .5, .5, .5, 1
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+                    Label:
+                        text: root.des
+                        size_hint: .9, .9
+                        font_size: 24
+                        color: 1, 1, 1, 1
+                        text_size: self.size
+                        halign: 'left'
+                        valign: 'middle'
+                AnchorLayout:
+                    anchor_y: 'center'
+                    anchor_x: 'center'
+                    size_hint_y: None
+                    height: 90
+                    canvas.before:
+                        Color:
+                            rgba: .5, .5, .5, 1
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+                    TextInput:
+                        id: _txtInput
+                        text: root.texto
+                        size_hint: .9, .9
+                        font_size: 30
+                        border: 1, 1, 1, 1
+        VTeclado:
+            id: _dock
+            tipo: 'letras'
