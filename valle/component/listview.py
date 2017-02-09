@@ -43,3 +43,6 @@ class CustomListView(AnchorLayout):
 
     def rm_all_widgets(self):
         self.list.clear_widgets()
+
+    def scroll_up(self):
+        self.scroll.scroll_y = .9

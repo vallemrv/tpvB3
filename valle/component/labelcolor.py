@@ -1,7 +1,7 @@
 from kivy.uix.label import Label
 from kivy.utils import get_color_from_hex
 from kivy.lang import Builder
-from kivy.properties import StringProperty, ListProperty
+from kivy.properties import StringProperty
 
 Builder.load_string('''
 <LabelColor>:
@@ -17,6 +17,6 @@ Builder.load_string('''
 
 class LabelColor(Label):
     bColor = StringProperty()
-    
+
     def on_bColor(self, key, value):
         self._color = get_color_from_hex(value)
