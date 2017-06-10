@@ -27,6 +27,8 @@ class PedidoController(BoxLayout):
         self.pilaDeStados = []
         self.linea_editable = None
         self.tipo_cobro = "Efectivo"
+        self.dbCliente = None
+        self.promocion = None
         self.modal = Sugerencias(onExit=self.exit_sug)
 
     def on_pedido(self, key, value):
@@ -35,7 +37,17 @@ class PedidoController(BoxLayout):
     def show_total(self, key, value):
         self.precio = self.pedido.total
         self.des = "Pedido {0: >10} articulos".format(
-            self.pedido.getNumArt())
+                    self.pedido.getNumArt())
+
+    def pedido_domicilio(self, num_tlf):
+        self.dbCliente = JsonStore("db/clientes/{0}.json".format(num_tlf))
+        self.lista.rm_all_widgets()
+        self.pedido = Pedido()
+        self.btnPedido.disabled = True
+        self.btnAtras.disabled = False
+        self.precio = 0
+        self.des = "Pedido {0: >10} articulos".format(0)
+        self.linea_nueva()
 
     def onPress(self, botones):
 
@@ -55,6 +67,8 @@ class PedidoController(BoxLayout):
                 self.tpv.imprimirTicket(self.pedido.guardar_pedido())
             elif tipo == 'clase':
                 self.clase = btn.tag
+                if "promocion" in self.clase:
+                    self.promocion = self.clase["promocion"]
                 self.puntero = 0
                 db = self.clase.get('productos')
                 self.show_botonera(db)
@@ -63,37 +77,55 @@ class PedidoController(BoxLayout):
                 self.pilaDeStados.append({'db': db, 'punt': 0,
                                           'pass': 1})
                 self.btnAtras.disabled = False
-
             else:
                 db = self.pedido.add_modificador(btn.tag)
-
                 if not self.linea_editable:
                     self.add_linea()
-
                 self.refresh_linea()
                 num = len(self.clase.get('preguntas')) if self.clase else 0
                 ps = len(botones) - 1
                 if db:
                     self.show_botonera(db)
                 elif not db and self.puntero < num and i == ps:
-                    db = self.clase.get('preguntas')[self.puntero]
-                    self.puntero = self.puntero + 1
-                    self.show_botonera(db)
-                elif self.puntero >= num and i == ps:
+                    db = None
+                    igDb = False
+                    while self.puntero < num:
+                        db = self.clase.get('preguntas')[self.puntero]
+                        self.puntero += 1
+                        if 'ignore' in btn.tag:
+                            if db not in btn.tag.get('ignore'):
+                                igDb = False
+                                break
+                            else:
+                                igDb = True
+                                db = None
+                        else:
+                            break
+
+                    if not igDb:
+                        self.show_botonera(db)
+                    else:
+                        self.puntero += 1
+
+                if not db and self.puntero >= num and i == ps:
                     self.linea_nueva()
+
                 if i == ps:
                     self.pilaDeStados.append({'db': db, 'punt': self.puntero,
                                               'pass': len(botones)})
 
-    def exit_sug(self, key, w, v, ln):
-        if v.get("text") != "":
-            ln.obj["modificadores"].append(v)
+    def exit_sug(self, key, w, txt, ln):
+        if txt != "":
+            if "sug" not in ln.obj:
+                ln.obj["sug"] = []
+
+            ln.obj["sug"].append(txt)
             db = JsonStore("db/sugerencias.json")
             sug = self.modal.sug
             db.put(ln.obj.get("text").lower(), db=sug)
             self.rf_parcial(w, ln)
-            self.modal.content = None
-        self.modal.dismiss()
+            self.modal.dismiss()
+
 
     def sugerencia(self, w, linea):
         try:
@@ -102,7 +134,8 @@ class PedidoController(BoxLayout):
             if not db.exists(name):
                 db.put(name, db=[])
             self.modal.sug = db[name].get("db")
-            self.modal.des = linea.getTexto()
+            self.modal.des = "{0}  {1:.2f}".format(linea.getTexto(),
+                                                   linea.getTotal())
             self.modal.clear_text()
             self.modal.tag = linea
             self.modal.content = w
@@ -124,6 +157,7 @@ class PedidoController(BoxLayout):
             if self.linea_editable:
                 self.lista.rm_linea(self.linea_editable)
                 self.linea_editable = None
+
         if num > 2:
             sc = self.pilaDeStados.pop()
             pr = self.pilaDeStados[-1]
@@ -138,11 +172,11 @@ class PedidoController(BoxLayout):
         self.refresh_linea()
 
 
-
     def linea_nueva(self):
         db = "db/clases.json"
         self.show_botonera(db)
         self.clase = None
+        self.promocion = None
         self.linea_editable = None
         if len(self.pedido.lineas_pedido) > 0:
             self.btnPedido.disabled = False
@@ -158,8 +192,17 @@ class PedidoController(BoxLayout):
                                               borrar=self.borrar,
                                               sumar=self.sumar,
                                               sugerencia=self.sugerencia)
+            if self.promocion is not None:
+                self.linea_editable.mostar_btnpromo()
+                self.linea_editable.aplicar = self.aplicar_promo
+                self.linea_editable.promocion = self.promocion
+            else:
+                self.linea_editable.mostar_btnpromo(False)
+
             self.lista.add_linea(self.linea_editable)
 
+    def aplicar_promo(self, btn):
+        self.rf_parcial(btn, btn.tag)
 
     def refresh_linea(self):
         if self.pedido and self.pedido.linea:
@@ -172,6 +215,8 @@ class PedidoController(BoxLayout):
     def rf_parcial(self, w, ln):
         w.texto = ln.getTexto()
         w.total = ln.getTotal()
+        if self.pedido:
+            self.pedido.actualizar_total()
 
     def sumar(self, w, tag):
         self.pedido.sumar(tag)
@@ -208,9 +253,23 @@ class PedidoController(BoxLayout):
         self.btnAtras.disabled = False
         self.precio = 0
         self.des = "Pedido {0: >10} articulos".format(0)
+        self.dbCliente = None
 
 
     def hacer_pedido(self):
-        self.btnPedido.disabled = True
-        self.btnAtras.disabled = True
-        self.show_botonera('db/privado/llevar.json')
+        if not self.dbCliente and self.precio > 0:
+            self.btnPedido.disabled = True
+            self.btnAtras.disabled = True
+            self.show_botonera('db/privado/llevar.json')
+        else:
+            if self.dbCliente:
+                self.pedido.para_llevar = "Domicilio"
+                self.pedido.dbCliente = self.dbCliente
+                self.pedido.num_avisador = "Domicilio"
+                self.pedido.modo_pago = "Efectivo"
+                self.tpv.mostrar_inicio()
+                self.tpv.imprimirTicket(self.pedido.guardar_pedido())
+            else:
+                self.show_botonera("db/privado/num_avisador.json")
+                self.pedido.modo_pago = "Efectivo"
+            

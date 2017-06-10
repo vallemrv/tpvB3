@@ -1,7 +1,10 @@
+# coding=utf-8
 from kivy.uix.anchorlayout import AnchorLayout
+from kivy.uix.listview import ListView
 from kivy.uix.modalview import ModalView
 from kivy.properties import ObjectProperty, StringProperty
 from kivy.lang import Builder
+from kivy.uix.button import Button
 
 Builder.load_string('''
 <DialogColor>:
@@ -31,10 +34,33 @@ Builder.load_string('''
 <ToolsClases>:
     anchor_x: 'center'
     anchor_y: 'center'
+    listPreguntas: _pregutas
     GridLayout:
         cols: 1
         spacing: 10
         size_hint: 1, .85
+        Label:
+            size_hint_y: None
+            height: 30
+            color: 0,0,0,1
+            font_size: 25
+            text: 'Editar Titulo'
+        BoxLayout:
+            size_hint_y: None
+            height: 40
+            orientation: 'horizontal'
+            spacing: 5
+            TextInput:
+                size_hint_y: None
+                height: 30
+                id: _titulo
+                hint_text: 'Titulo teclado'
+                text: root.titulo
+            Button:
+                size_hint: .15, None
+                height: 30
+                text: '...'
+                on_press: root.setTitulo()
         Label:
             size_hint_y: None
             height: 30
@@ -69,23 +95,6 @@ Builder.load_string('''
             TextInput:
                 size_hint_y: None
                 height: 30
-                id: _titulo
-                hint_text: 'Titulo teclado'
-                text: root.titulo
-            Button:
-                size_hint: .15, None
-                height: 30
-                text: '...'
-                on_press: root.setTitulo()
-
-        BoxLayout:
-            size_hint_y: None
-            height: 40
-            orientation: 'horizontal'
-            spacing: 5
-            TextInput:
-                size_hint_y: None
-                height: 30
                 id: _color
                 hint_text: 'Color'
             Button:
@@ -95,9 +104,12 @@ Builder.load_string('''
                 on_press: root.show_modal()
         BoxLayout:
             size_hint_y: None
-            height: 60
+            height: 50
             spacing: 5
             orientation: 'horizontal'
+            Button:
+                text: 'Nuevo'
+                on_press: root.on_new()
             Button:
                 text: 'Grabar'
                 on_press: root.on_press()
@@ -107,6 +119,12 @@ Builder.load_string('''
             Button:
                 text: 'Exit'
                 on_press: root.exit()
+        Label:
+            size_hint_y: None
+            height: 30
+            color: 0,0,0,1
+            font_size: 25
+            text: 'Editar Preguntas'
         BoxLayout:
             size_hint_y: None
             height: 40
@@ -122,8 +140,18 @@ Builder.load_string('''
                 height: 30
                 text: '...'
                 on_press: root.crear_preguntas()
+        AnchorLayout:
+            canvas:
+                Color:
+                    rgba: 0,0,0,1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            id: _pregutas
+
 
 ''')
+
 
 class DialogColor(ModalView):
     color = StringProperty('#000000')
@@ -153,6 +181,7 @@ class ToolsClases(AnchorLayout):
                 self.storage.put('db', lista=self.lista)
             self.show(db)
 
+
     def on_storage(self, key, value):
         self.titulo = self.storage['titulo'].get('text')
         self.lista = self.storage['db'].get('lista')
@@ -172,6 +201,16 @@ class ToolsClases(AnchorLayout):
     def set_color(self, obj):
         self.ids._color.text = self.modal.getColor()
 
+    def on_new(self):
+        self.clase = None
+        self.ids._nombre.text = ""
+        self.ids._color.text = ""
+        self.ids._precio.text = ""
+        self.ids._impresora.text = ""
+        self.ids._tipo.text = ""
+        self.listPreguntas.item_strings = []
+
+
     def editar(self, obj):
         self.clase = obj
         self.ids._nombre.text = obj.get('text')
@@ -179,6 +218,8 @@ class ToolsClases(AnchorLayout):
         self.ids._precio.text = str(obj.get('precio'))
         self.ids._impresora.text = obj.get('impresora')
         self.ids._tipo.text = obj.get('tipo')
+        self.listPreguntas.add_widget(ListView(item_strings=self.clase.get("preguntas")))
+
 
     def show_modal(self):
         self.modal.color = self.ids._color.text
@@ -189,9 +230,6 @@ class ToolsClases(AnchorLayout):
             self.clase['text'] = self.ids._nombre.text
             self.clase['color'] = self.ids._color.text
             self.clase['tipo'] = self.ids._tipo.text
-            self.clase['productos'] = ""
-            self.clase['preguntas'] = []
-            self.clase['modificadores'] = []
             self.clase['impresora'] = self.ids._impresora.text
             self.clase['precio'] = self.ids._precio.text
         else:

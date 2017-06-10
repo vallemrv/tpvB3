@@ -97,7 +97,7 @@ class DocPrint(EventDispatcher):
         self.file.write(self.comandos.saltoDeLinea)
         self.file.write(self.comandos.iniciarImp)
 
-    def imprimirTicket(self, p, num,  lineas, fecha, total):
+    def imprimirTicket(self, p, num,  lineas, fecha, total, cl=None):
 
         self.initDoc()
         self.AddLinea()
@@ -107,6 +107,8 @@ class DocPrint(EventDispatcher):
         self.AddLinea(s='Plaza San lazaro, 9, local 2', aling='centrado',
                       t='peque', negrita=True)
         self.AddLinea(s='NIF: 52527453F', aling='centrado',
+                      t='peque', negrita=True)
+        self.AddLinea(s='TLF: 958092462', aling='centrado',
                       t='peque', negrita=True)
         self.AddLinea()
         self.AddLinea()
@@ -122,8 +124,6 @@ class DocPrint(EventDispatcher):
                           aling='centrado')
         self.AddLinea(s="Total: {0:.2f}  ".format(parse_float(total)),
                       aling='izq', t='grande')
-        self.AddLinea(s="Descuento por inauguracion: {0:.2f}  ".format(
-            parse_float(total)*.5), aling='izq', t='grande')
         self.AddLinea(s=fecha, aling='centrado')
         self.AddLinea()
         self.AddLinea(s="Factura simplificada", aling='centrado')
@@ -131,6 +131,10 @@ class DocPrint(EventDispatcher):
         self.AddLinea(s="Iva incluido", aling='centrado')
         self.AddLinea()
         self.AddLinea(s="Gracias por su visita", aling='centrado')
+        if cl:
+            self.AddLinea(s=cl.get("nombre"), aling='centrado')
+            self.AddLinea(s=cl.get("direccion"), aling='centrado')
+            self.AddLinea(s=cl.get("num_tlf"), aling='centrado')
         self.AddLinea()
         self.imprimir(p)
 
@@ -154,6 +158,28 @@ class DocPrint(EventDispatcher):
         self.AddLinea()
         self.imprimir(p)
 
+    def printDesglose(self, p, fecha, lineas):
+
+        self.initDoc()
+        self.AddLinea()
+        self.AddLinea(s="Cierre de caja", aling='centrado', t='grande')
+        self.AddLinea(s=fecha, aling='centrado', t='grande')
+        self.AddLinea(s="----------------------------------------------",
+                      aling='centrado', t='grande')
+        self.AddLinea()
+        for linea in lineas:
+            can = linea["can"]
+            texto_tipo = linea["texto_tipo"]
+            tipo = linea["tipo"]
+            self.AddLinea(s="Retirar {0: >5} {1} de {2}".format(can,
+                                                                texto_tipo,
+                                                                tipo),
+                          aling='centrado', t='grande')
+
+        self.AddLinea()
+        self.AddLinea()
+        self.imprimir(p)
+
 
 
 
@@ -164,14 +190,19 @@ if __name__ == '__main__':
     docPrint.ImprimirLogo()
     docPrint.AddLinea()
     docPrint.AddLinea(s='BTres', aling='centrado', t='grande', negrita=True)
-    docPrint.AddLinea(s='Pizzeria y Hamburgeseria', aling='centrado', t='normal', negrita=True)
-    docPrint.AddLinea(s='Plaza San lazaro, 9, local 2', aling='centrado', t='peque', negrita=True)
-    docPrint.AddLinea(s='NIF: 52527453F', aling='centrado', t='peque', negrita=True)
+    docPrint.AddLinea(s='Pizzeria y Hamburgeseria',
+                      aling='centrado', t='normal', negrita=True)
+    docPrint.AddLinea(s='Plaza San lazaro, 9, local 2',
+                      aling='centrado', t='peque', negrita=True)
+    docPrint.AddLinea(s='NIF: 52527453F', aling='centrado',
+                      t='peque', negrita=True)
     docPrint.AddLinea()
     docPrint.AddLinea()
-    docPrint.AddLinea(s="Can  Descripcion            Precio   Total", aling='centrado')
-    docPrint.AddLinea(s="------------------------------------------", aling='centrado')
-    docPrint.AddLinea(s='00000000',aling='centrado')
+    docPrint.AddLinea(s="Can  Descripcion            Precio   Total",
+                      aling='centrado')
+    docPrint.AddLinea(s="------------------------------------------",
+                      aling='centrado')
+    docPrint.AddLinea(s='00000000', aling='centrado')
     docPrint.AddLinea()
     docPrint.AddLinea("Factura simplificada", aling='centrado')
     docPrint.AddLinea(s="Num: {0}".format(0123), aling='centrado')
@@ -179,6 +210,5 @@ if __name__ == '__main__':
     docPrint.AddLinea()
     docPrint.AddLinea(s="Gracias por su visita", aling='centrado')
     docPrint.AddLinea()
-
 
     docPrint.imprimir('caja')

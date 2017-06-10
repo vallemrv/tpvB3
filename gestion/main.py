@@ -7,7 +7,7 @@
 """
 import init
 from kivy.app import App
-from uix.gestor import Gestor
+from controllers.gestor import Gestor
 from kivy.config import Config
 
 

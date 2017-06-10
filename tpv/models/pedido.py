@@ -21,6 +21,8 @@ class Pedido(EventDispatcher):
         self.lineas_pedido = []
         self.constructor = None
         self.linea = None
+        self.dbCliente = None
+
 
     def add_modificador(self, obj):
         db = None
@@ -44,11 +46,13 @@ class Pedido(EventDispatcher):
                 self.lineas_pedido.pop()
                 self.linea = None
 
-
-    def finaliza_linea(self):
+    def actualizar_total(self):
         self.total = 0.0
         for item in self.lineas_pedido:
             self.total = self.total + item.getTotal()
+
+    def finaliza_linea(self):
+        self.actualizar_total()
         self.linea = None
         self.constructor = None
 
@@ -89,19 +93,40 @@ class Pedido(EventDispatcher):
             obj = self.lineas_pedido[i]
             lista.append({'text': obj.obj.get('text'),
                           'des': obj.getTexto(),
-                          'total': obj.getTotal()})
+                          'cant': obj.obj.get('cant'),
+                          'precio': obj.getPrecio(),
+                          'total': obj.getTotal(),
+                          'tipo': obj.obj.get("tipo")})
         return lista
 
     def guardar_pedido(self):
-        nombre = time.strftime("db/pd/%Y_%m_%d_%H_%M_%S.00.json")
+        pedido = time.strftime("%Y_%m_%d_%H_%M_%S")
+        fichero = "db/pd/{0}1.00.json".format(pedido)
         self.fecha = time.strftime("%d/%m/%Y_%H:%M:%S")
-        db = JsonStore(nombre)
-        db.put('tk', reg={'total': self.total,
-                          'modo_pago': self.modo_pago,
-                          'para_llevar': self.para_llevar,
-                          'fecha': self.fecha,
-                          'num_avisador': self.num_avisador,
-                          'enviado': 'False',
-                          'numTicket': time.strftime("%y%m%d%H%M%S"),
-                          'lineas': self.get_list_pedidos()})
+        num_tlf = ""
+        if self.dbCliente:
+            num_tlf = self.dbCliente["reg"].get("num_tlf")
+            pedidos = self.dbCliente["reg"].get("pedidos")
+            nombre = self.dbCliente["reg"].get("nombre")
+            dir = self.dbCliente["reg"].get("direccion")
+            notas = self.dbCliente["reg"].get("notas")
+            list = self.dbCliente["reg"].get("list")
+            pedidos.append(fichero)
+            self.dbCliente.put("reg", pedidos=pedidos,
+                               direccion=dir,
+                               nombre=nombre,
+                               num_tlf=num_tlf,
+                               list=list,
+                               notas=notas)
+            fichero = fichero.replace("1.00.", "0.00.")
+
+        db = JsonStore(fichero)
+        db.put('reg', total=self.total,
+               modo_pago=self.modo_pago,
+               para_llevar=self.para_llevar,
+               fecha=self.fecha,
+               num_avisador=self.num_avisador,
+               numTicket=time.strftime("%y%m%d%H%M%S"),
+               num_tlf=num_tlf,
+               lineas=self.get_list_pedidos())
         return db

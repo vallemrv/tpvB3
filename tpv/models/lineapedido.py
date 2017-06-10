@@ -10,6 +10,7 @@ class Linea():
     def __init__(self, obj, pun=0):
         self.puntero = pun
         self.obj = obj
+        self.promocion = None
 
     def get_pregunta(self):
         db = None
@@ -30,12 +31,24 @@ class Linea():
         if len(self.obj['modificadores']) > 0:
             self.obj['modificadores'].pop()
 
+    def getPrecio(self):
+        total = parse_float(self.obj.get('precio'))
+        for i in range(len(self.obj.get('modificadores'))):
+            mod = self.obj['modificadores'][i]
+            total = total + self._getPrecioMod(mod)
+        if self.promocion is not None:
+            total *= float(self.promocion)
+        return total
+
     def getTotal(self):
         total = parse_float(self.obj.get('precio'))
         for i in range(len(self.obj.get('modificadores'))):
             mod = self.obj['modificadores'][i]
             total = total + self._getPrecioMod(mod)
-        return total * self.obj['cant']
+        total = total * self.obj['cant']
+        if self.promocion is not None:
+            total *= float(self.promocion)
+        return total
 
     def _getPrecioMod(self, mod):
         total = parse_float(mod.get('precio'))
@@ -46,10 +59,15 @@ class Linea():
 
     def getTexto(self):
         texto = self.obj.get('text')
+        sug = ""
         for i in range(len(self.obj.get('modificadores'))):
             mod = self.obj['modificadores'][i]
             texto = texto + " " + self._getTextoMod(mod)
-        return '{0: >3} {1}'.format(self.obj['cant'], texto)
+        if "sug" in self.obj:
+            sug += " "
+            for sg in self.obj["sug"]:
+                sug += sg
+        return '{0: >3} {1}{2}'.format(self.obj['cant'], texto, sug)
 
     def _getTextoMod(self, mod):
         texto = mod.get('text')
@@ -59,7 +77,7 @@ class Linea():
         return texto
 
     def getNumMod(self):
-        return len(self.obj['modificadores'])
+        return len(self.obj["modificadores"])
 
 
     def getNumArt(self):

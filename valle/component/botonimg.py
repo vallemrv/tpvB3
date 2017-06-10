@@ -5,7 +5,7 @@ Builder.load_string('''
 <BotonImg>:
     size_hint: None, 1
     width: self.height
-    src: './img/plus.ico'
+    src: ''
     AnchorLayout:
         anchor_x: 'center'
         anchor_y: 'center'
@@ -16,7 +16,7 @@ Builder.load_string('''
             allow_stretch: True
             center: self.parent.center
             size: root.width * .85, root.height * .85
-                    ''')
+''')
 
 
 class BotonImg(Button):

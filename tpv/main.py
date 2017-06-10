@@ -3,7 +3,6 @@
 
     Autor: Manuel Rodriguez
     Licencia: Apache v2.0
-
 """
 import init
 from kivy.app import App
@@ -15,7 +14,7 @@ try: # this is only for pygame window if pygame is avaliable
     pygame.display.init()
     info = pygame.display.Info()
     width, height = info.current_w, info.current_h
-    Config.set('graphics', 'width', str(int(width * .95)))
+    Config.set('graphics', 'width', str(int(width * .96)))
     Config.set('graphics', 'height', str(int(height * .98)))
 except:
     pass

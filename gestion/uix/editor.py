@@ -5,7 +5,7 @@ from kivy.properties import ObjectProperty
 from uix.toolsclases import ToolsClases
 
 Builder.load_string('''
-#:import Botonera shared.botonera.Botonera
+#:import Botonera valle.component.botonera.Botonera
 <Editor>:
     size_hint: .9, .9
     orientation: 'horizontal'
