@@ -1,0 +1,82 @@
+# @Author: Manuel Rodriguez <vallemrv>
+# @Date:   11-Jul-2017
+# @Email:  valle.mrv@gmail.com
+# @Last modified by:   valle
+# @Last modified time: 12-Jul-2017
+# @License: Apache license vesion 2.0
+
+#:import res components.resources
+#:import get_color kivy.utils.get_color_from_hex
+
+<LabelDecorators>:
+    anchor_x: 'center'
+    anchor_y: 'center'
+
+
+<LabelBase>:
+    border_size: 5
+    container: _container
+    LabelDecorators:
+        pos: root.pos
+        size: root.size
+        canvas.before:
+            Color:
+                rgb: 0,0,0
+            Rectangle:
+                size: self.size
+                pos: self.pos
+        LabelDecorators:
+            id: _container
+            size_hint: None, None
+            size: (self.parent.width-root.border_size, self.parent.height-root.border_size)
+            canvas.before:
+                Color:
+                    rgb: get_color(root.bgColor)
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+
+<LabelColor>:
+    Label:
+        size_hint: .9, 1
+        font_size: root.font_size
+        text_size: self.size
+        halign: 'left'
+        valign: 'middle'
+        text: root.text
+        color: get_color(root.color)
+
+<LabelClicable>:
+    Label:
+        size_hint: .9, 1
+        font_size: root.font_size
+        text_size: self.size
+        halign: 'left'
+        valign: 'middle'
+        text: root.text
+        color: get_color(root.color)
+
+
+<LabelIcon>:
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: .9, 1
+        Label:
+            id: _label_icon
+            size_hint: .9, 1
+            font_size: root.font_size
+            text_size: self.size
+            halign: 'left'
+            valign: 'middle'
+            text: root.text
+            color: get_color(root.color)
+        Label:
+            id: _label_text
+            size_hint: .1, 1
+            font_name: res.FONT_AWESOME
+            font_size: root.font_size
+            text_size: self.size
+            halign: 'right'
+            valign: 'middle'
+            text: root.icon
+            color: get_color(root.color)

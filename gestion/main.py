@@ -1,39 +1,39 @@
+# @Author: Manuel Rodriguez <valle>
+# @Date:   15-Jul-2017
+# @Email:  valle.mrv@gmail.com
+# @Filename: main.py
+# @Last modified by:   valle
+# @Last modified time: 15-Jul-2017
+# @License: Apache license vesion 2.0
 # -*- coding: utf-8 -*-
-"""Programa Gestion para el TPV del Btres
 
-    Autor: Manuel Rodriguez
-    Licencia: Apache v2.0
+import os
+import sys
+reload(sys)  # Reload does the trick!
+sys.setdefaultencoding('UTF8')
+root = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(root, "valle_libs"))
 
-"""
-import init
+
 from kivy.app import App
-from controllers.gestor import Gestor
 from kivy.config import Config
+from controllers.gestion  import Gestion
 
 
-try: # this is only for pygame window if pygame is avaliable
-    import pygame
-    pygame.display.init()
-    info = pygame.display.Info()
-    width, height = info.current_w, info.current_h
-    Config.set('graphics', 'width', str(int(width * .95)))
-    Config.set('graphics', 'height', str(int(height * .95)))
-except:
-    pass
+Config.set("graphics", "width", "300")
+Config.set("graphics", "height", "600")
 
 
-class GestorApp(App):
-
-    """Aplicacion principal para el TPV"""
+class GestionApp(App):
+    def __init__(self, **kargs):
+        super(GestionApp, self).__init__(**kargs)
 
     def build(self):
-        return Gestor()
+        return Gestion()
 
     def on_pause(self):
         return True
 
 
 if __name__ == '__main__':
-    from kivy.core.window import Window
-    Window.clearcolor = (1, 1, 1, 1)
-    GestorApp().run()
+    GestionApp().run()

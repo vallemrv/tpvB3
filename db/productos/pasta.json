@@ -1,7 +1,0 @@
-{"titulo": {"text": "Pasta y verduras"}, "db": {"lista": [
-{"modificadores": [], "preguntas": [], "tipo": "pasta", "color": "#4b3185ff", "text": "Tortiglioni", "productos": "", "precio": "0", "impresora": ""},
-{"modificadores": [], "preguntas": [], "tipo": "pasta", "color": "#4b3185ff", "text": "Espaguetis", "productos": "", "precio": "0", "impresora": ""},
-{"modificadores": [], "preguntas": [], "tipo": "pasta", "color": "#4b3185ff", "text": "Tagliatelle", "productos": "", "precio": "0", "impresora": ""},
-{"modificadores": [], "preguntas": [], "tipo": "pasta", "color": "#4b3185ff", "text": "Noodles\nCalabacin", "productos": "", "precio": "0", "impresora": ""},
-{"modificadores": [], "tipo": "pasta", "preguntas": [], "text": "Buffet libre", "precio": "5,95", "impresora": "", "ignore": ["db/preguntas/salsas.json"], "color": "#7965ffff", "productos": ""}
-]}}

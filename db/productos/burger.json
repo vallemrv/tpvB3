@@ -1,9 +1,0 @@
-{"titulo": {"text": "Burger"}, "db": {"lista": [{"tipo": "burger", "preguntas": [], "text": "Btres", "precio": "5", "impresora": "", "modificadores": [], "color": "#ff4c8fff", "productos": ""}, {"tipo": "burger", "preguntas": [], "text": "Clasica", "precio": "3,5", "impresora": "", "modificadores": [], "color": "#7f9fffff", "productos": ""}, {"tipo": "burger", "preguntas": [], "text": "Perfecta", "precio": "4", "impresora": "", "modificadores": [], "color": "#ff1919ff", "productos": ""}, {"tipo": "burger", "preguntas": [], "text": "Cheese Burger", "precio": "3,70", "impresora": "", "modificadores": [], "color": "#4cff79ff", "productos": ""}, {"tipo": "burger", "preguntas": ["db/preguntas/ing_burger.json"], "text": "Burger con", "precio": "2,9", "impresora": "", "modificadores": [], "color": "#7f9fffff", "productos": ""},
-{"tipo": "burger", "preguntas": [], "text": "Btres deluxe", "precio": "5", "impresora": "", "modificadores": [], "color": "#4cff79ff", "productos": ""},
-{"tipo": "burger", "preguntas": [], "text": "Tejana", "precio": "3,7", "impresora": "", "modificadores": [], "color": "#4cff79ff", "productos": ""},
-{"tipo": "burger", "preguntas": [], "text": "Doña Paquita", "precio": "5,9", "impresora": "", "modificadores": [], "color": "#4cff79ff", "productos": ""},
-{"tipo": "burger", "preguntas": [], "text": "Paquita", "precio": "5", "impresora": "", "modificadores": [], "color": "#4cff79ff", "productos": ""},
-{"tipo": "burger", "preguntas": [], "text": "Don paco", "precio": "3,7", "impresora": "", "modificadores": [], "color": "#4cff79ff", "productos": ""},
-{"modificadores": [], "tipo": "burger", "preguntas": [], "text": "Buffet libre", "precio": "7,95", "impresora": "", "ignore": ["db/preguntas/menu.json"], "color": "#7965ffff", "productos": ""}
-
-]}}

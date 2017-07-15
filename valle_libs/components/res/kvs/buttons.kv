@@ -1,0 +1,145 @@
+# @Author: Manuel Rodriguez <valle>
+# @Date:   11-Jul-2017
+# @Email:  valle.mrv@gmail.com
+# @Last modified by:   valle
+# @Last modified time: 11-Jul-2017
+# @License: Apache license vesion 2.0
+# -*- coding: utf-8 -*-
+
+#:import res components.resources
+#:import get_color kivy.utils.get_color_from_hex
+
+<Decorators>:
+    mywidget: True
+    anchor_x: 'center'
+    anchor_y: 'center'
+
+
+<ButtonBase>:
+    border_size: 5
+    container: _container
+    Decorators:
+        pos: root.pos
+        size: root.size
+        canvas.before:
+            Color:
+                rgb: 0,0,0
+            Rectangle:
+                size: self.size
+                pos: self.pos
+        Decorators:
+            id: _container
+            size_hint: None, None
+            size: (self.parent.width-root.border_size, self.parent.height-root.border_size)
+            canvas.before:
+                Color:
+                    rgb: get_color(root.bgColor)
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+
+<ButtonColor>:
+    label_selected: _label_selected
+    RelativeLayout:
+        size_hint: 1,1
+        AnchorLayout:
+            anchor_x: 'right'
+            anchor_y: 'top'
+            Label:
+                id: _label_selected
+                font_name: res.FONT_AWESOME
+                color: root.color
+                size_hint: None, None
+                size: dp(50), dp(50)
+                font_size:  '35dp'
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'center'
+            size_hint: 1, 1
+            Label:
+                size_hint: .9, .9
+                color: root.color
+                font_size: root.font_size
+                text: root.text
+                text_size: self.size
+                halign: 'center'
+                valign: 'middle'
+
+<ButtonImg>:
+    label_container: _label_container
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+        size_hint: 1, 1
+        GridLayout:
+            id: _label_container
+            cols: 1
+            size_hint: .9, .9
+            AnchorLayout:
+                anchor_x: 'center'
+                anchor_y: 'center'
+                Image:
+                    size_hint: 1, 1
+                    source: root.src
+
+
+<ButtonIcon>:
+    label_container: _label_container
+    orientation: 'vertical'
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+        size_hint: 1, 1
+        BoxLayout:
+            id: _label_container
+            orientation: root.orientation
+            size_hint: .85, .85
+            AnchorLayout:
+                anchor_x: 'center'
+                anchor_y: 'center'
+                size_hint: root.icon_size_hint
+                Label:
+                    font_name: res.FONT_AWESOME
+                    text: root.icon
+                    font_size: dp(root.font_size.replace('dp','')) + dp(10)
+                    color: root.color
+                    text_size: self.size
+                    halign: root.icon_align
+                    valign: 'middle'
+
+
+<FloatButton>:
+    shape: _shape
+    AnchorLayout:
+        anchor_y: 'center'
+        anchor_x: 'center'
+        pos: root.pos
+        size: root.size
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'center'
+            size_hint: None, 1
+            width: self.height
+            canvas.before:
+                Rectangle:
+                    source: res.IMG_SHADOW
+                    pos: root.x, root.y
+                    size: self.width, self.width
+            BoxLayout:
+                id: _shape
+                size_hint: .85, .85
+                canvas.before:
+                    Color:
+                        group: 'shape_up'
+                        rgb: get_color(root.bgColor)
+                    Ellipse:
+                        group: 'shape_up'
+                        pos: self.x, self.y
+                        size: self.height, self.height
+            Label:
+                font_name: res.FONT_AWESOME
+                font_size: root.font_size
+                pos: root.pos
+                size: root.size
+                text: root.icon
+                color: root.color

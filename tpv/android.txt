@@ -1,3 +1,0 @@
-title=TPVBtres
-author=valleapp.com
-orientation=landscape
