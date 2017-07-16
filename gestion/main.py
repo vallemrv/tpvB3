@@ -3,7 +3,7 @@
 # @Email:  valle.mrv@gmail.com
 # @Filename: main.py
 # @Last modified by:   valle
-# @Last modified time: 15-Jul-2017
+# @Last modified time: 16-Jul-2017
 # @License: Apache license vesion 2.0
 # -*- coding: utf-8 -*-
 
@@ -20,7 +20,7 @@ from kivy.config import Config
 from controllers.gestion  import Gestion
 
 
-Config.set("graphics", "width", "300")
+Config.set("graphics", "width", "350")
 Config.set("graphics", "height", "600")
 
 

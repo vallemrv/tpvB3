@@ -4,7 +4,7 @@
 # @Date:   09-Jul-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 14-Jul-2017
+# @Last modified time: 16-Jul-2017
 # @License: Apache license vesion 2.0
 
 from kivy.uix.button import Button
@@ -157,8 +157,8 @@ class ButtonImg(ButtonBase):
         self.label_container.add_widget(label)
 
 class ButtonIcon(ButtonBase):
-    icon = StringProperty()
-    text = StringProperty()
+    icon = StringProperty("")
+    text = StringProperty("")
     label_container = ObjectProperty(allownone=False)
     orientation = OptionProperty("vertial", options=("vertical", "horizontal"))
     label_size_hint = ListProperty([1, .3])
