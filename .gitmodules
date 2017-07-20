@@ -1,15 +1,1 @@
-# @Author: Manuel Rodriguez <valle>
-# @Date:   20-Jul-2017
-# @Email:  valle.mrv@gmail.com
-# @Filename: .gitmodules
-# @Last modified by:   valle
-# @Last modified time: 20-Jul-2017
-# @License: Apache license vesion 2.0
 
-
-[submodule "valle_libs/kivy-component"]
-	path = kivy-component
-	url = https://github.com/vallemrv/kivy-component.git
-[submodule "valle_libs/python-ormsqlite"]
-	path = python-ormsqlite
-	url = https://github.com/vallemrv/python-ormsqlite.git
