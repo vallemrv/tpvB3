@@ -1,0 +1,153 @@
+#:import get_color kivy.utils.get_color_from_hex
+#:import LabelColor components.labels.LabelColor
+#:import ButtonIcon components.buttons.ButtonIcon
+#:import FloatButton components.buttons.FloatButton
+#:import res components.resources
+<FloatTextInput>:
+    input_text: _input
+    size_hint: 1, 1
+    canvas:
+        Color:
+            rgba: .4,.4,.4,.6
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'top'
+        size_hint: 1, .85
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'center'
+            size_hint: .9, None
+            height: dp(150)
+            GridLayout:
+                cols: 1
+                spacing: dp(5)
+                size_hint: .9, .9
+                LabelColor:
+                    size_hint: 1, None
+                    height: dp(35)
+                    text: root.label
+                    font_size: '15dp'
+                    text_size: self.size
+                    color: "#000000"
+                    bgColor: '#fcf6e1'
+                    border_size:'1dp'
+
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint: 1, None
+                    height: dp(40)
+                    TextInput:
+                        id: _input
+                        size_hint: .7, None
+                        height: dp(35)
+                        font_size: dp(20)
+                        multiline: False
+                        focus: root.focus
+                        text: root.text
+                    ButtonIcon:
+                        icon: res.FA_CHECK
+                        size_hint: None, None
+                        height: dp(35)
+                        width: dp(35)
+                        font_size: '12dp'
+                        border_size: 0
+                        bgColor: '#a5e5f9'
+                        on_release:
+                            root.text = _input.text
+                            root.controller.hide(root.input, _input.text)
+
+
+<ValleTextInput>:
+    AnchorLayout:
+        anchor_y: 'center'
+        anchor_x: 'center'
+        canvas:
+            Color:
+                rgba: get_color(root.bgColor)
+            Rectangle:
+                size: self.size
+                pos: self.pos
+        GridLayout:
+            cols: 1
+            size_hint: .9, .9
+            Label:
+                size_hint: 1, None
+                text: root.label
+                text_size: self.size
+                halign: 'left'
+                valign: 'middle'
+                color: .6,.6,.6,.9
+                font_size: dp(15)
+                height: dp(25)
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint: 1, 1
+                Label:
+                    text: root.text
+                    font_size: root.font_size
+                    text_size: self.size
+                    size_hint: 1, 1
+                    halign: 'left'
+                    valign: 'middle'
+                    id: _text
+                    color: get_color(root.color)
+
+
+            AnchorLayout:
+                anchor_x: 'center'
+                anchor_y: 'center'
+                size_hint: 1, None
+                height: dp(1)
+                canvas:
+                    Color:
+                        rgba: 0,0,0,1
+                    Rectangle:
+                        size: self.size
+                        pos: _text.x, _text.y-dp(3)
+
+
+<InputForm>:
+    float_input: _float_input
+    form_content: _form_content
+    canvas.before:
+        Color:
+            rgba: get_color(self.bgColor)
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    ScrollView:
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: 1, None
+            GridLayout:
+                cols: 1
+                spacing: dp(5)
+                size_hint: 1, 1
+                id: _form_content
+
+
+    AnchorLayout:
+        anchor_y: 'center'
+        anchor_x: 'center'
+        size_hint: 1, 1
+        AnchorLayout:
+            anchor_y: 'bottom'
+            anchor_x: 'right'
+            size_hint: .95, .95
+            FloatButton:
+                icon: res.FA_CHECK
+                size_hint: None, None
+                size: dp(70), dp(70)
+                font_size: '20dp'
+                bgColor: '#84cded'
+                color: 0,0,0,1
+                on_release: root.enviar_form()
+
+
+    FloatTextInput:
+        id: _float_input
+        pos: root.width+10, 0
+        controller: root
