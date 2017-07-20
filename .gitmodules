@@ -5,3 +5,9 @@
 # @Last modified by:   valle
 # @Last modified time: 20-Jul-2017
 # @License: Apache license vesion 2.0
+[submodule "valle_libs/python-ormsqlite"]
+	path = valle_libs/python-ormsqlite
+	url = https://github.com/vallemrv/python-ormsqlite.git
+[submodule "valle_libs/kivy-component"]
+	path = valle_libs/kivy-component
+	url = https://github.com/vallemrv/kivy-component.git
