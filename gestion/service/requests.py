@@ -7,3 +7,12 @@
 # @License: Apache license vesion 2.0
 
 
+from kivy.network.urlrequest import UrlRequest
+import json
+import base64
+
+class Familias(object):
+    def __init__(self, **kargs):
+        super(Familias, self).__init__(**kargs)
+
+    def get_familias()

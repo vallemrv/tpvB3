@@ -4,7 +4,7 @@
 # @Date:   09-Jul-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 16-Jul-2017
+# @Last modified time: 18-Jul-2017
 # @License: Apache license vesion 2.0
 
 from kivy.uix.button import Button
@@ -20,6 +20,7 @@ from kivy.graphics.instructions import InstructionGroup
 from kivy.vector import Vector
 from kivy.lang import Builder
 from kivy.clock import Clock
+from kivy.metrics import dp
 import resources as res
 Builder.load_file(res.get_kv("buttons"))
 
@@ -39,6 +40,13 @@ class ButtonBase(ButtonBehavior, Widget):
 
     def __init__(self, **kargs):
         super(ButtonBase, self).__init__(**kargs)
+
+    def on_color(self, w, val):
+        if "#" in val:
+            val = "".join(val)
+            self.color = get_color_from_hex(val)
+        else:
+            self.color = val
 
     def on_container(self, root, val):
         self.container.bind(pos=self.on_container_pos)
@@ -64,8 +72,6 @@ class ButtonBase(ButtonBehavior, Widget):
         else:
             self.container.canvas.before.remove(self.shape_up)
             self.shape_up.clear()
-
-
         self.draw_color()
 
     def on_bgColor(self, root, val):
@@ -106,7 +112,6 @@ class ButtonBase(ButtonBehavior, Widget):
             return True
 
     def remove_shape_down(self, dt):
-        #super(ButtonBase, self).on_touch_up(touch)
         self.container.canvas.before.remove(self.shape_down)
         self.shape_down.clear()
 
@@ -157,13 +162,14 @@ class ButtonImg(ButtonBase):
         self.label_container.add_widget(label)
 
 class ButtonIcon(ButtonBase):
-    icon = StringProperty("")
-    text = StringProperty("")
+    icon = StringProperty('')
+    text = StringProperty('')
     label_container = ObjectProperty(allownone=False)
     orientation = OptionProperty("vertial", options=("vertical", "horizontal"))
     label_size_hint = ListProperty([1, .3])
     icon_size_hint = ListProperty([1, .7])
     icon_align = OptionProperty("center", options=("center","left","right"))
+    icon_font_size = ObjectProperty("30dp")
 
     def __init__(self, **kargs):
         super(ButtonIcon, self).__init__(**kargs)
@@ -191,6 +197,9 @@ class ButtonIcon(ButtonBase):
         self.icon_size_hint = (1, .8) if val == "vertical" else (.2, 1)
         self.icon_align = "center" if val == "vertical" else "left"
 
+    def on_font_size(self, w, val):
+        self.icon_font_size = dp(self.font_size.replace('dp','')) + dp(20)
+
 
 
 
@@ -204,6 +213,11 @@ class FloatButton(ButtonBehavior, Widget):
         super(FloatButton, self).__init__(*args, **kwargs)
         self.shape_up = None
         self.shape_down = None
+
+    def on_color(self, w, val):
+        if "#" in val:
+            val = "".join(val)
+            self.color = get_color_from_hex(val)
 
     def on_bgColor(self, root, val):
         if self.shape_up == None:

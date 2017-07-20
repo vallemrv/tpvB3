@@ -101,7 +101,7 @@
                 Label:
                     font_name: res.FONT_AWESOME
                     text: root.icon
-                    font_size: dp(root.font_size.replace('dp','')) + dp(10)
+                    font_size: root.icon_font_size
                     color: root.color
                     text_size: self.size
                     halign: root.icon_align
@@ -121,13 +121,15 @@
             size_hint: None, 1
             width: self.height
             canvas.before:
+                Color:
+                    rgba: 0,0,0,1
                 Rectangle:
                     source: res.IMG_SHADOW
                     pos: root.x, root.y
                     size: self.width, self.width
             BoxLayout:
                 id: _shape
-                size_hint: .85, .85
+                size_hint: .8, .8
                 canvas.before:
                     Color:
                         group: 'shape_up'

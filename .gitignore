@@ -4,6 +4,8 @@ __pycache__/
 *$py.class
 .atomignore
 .DS_Store
+*.pyo
+*.pyc
 
 # C extensions
 *.so
