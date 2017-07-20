@@ -37,6 +37,8 @@ FA_TABLE = unichr(0xf0ce)
 FA_SPINNER = unichr(0xf110)
 FA_CIRCLE = unichr(0xf1ce)
 FA_REFRESH = unichr(0xf021)
+FA_CUTLERY = unichr(0xf0f5)
+FA_PLUS = unichr(0xf067)
 
 def get_kv(name):
     name = name if "kv" in name else name+".kv"
