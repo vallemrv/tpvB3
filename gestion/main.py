@@ -3,7 +3,7 @@
 # @Email:  valle.mrv@gmail.com
 # @Filename: main.py
 # @Last modified by:   valle
-# @Last modified time: 16-Jul-2017
+# @Last modified time: 26-Jul-2017
 # @License: Apache license vesion 2.0
 # -*- coding: utf-8 -*-
 
@@ -16,8 +16,8 @@ sys.path.insert(0, os.path.join(root, "valle_libs"))
 
 
 from kivy.app import App
+from views.gestion  import Gestion
 from kivy.config import Config
-from controllers.gestion  import Gestion
 
 
 Config.set("graphics", "width", "350")
