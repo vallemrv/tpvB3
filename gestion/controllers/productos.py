@@ -5,7 +5,7 @@
 # @Email:  valle.mrv@gmail.com
 # @Filename: productos.py
 # @Last modified by:   valle
-# @Last modified time: 13-Aug-2017
+# @Last modified time: 22-Aug-2017
 # @License: Apache license vesion 2.0
 
 from kivy.event import EventDispatcher
@@ -73,7 +73,7 @@ class Productos(EventDispatcher):
         self.select.page_manager.show_subeditor(Ingredientes(producto=sel.get("reg")))
 
     def edit_preguntas(self, sel):
-        self.select.page_manager.show_subeditor(Pregutas(parent=sel.get("reg")))
+        self.select.page_manager.show_subeditor(Pregutas(grupo=sel.get("reg")))
 
 
     def editar_form(self, model):

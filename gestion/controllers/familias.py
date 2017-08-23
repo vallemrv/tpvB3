@@ -5,12 +5,13 @@
 # @Email:  valle.mrv@gmail.com
 # @Filename: productos.py
 # @Last modified by:   valle
-# @Last modified time: 12-Aug-2017
+# @Last modified time: 22-Aug-2017
 # @License: Apache license vesion 2.0
 
 from kivy.event import EventDispatcher
 from kivy.properties import ObjectProperty
 from service.http import HttpFamilias
+from controllers.preguntas import PregutasFamilias
 
 
 class Familias(EventDispatcher):
@@ -65,3 +66,6 @@ class Familias(EventDispatcher):
     def on_success_rm(self, req, res):
         self.editor.show_mensaje(self.men)
         self.editor.hide_spin()
+
+    def edit_preguntas(self, sel):
+        self.editor.page_manager.show_asociador(PregutasFamilias(grupo=sel.get("reg")))

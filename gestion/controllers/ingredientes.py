@@ -5,7 +5,7 @@
 # @Email:  valle.mrv@gmail.com
 # @Filename: productos.py
 # @Last modified by:   valle
-# @Last modified time: 13-Aug-2017
+# @Last modified time: 22-Aug-2017
 # @License: Apache license vesion 2.0
 
 from kivy.event import EventDispatcher
@@ -23,9 +23,7 @@ class Ingredientes(EventDispatcher):
         self.http = HttpIngredientes()
         self.men = 'No hay ingredientes creados para este productos para crear uno pulse +'
 
-    def on_producto(self, w, l):
-        print l
-
+    
     def on_show(self, **args):
         self.editor.title = "Editar ingredientes"
         if "ID" in self.producto:

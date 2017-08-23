@@ -5,7 +5,7 @@
 # @Email:  valle.mrv@gmail.com
 # @Filename: menu.py
 # @Last modified by:   valle
-# @Last modified time: 16-Aug-2017
+# @Last modified time: 22-Aug-2017
 # @License: Apache license vesion 2.0
 
 
@@ -23,12 +23,14 @@ Builder.load_string('''
 #:import Botonera components.botonera.Botonera
 #:import Familias views.editor.Editor
 #:import Selector views.selector.Selector
+#:import Asociador views.asociacion.Asociador
 #:import AddForm views.add_reg.AddForm
 <Gestion>:
     menu: _menu
     editor: _editor
     select: _select
     subeditor: _subeditor
+    asociador: _asociador
     MainPage:
         title: 'Menu'
         ValleListView:
@@ -44,6 +46,13 @@ Builder.load_string('''
         Selector:
             id: _select
             title: 'Elegir'
+    Page:
+        id_page: "asociador"
+        title: _asociador.title
+        show: _asociador.on_show
+        Asociador:
+            id: _asociador
+            title: 'Asociar'
 
     Page:
         id_page: "subeditor"
@@ -135,3 +144,8 @@ class Gestion(PageManager):
         controller.editor = self.subeditor
         self.subeditor.controller = controller
         self.navigate('subeditor')
+
+    def show_asociador(self, controller):
+        controller.asociador = self.asociador
+        self.asociador.controller = controller
+        self.navigate('asociador')
