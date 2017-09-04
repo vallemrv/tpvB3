@@ -1,0 +1,3 @@
+title=GestorB3
+author=valleapp.com
+orientation=landscape
