@@ -2,7 +2,7 @@
 # @Date:   02-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 02-Sep-2017
+# @Last modified time: 04-Sep-2017
 # @License: Apache license vesion 2.0
 
 
@@ -15,7 +15,7 @@ class Clases(models.Model):
     color = models.CharField(default="#d898e8")
     orden = models.IntegerField(default=0)
     productos = models.ManyToMany(otherclass='Productos')
-    preguntas = models.ManyToMany(otherclass='Preguntas')
+    preguntas = models.ManyToMany(otherclass='ClasesPreguntas')
     modify = models.DateTime(auto_now=True)
 
 class Productos(models.Model):
@@ -24,8 +24,8 @@ class Productos(models.Model):
     precio = models.DecimalField(decimal_places=2, default=None, null=True)
     color = models.CharField(default="#d898e8")
     orden = models.IntegerField(default=0)
-    preguntas = models.ManyToMany(otherclass='Preguntas')
-    ignore = models.ManyToMany(otherclass='Preguntas')
+    preguntas = models.ManyToMany(otherclass='ClasesPreguntas')
+    ignore = models.ManyToMany(otherclass='ClasesPreguntas')
     modify = models.DateTime(auto_now=True)
 
 

@@ -1,11 +1,18 @@
 # -*- coding: utf-8 -*-
+# @Author: Manuel Rodriguez <valle>
+# @Date:   10-May-2017
+# @Email:  valle.mrv@gmail.com
+# @Last modified by:   valle
+# @Last modified time: 04-Sep-2017
+# @License: Apache license vesion 2.0
+
 from kivy.uix.boxlayout import BoxLayout
 from kivy.storage.jsonstore import JsonStore
 from kivy.properties import ObjectProperty, NumericProperty, StringProperty
 from kivy.lang import Builder
 from controllers.lineawidget import LineaWidget
 from controllers.sugerencias import Sugerencias
-from valle.utils import json_to_list
+
 from models.pedido import Pedido
 
 Builder.load_file('view/pedido.kv')
@@ -272,4 +279,3 @@ class PedidoController(BoxLayout):
             else:
                 self.show_botonera("db/privado/num_avisador.json")
                 self.pedido.modo_pago = "Efectivo"
-            

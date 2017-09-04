@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # @Author: Manuel Rodriguez <valle>
 # @Date:   04-Sep-2017
 # @Email:  valle.mrv@gmail.com
@@ -6,30 +8,18 @@
 # @License: Apache license vesion 2.0
 
 
-# -*- coding: utf-8 -*-
-"""Programa tpv para la pizeria Btres
 
-    Autor: Manuel Rodriguez
-    Licencia: Apache v2.0
-"""
-import init
+import config
 from kivy.app import App
 from controllers.tpv import Tpv
 from kivy.config import Config
 
-try: # this is only for pygame window if pygame is avaliable
-    import pygame
-    pygame.display.init()
-    info = pygame.display.Info()
-    width, height = info.current_w, info.current_h
-    Config.set('graphics', 'width', str(int(width * .96)))
-    Config.set('graphics', 'height', str(int(height * .98)))
-except:
-    pass
-
 class TpvApp(App):
 
-    """Aplicacion principal para el TPV"""
+    def __init__(self, **kargs):
+        super(TpvApp, self).__init__(**kargs)
+        self.title = 'BTRES'
+        self.icon = "img/logo.jpg"
 
     def build(self):
         return Tpv()

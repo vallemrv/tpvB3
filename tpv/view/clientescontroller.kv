@@ -1,5 +1,3 @@
-#:import CustomListView valle.component.listview.CustomListView
-#:import BotonImg valle.component.botonimg.BotonImg
 <TextGrande@TextInput>:
     font_size: 50
 
@@ -54,10 +52,10 @@
                 size_hint_x: .7
                 hint_text: str("Dirección").decode('utf-8')
                 id: _dir
-            BotonImg:
+            ButtonImg:
                 id: _btnAdd
                 on_press: root.add_dir()
-        CustomListView:
+        ValleListView:
             size_hint_y: .4
             id: _list
         TextGrande:

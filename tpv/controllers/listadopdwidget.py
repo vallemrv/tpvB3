@@ -1,12 +1,20 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
+
+# @Author: Manuel Rodriguez <valle>
+# @Date:   10-May-2017
+# @Email:  valle.mrv@gmail.com
+# @Last modified by:   valle
+# @Last modified time: 04-Sep-2017
+# @License: Apache license vesion 2.0
+
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.storage.jsonstore import JsonStore
 from kivy.properties import ObjectProperty, NumericProperty, StringProperty
 from kivy.lang import Builder
-from valle.component.labelclicable import LabelClicable
-from valle.utils import parse_float
 from glob import glob
 from os import rename
+from components.labels import LabelClicable
+
 
 Builder.load_file('view/listadopdwidget.kv')
 

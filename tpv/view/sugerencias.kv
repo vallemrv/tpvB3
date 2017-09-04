@@ -1,7 +1,3 @@
-#:import Botonera valle.component.botonera.Botonera
-#:import VTeclado valle.component.vteclado.VTeclado
-#:import CustomListView valle.component.listview.CustomListView
-#:import LabelColor valle.component.labelcolor.LabelColor
 <Sugerencias>:
     lista: _lista
     txtSug: _txtInput
@@ -31,7 +27,7 @@
                         height: 40
                         font_size: 30
                         color: 0, 0, 0, 1
-                    CustomListView:
+                    ValleListView:
                         id: _lista
                         bColor: "#FFFFFF"
                 AnchorLayout:
@@ -50,11 +46,11 @@
                             font_size: 30
                             color: 0,0,0,1
                         LabelColor:
-                            bColor: '#333333'
+                            bgColor: '#333333'
                             height: 90
                             text: root.des
-                            font_size: 24
-                            color: 1, 1, 1, 1
+                            font_size: '24dp'
+                            color: '#ffffff'
                             text_size: self.size
                             halign: 'left'
                             valign: 'middle'

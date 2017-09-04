@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*
+# @Author: Manuel Rodriguez <valle>
+# @Date:   10-May-2017
+# @Email:  valle.mrv@gmail.com
+# @Last modified by:   valle
+# @Last modified time: 04-Sep-2017
+# @License: Apache license vesion 2.0
+
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import StringProperty, ObjectProperty, NumericProperty
 from kivy.lang import Builder
-from valle.component.botonimg import BotonImg
+from components.buttons import ButtonImg
 
 Builder.load_string('''
-#:import BotonImg valle.component.botonimg.BotonImg
-#:import LabelClicable valle.component.labelclicable.LabelClicable
 <LineaWidget>:
     canvas.before:
         Color:

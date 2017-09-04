@@ -3,7 +3,7 @@
 # @Email:  valle.mrv@gmail.com
 # @Filename: __init__.py
 # @Last modified by:   valle
-# @Last modified time: 02-Sep-2017
+# @Last modified time: 04-Sep-2017
 # @License: Apache license vesion 2.0
 
 
@@ -15,7 +15,7 @@ sys.setdefaultencoding('UTF8')
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT_DIR = os.path.dirname(BASE_DIR)
 
-os.chdir(ROOT_DIR)
+os.chdir(BASE_DIR)
 sys.path.append(ROOT_DIR)
 sys.path.insert(0, os.path.join(ROOT_DIR, "valle_libs"))
 

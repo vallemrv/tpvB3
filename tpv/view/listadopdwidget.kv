@@ -1,5 +1,3 @@
-#:import CustomListView valle.component.listview.CustomListView
-#:import LabelColor valle.component.labelcolor.LabelColor
 <ListadoPdWidget>:
     pedido: _pedido
     lista: _listado_pedidos
@@ -14,11 +12,11 @@
             size_hint_x: .6
             orientation: 'vertical'
             LabelColor:
-                bColor: "#FFFFFF"
+                bgColor: "#FFFFFF"
                 text: "Lista de pedidos"
                 size_hint_y: .1
-                color: 0, 0, 0, 1
-            CustomListView:
+                color: "#000000"
+            ValleListView:
                 id: _listado_pedidos
                 bColor: "#FFFFFF"
         BoxLayout:
@@ -27,12 +25,12 @@
             size_hint_x: .4
             orientation: 'vertical'
             LabelColor:
-                bColor: "#000000"
+                bgColor: "#000000"
                 size_hint_y: .1
                 text: root.des
-            CustomListView:
+            ValleListView:
                 id: _pedido
-                bColor: "#000000"
+                bgColor: "#000000"
             BoxLayout:
                 canvas.before:
                     Color:

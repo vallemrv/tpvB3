@@ -1,8 +1,16 @@
+# @Author: Manuel Rodriguez <valle>
+# @Date:   10-May-2017
+# @Email:  valle.mrv@gmail.com
+# @Last modified by:   valle
+# @Last modified time: 04-Sep-2017
+# @License: Apache license vesion 2.0
+
+
 # -*- coding: utf-8 -*-
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.storage.jsonstore import JsonStore
 from kivy.lang import Builder
-from valle.tpv.impresora import DocPrint
+from valle_libs.tpv.impresora import DocPrint
 from controllers.inicio import Inicio
 from controllers.pedido import PedidoController
 from controllers.listadowidget import ListadoWidget

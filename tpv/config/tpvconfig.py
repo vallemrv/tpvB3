@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # @Author: Manuel Rodriguez <valle>
 # @Date:   04-Sep-2017
 # @Email:  valle.mrv@gmail.com
@@ -6,4 +8,6 @@
 # @License: Apache license vesion 2.0
 
 
-from clases import *
+COLOR_LIST_VIEW = "#000000"
+COLOR_BUTTONS = "#def4c9"
+COLOR_TITLE = '#87d1f1'

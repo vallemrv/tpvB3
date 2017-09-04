@@ -1,15 +1,24 @@
 # -*- coding: utf-8 -*-
+# @Author: Manuel Rodriguez <valle>
+# @Date:   10-May-2017
+# @Email:  valle.mrv@gmail.com
+# @Last modified by:   valle
+# @Last modified time: 04-Sep-2017
+# @License: Apache license vesion 2.0
+
+
+
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.properties import ObjectProperty
 from kivy.lang import Builder
 from kivy.storage.jsonstore import JsonStore
 from kivy.clock import Clock
-from controllers.lineaarqueo import LineaArqueo
-from valle.utils import parse_float
-from valle.tpv.impresora import DocPrint
 from glob import glob
 from os import rename
 from time import strftime
+from controllers.lineaarqueo import LineaArqueo
+from valle_libs.tpv.impresora import DocPrint
+
 
 Builder.load_file("view/arqueo.kv")
 
