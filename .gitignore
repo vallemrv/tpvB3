@@ -2,7 +2,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-.atomignore
 .DS_Store
 *.pyo
 *.pyc
