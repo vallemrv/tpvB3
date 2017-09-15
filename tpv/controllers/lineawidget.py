@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 04-Sep-2017
+# @Last modified time: 13-Sep-2017
 # @License: Apache license vesion 2.0
 
 from kivy.uix.boxlayout import BoxLayout
@@ -22,16 +22,17 @@ Builder.load_string('''
     spacing: 5
     orientation: 'horizontal'
     LabelClicable:
-        event: root.click_sug
-        color: .9,.9,.9,1
-        font_size: 16
-        texto: "{0}  {1:.2f}".format(root.texto, root.total)
-    BotonImg:
+        on_press: root.click_sug()
+        bgColor: "#3b434d"
+        font_size: "15dp"
+        color: "#f1eaea"
+        text: "{0}  {1:.2f}".format(root.texto, root.total)
+    ButtonImg:
         size_hint: None, 1
         width: self.height
         on_press: root.sumar(root, root.tag)
         src: './img/plus.ico'
-    BotonImg:
+    ButtonImg:
         size_hint: None, 1
         width: self.height
         on_press: root.borrar(root, root.tag)
@@ -50,7 +51,7 @@ class LineaWidget(BoxLayout):
 
     def __init__(self, **kargs):
         super(LineaWidget, self).__init__(**kargs)
-        self.btnPromo = BotonImg()
+        self.btnPromo = ButtonImg()
         self.btnPromo.size_hint = None, 1
         self.btnPromo.src = './img/promocion.jpeg'
         self.btnPromo.width = self.btnPromo.height
@@ -69,5 +70,5 @@ class LineaWidget(BoxLayout):
         if self.aplicar:
             self.aplicar(self)
 
-    def click_sug(self, btn):
+    def click_sug(self):
         self.sugerencia(self, self.tag)

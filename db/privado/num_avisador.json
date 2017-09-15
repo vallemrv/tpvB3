@@ -1,0 +1,82 @@
+{"titulo": {"text":"Numero avisador"},  "db": {"lista": [
+  {
+    "text": "1",
+    "bgColor": "#c2d7f2",
+    "tipo": "num"
+  },
+  {
+    "text": "2",
+    "bgColor": "#c2d7f2",
+    "tipo": "num"
+  },
+  {
+    "text": "3",
+    "bgColor": "#c2d7f2",
+    "tipo": "num"
+  },
+  {
+    "text": "4",
+  "bgColor": "#c2d7f2",
+    "tipo": "num"
+  },
+  {
+    "text": "5",
+    "bgColor": "#c2d7f2",
+    "tipo": "num"
+  },
+  {
+    "text": "6",
+    "bgColor": "#c2d7f2",
+    "tipo": "num"
+  },
+  {
+    "text": "7",
+    "bgColor": "#c2d7f2",
+    "tipo": "num"
+  },
+  {
+    "text": "8",
+  "bgColor": "#c2d7f2",
+    "tipo": "num"
+  },
+  {
+    "text": "9",
+    "bgColor": "#c2d7f2",
+    "tipo": "num"
+  },
+  {
+    "text": "10",
+    "bgColor": "#c2d7f2",
+    "tipo": "num"
+  },
+  {
+    "text": "11",
+    "bgColor": "#c2d7f2",
+    "tipo": "num"
+  },
+  {
+    "text": "12",
+    "bgColor": "#c2d7f2",
+    "tipo": "num"
+  },
+  {
+    "text": "13",
+    "bgColor": "#c2d7f2",
+    "tipo": "num"
+  },
+  {
+    "text": "14",
+    "bgColor": "#c2d7f2",
+    "tipo": "num"
+  },
+  {
+    "text": "15",
+    "bgColor": "#c2d7f2",
+    "tipo": "num"
+  },
+  {
+    "text": "16",
+    "bgColor": "#c2d7f2",
+    "tipo": "num"
+  }
+]}}

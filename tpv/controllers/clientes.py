@@ -1,9 +1,18 @@
 # -*- coding: utf-8 -*-
+# @Author: Manuel Rodriguez <valle>
+# @Date:   10-May-2017
+# @Email:  valle.mrv@gmail.com
+# @Last modified by:   valle
+# @Last modified time: 12-Sep-2017
+# @License: Apache license vesion 2.0
+
 from kivy.uix.anchorlayout import AnchorLayout
-from kivy.uix.button import Button
 from kivy.storage.jsonstore import JsonStore
 from kivy.properties import ObjectProperty
 from kivy.lang import Builder
+from components.labels import LabelClicable
+
+from models.db.pedidos import Clientes as ClientesModel, Direcciones
 
 Builder.load_file("view/clientescontroller.kv")
 
@@ -17,37 +26,48 @@ class Clientes(AnchorLayout):
     pedir = ObjectProperty(None)
 
     def guardar(self):
-        list = self.db["reg"].get("list")
-        pedidos = self.db["reg"].get("pedidos")
-        self.db.put("reg", num_tlf=self.tlf.text, nombre=self.nombre.text,
-                    direccion=self.dir.text,
-                    pedidos=pedidos,
-                    list=list,
-                    notas=self.notas.text)
+        self.db.save(telefono=self.tlf.text,
+                     nombre=self.nombre.text,
+                     apellido=self.apellido.text,
+                     email=self.email.text,
+                     nota=self.notas.text)
 
     def on_db(self, key, value):
-        self.tlf.text = self.db['reg'].get('num_tlf')
-        self.nombre.text = self.db['reg'].get('nombre')
-        self.dir.text = self.db['reg'].get('direccion')
+        self.tlf.text = self.db.telefono if self.db.telefono is not None else ""
+        self.nombre.text = self.db.nombre if self.db.nombre is not None else ""
+        self.apellido.text = self.db.apellido if self.db.apellido is not None else ""
+        self.email.text = self.db.email if self.db.email is not None else ""
+        self.notas.text = self.db.nota if self.db.nota is not None else ""
+        id_direccion = self.db.direccion
+        if id_direccion != None:
+            self.dir.text = self.db.direcciones.get(query="id=%d" % id_direccion)[0].direccion
         self.rellena_list()
-        self.notas.text = self.db['reg'].get('notas')
+
 
     def rellena_list(self):
-        self.list.rm_all_widgets()
-        for l in self.db["reg"].get('list'):
-            btn = Button(text=l)
-            self.list.add_linea(btn)
+        self.listDirecciones.rm_all_widgets()
+        for l in self.db.direcciones.get():
+            btn = LabelClicable(text=l.direccion)
+            btn.tag = l
             btn.bind(on_press=self.sel_dir)
+            self.listDirecciones.add_linea(btn)
 
     def sel_dir(self, btn):
-        self.dir.text = btn.text
-        self.guardar()
+        direccion = self.db.direcciones.get(query="id=%d" % btn.tag.id)
+        if len(direccion) > 0:
+            self.dir.text = direccion[0].direccion
+            self.db.direccion = btn.tag.id
+            self.db.save()
 
     def add_dir(self):
-        list = self.db["reg"].get("list")
-        if self.dir.text not in list:
-            list.append(self.dir.text)
+        list = self.db
+        direccion = self.db.direcciones.get(query="direccion='%s'" % self.dir.text)
+        if len(direccion) <= 0:
+            direccion = Direcciones(direccion=self.dir.text)
             self.guardar()
+            self.db.direcciones.add(direccion)
+            self.db.direccion = direccion.id
+            self.db.save()
         self.rellena_list()
 
 class ClientesController(AnchorLayout):
@@ -70,10 +90,13 @@ class ClientesController(AnchorLayout):
 
     def aceptar(self, numTlf):
         if len(numTlf) == 9:
-            db = JsonStore("db/clientes/{0}.json".format(numTlf))
-            if not db.exists("reg"):
-                db.put("reg", num_tlf=numTlf, nombre="",
-                       direccion="", list=[], pedidos=[], notas="")
+            db = ClientesModel()
+            db.load_first_by_query(query="telefono='%s'" % numTlf)
+            if db.id == -1:
+                db.telefono = numTlf
             self.clientes.db = db
             self.remove_widget(self.find)
             self.add_widget(self.clientes)
+
+    def hacer_pedido(self):
+        pass

@@ -1,36 +1,39 @@
 # -*- coding: utf-8 -*-
+# @Author: Manuel Rodriguez <valle>
+# @Date:   10-May-2017
+# @Email:  valle.mrv@gmail.com
+# @Last modified by:   valle
+# @Last modified time: 15-Sep-2017
+# @License: Apache license vesion 2.0
+
+
 from kivy.event import EventDispatcher
 from kivy.properties import StringProperty
-from valle.utils import parse_float
 import commands
-import time
-import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
+from datetime import datetime
 
 class Comandos(object):
     """docstring for Comandos"""
     def __init__(self):
         super(Comandos, self).__init__()
-        self.cortarPapel = chr(29) + chr(86) + chr(1)
-        self.agregarLineas = chr(27) + chr(100) + chr(6)
-        self.tipoEuro = chr(27) + chr(116) + chr(16)
         self.iniciarImp = chr(27) + chr(64)
-        self.resaltado = chr(27) + chr(33) + chr(8)
+        self.agregarLineas = chr(27) + chr(100) + chr(6)
         self.cortarPapel = chr(29) + chr(86) + chr(1)
         self.centrado = chr(27) + chr(97) + chr(1)
-        self.derecha = chr(27) + chr(97) + chr(0)
-        self.izquierda = chr(27) + chr(97)+chr(2)
-        self.normal = chr(27)+chr(77)+chr(48)
-        self.peque = chr(27)+chr(77)+chr(49)
-        self.grande = chr(27)+chr(33)+chr(16)
-        self.grandeNegrita = chr(27) + chr(33) + chr(24)
+        self.derecha = chr(27) + chr(97) + chr(0x02)
+        self.izquierda = chr(27) + chr(97)+chr(0x00)
+        self.normal = chr(29)+chr(33)+chr(0x00)
+        self.mediana = chr(29)+chr(33)+chr(0x11)
+        self.grande = chr(29)+chr(33)+chr(0x22)
+        self.semigrande = chr(29)+chr(33)+chr(0x02)
+        self.negrita = chr(27) + chr(33) + chr(8)
+        self.no_negrita = chr(27) + chr(33) + chr(0)
         self.abrirCajon = chr(27) + chr(112) + chr(48)
         self.impLogo = chr(28) + chr(112) + chr(1) + chr(48)
-        self.saltoLineaFinal = chr(27) + chr(74) + chr(255)
-        self.saltoDeLinea = chr(27) + chr(100) + chr(1)
+        self.saltoLineaFinal = chr(27) + chr(100) + chr(12)
+        self.saltoDeLinea = chr(0xA)
 
-
+comandos = Comandos()
 class DocPrint(EventDispatcher):
     """docstring for DocPrint"""
 
@@ -46,8 +49,8 @@ class DocPrint(EventDispatcher):
         self.file.write(self.comandos.impLogo);
 
 
-    def AddNegrita(self):
-		self.file.write(self.comandos.resaltado)
+    def AddNegritaGrande(self):
+		self.file.write(self.comandos.negritaGrande)
 
 
     def abrir_cajon(self, nomImp):
@@ -58,7 +61,7 @@ class DocPrint(EventDispatcher):
 
     def imprimir(self, nomImp):
         if self.file:
-            self.file.write(self.comandos.saltoLineaFinal)
+            self.file.write(self.comandos.agregarLineas)
             self.file.write(self.comandos.cortarPapel)
             self.file.close()
             commands.getoutput('lpr -P {0} print.aux'.format(nomImp))
@@ -72,58 +75,77 @@ class DocPrint(EventDispatcher):
             self.file.write(self.comandos.izquierda)
 
     def AddSize(self, size):
-        if size == 'peque':
-            self.file.write(self.comandos.peque)
-        if size == 'grande':
-            self.file.write(self.comandos.grande)
         if size == 'normal':
             self.file.write(self.comandos.normal)
+        if size == 'mediana':
+            self.file.write(self.comandos.mediana)
+        if size == 'semigrande':
+            self.file.write(self.comandos.semigrande)
+        if size == 'grande':
+            self.file.write(self.comandos.grande)
 
     def AddLinea(self, s=None, aling=None, t='normal', negrita=False):
-        if aling:
-            self.AddALineamiento(aling)
+        if aling != None:
+           self.AddALineamiento(aling)
 
-        if negrita and t=='grande':
-            self.file.write(self.comandos.grandeNegrita)
-        elif negrita and t != 'grande':
-            self.AddNegrita()
+        if negrita:
+            self.file.write(self.comandos.negrita)
+        else:
+            self.file.write(self.comandos.no_negrita)
 
         self.AddSize(t)
 
-        if s:
-            #self.file.write(self.comandos.tipoEuro)
+        if s != None:
             self.file.write(s)
 
         self.file.write(self.comandos.saltoDeLinea)
-        self.file.write(self.comandos.iniciarImp)
 
-    def imprimirTicket(self, p, num,  lineas, fecha, total, cl=None):
+    def imprimirTicket(self, p, num,  lineas, fecha, total,
+                        efectivo, cambio, cl=None):
 
         self.initDoc()
         self.AddLinea()
         self.AddLinea(s='BTres', aling='centrado', t='grande', negrita=True)
         self.AddLinea(s='Pizzeria y Hamburgeseria', aling='centrado',
-                      t='normal', negrita=True)
+                      t='mediana', negrita=True)
         self.AddLinea(s='Plaza San lazaro, 9, local 2', aling='centrado',
-                      t='peque', negrita=True)
+                      t='normal', negrita=False)
         self.AddLinea(s='NIF: 52527453F', aling='centrado',
-                      t='peque', negrita=True)
+                      t='normal', negrita=False)
         self.AddLinea(s='TLF: 958092462', aling='centrado',
-                      t='peque', negrita=True)
+                      t='normal', negrita=False)
         self.AddLinea()
         self.AddLinea()
-        self.AddLinea(s="     Descripcion                        Total ",
+        self.AddLinea(s="Cant  Descripcion                       Total ",
                       aling='centrado')
         self.AddLinea(s="----------------------------------------------",
                       aling='centrado')
-        for i in range(len(lineas)):
-            ln = lineas[i]
-            self.AddLinea(s="{0: <35} {1:.2f}".format(ln.get('des'),
-                                                      parse_float(
-                                                          ln.get('total'))),
-                          aling='centrado')
-        self.AddLinea(s="Total: {0:.2f}  ".format(parse_float(total)),
-                      aling='izq', t='grande')
+        for ln in lineas:
+            tipo = ln.tipo if ln.tipo in ("pizzas, burger") else ""
+            self.AddLinea(s="{0: >4} {1:>10} {2: >25} {3:.2f} €".format(ln.cant, tipo, ln.text,
+                                                      float(ln.total)), aling='centrado', negrita=True)
+            des = ln.des.replace(ln.text, "")
+            chunks, chunk_size = len(des), 34
+            sub = [ des[i:i+chunk_size] for i in range(0, chunks, chunk_size) ]
+            for s in sub:
+                self.AddLinea(s="{0: <4} {1: <35}".format("", s),
+                              aling='centrado', negrita=False)
+
+
+        self.AddLinea(s="Total: {0:0.2f}  ".format(total),
+                      aling='izq', t='mediana')
+        self.AddLinea(s="Efectivo: {0:0.2f}  ".format(efectivo),
+                      aling='izq', t='normal')
+        self.AddLinea(s="Cambio: {0:0.2f}  ".format(cambio),
+                      aling='izq', t='normal')
+
+        if type(fecha) is datetime:
+            fecha = fecha.strftime("%d/%m/%Y %H:%M:%S")
+        else:
+            fecha = datetime.strptime(fecha, "%Y-%m-%d %H:%M:%S.%f")
+            fecha = fecha.strftime("%d/%m/%Y %H:%M:%S")
+
+
         self.AddLinea(s=fecha, aling='centrado')
         self.AddLinea()
         self.AddLinea(s="Factura simplificada", aling='centrado')
@@ -131,10 +153,17 @@ class DocPrint(EventDispatcher):
         self.AddLinea(s="Iva incluido", aling='centrado')
         self.AddLinea()
         self.AddLinea(s="Gracias por su visita", aling='centrado')
-        if cl:
-            self.AddLinea(s=cl.get("nombre"), aling='centrado')
-            self.AddLinea(s=cl.get("direccion"), aling='centrado')
-            self.AddLinea(s=cl.get("num_tlf"), aling='centrado')
+        if cl != None and len(cl) > 0:
+            self.AddLinea(s="----------------------------------------------",
+                          aling='centrado')
+            self.AddLinea()
+            self.AddLinea(s="----------------------------------------------",
+                          aling='centrado')
+            cl = cl[0]
+            self.AddLinea(s=cl.nombre, aling='der', t="semigrande")
+            self.AddLinea(s=cl.direcciones.get(query="id=%d"%cl.direccion)[0].direccion,
+                          aling='der', t="semigrande")
+            self.AddLinea(s=cl.telefono, aling='der',  t="semigrande")
         self.AddLinea()
         self.imprimir(p)
 
@@ -163,6 +192,12 @@ class DocPrint(EventDispatcher):
         self.initDoc()
         self.AddLinea()
         self.AddLinea(s="Cierre de caja", aling='centrado', t='grande')
+        if type(fecha) is datetime:
+            fecha = fecha.strftime("%d/%m/%Y %H:%M:%S")
+        else:
+            fecha = datetime.strptime(fecha, "%Y-%m-%d %H:%M:%S.%f")
+            fecha = fecha.strftime("%d/%m/%Y %H:%M:%S")
+
         self.AddLinea(s=fecha, aling='centrado', t='grande')
         self.AddLinea(s="----------------------------------------------",
                       aling='centrado', t='grande')
@@ -184,10 +219,16 @@ class DocPrint(EventDispatcher):
 
 
 if __name__ == '__main__':
+    import sys
+    import os
+    reload(sys)
+    sys.setdefaultencoding('UTF8')
+
 
     docPrint = DocPrint()
     docPrint.initDoc()
-    docPrint.ImprimirLogo()
+    '''
+    #docPrint.ImprimirLogo()
     docPrint.AddLinea()
     docPrint.AddLinea(s='BTres', aling='centrado', t='grande', negrita=True)
     docPrint.AddLinea(s='Pizzeria y Hamburgeseria',
@@ -210,5 +251,27 @@ if __name__ == '__main__':
     docPrint.AddLinea()
     docPrint.AddLinea(s="Gracias por su visita", aling='centrado')
     docPrint.AddLinea()
+    '''
 
-    docPrint.imprimir('caja')
+
+    file = open("logo.bin", "r")
+    logo = file.read()
+
+    docPrint.AddLinea(s=comandos.centrado)
+    docPrint.AddLinea(s=logo)
+    docPrint.AddLinea(s=comandos.negrita)
+    docPrint.AddLinea(s=comandos.normal)
+    docPrint.AddLinea(s="finger de queso")
+    docPrint.AddLinea(s=comandos.no_negrita)
+    docPrint.AddLinea(s=comandos.mediana)
+    docPrint.AddLinea(s="Raul Blanco")
+
+    docPrint.AddLinea(s=comandos.semigrande)
+    docPrint.AddLinea(s="Pepito caracol")
+
+    docPrint.AddLinea(s=comandos.agregarLineas)
+    #docPrint.AddLinea(s=chr(0x1D)+"V"+chr(66)+chr(0))
+    #docPrint.AddLinea(s=saltoLineaFinal)
+    docPrint.AddLinea(s=comandos.cortarPapel)
+
+    docPrint.imprimir('_192_168_0_103')

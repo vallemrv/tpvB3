@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 04-Sep-2017
+# @Last modified time: 15-Sep-2017
 # @License: Apache license vesion 2.0
 
 from kivy.uix.boxlayout import BoxLayout
@@ -11,7 +11,7 @@ from kivy.storage.jsonstore import JsonStore
 from kivy.properties import ObjectProperty, NumericProperty, StringProperty
 from kivy.lang import Builder
 from controllers.lineawidget import LineaWidget
-from controllers.sugerencias import Sugerencias
+from modals import Sugerencias, Efectivo
 
 from models.pedido import Pedido
 
@@ -24,7 +24,7 @@ class Wrap():
 class PedidoController(BoxLayout):
     tpv = ObjectProperty(None, allownone=True)
     pedido = ObjectProperty(None, allownone=True)
-    precio = NumericProperty(0.0)
+    total = NumericProperty(0.0)
     des = StringProperty("Pedido {0: >10} articulos".format(0))
 
     def __init__(self, **kargs):
@@ -37,22 +37,23 @@ class PedidoController(BoxLayout):
         self.dbCliente = None
         self.promocion = None
         self.modal = Sugerencias(onExit=self.exit_sug)
+        self.efectivo = Efectivo(onExit=self.salir_efectivo)
 
     def on_pedido(self, key, value):
         self.pedido.bind(total=self.show_total)
 
     def show_total(self, key, value):
-        self.precio = self.pedido.total
+        self.total = self.pedido.total
         self.des = "Pedido {0: >10} articulos".format(
                     self.pedido.getNumArt())
 
-    def pedido_domicilio(self, num_tlf):
-        self.dbCliente = JsonStore("db/clientes/{0}.json".format(num_tlf))
+    def pedido_domicilio(self, db):
+        self.dbCliente = db
         self.lista.rm_all_widgets()
         self.pedido = Pedido()
         self.btnPedido.disabled = True
         self.btnAtras.disabled = False
-        self.precio = 0
+        self.total = 0
         self.des = "Pedido {0: >10} articulos".format(0)
         self.linea_nueva()
 
@@ -63,21 +64,34 @@ class PedidoController(BoxLayout):
             tipo = btn.tag.get('tipo')
             if tipo == 'cobros':
                 self.pedido.modo_pago = btn.tag.get("text")
-                self.tpv.abrir_cajon()
-                self.show_botonera("db/privado/num_avisador.json")
+                if self.pedido.modo_pago == "Efectivo":
+                    self.mostrar_efectivo()
+                else:
+                    self.pedido.cambio = 0.00
+                    self.pedido.efectivo = 0.00
+                    self.tpv.mostrar_inicio()
+                    self.tpv.imprimirTicket(self.pedido.guardar_pedido())
             elif tipo == 'llevar':
-                self.show_botonera('db/privado/cobrar.json')
+                self.show_botonera('../db/privado/num_avisador.json')
                 self.pedido.para_llevar = btn.tag.get('text')
+                if self.pedido.para_llevar == "Para recoger":
+                    self.pedido.para_llevar = "Para llevar"
+                    self.pedido.num_avisador = "Para recoger"
+                    self.pedido.modo_pago = "Efectivo"
+                    self.pedido.cambio = 0.00
+                    self.pedido.efectivo = 0.00
+                    self.tpv.mostrar_inicio()
+                    self.pedido.guardar_pedido()
             elif tipo == 'num':
+                self.show_botonera('../db/privado/cobrar.json')
                 self.pedido.num_avisador = btn.tag.get("text")
-                self.tpv.mostrar_inicio()
-                self.tpv.imprimirTicket(self.pedido.guardar_pedido())
             elif tipo == 'clase':
                 self.clase = btn.tag
                 if "promocion" in self.clase:
                     self.promocion = self.clase["promocion"]
                 self.puntero = 0
-                db = self.clase.get('productos')
+                name = self.clase.get('productos')
+                db = "../db/productos/%s.json" % name
                 self.show_botonera(db)
                 self.linea_editable = None
                 self.pilaDeStados = []
@@ -85,19 +99,22 @@ class PedidoController(BoxLayout):
                                           'pass': 1})
                 self.btnAtras.disabled = False
             else:
+                if "precio" in self.clase:
+                    btn.tag["precio"] = btn.tag["precio"] * self.clase["precio"]
                 db = self.pedido.add_modificador(btn.tag)
                 if not self.linea_editable:
                     self.add_linea()
                 self.refresh_linea()
                 num = len(self.clase.get('preguntas')) if self.clase else 0
                 ps = len(botones) - 1
-                if db:
+                if db != None:
                     self.show_botonera(db)
-                elif not db and self.puntero < num and i == ps:
+                elif db == None and self.puntero < num and i == ps:
                     db = None
                     igDb = False
                     while self.puntero < num:
-                        db = self.clase.get('preguntas')[self.puntero]
+                        name = self.clase.get('preguntas')[self.puntero]
+                        db = "../db/preguntas/%s.json" %  name
                         self.puntero += 1
                         if 'ignore' in btn.tag:
                             if db not in btn.tag.get('ignore'):
@@ -121,23 +138,39 @@ class PedidoController(BoxLayout):
                     self.pilaDeStados.append({'db': db, 'punt': self.puntero,
                                               'pass': len(botones)})
 
+
+    def mostrar_efectivo(self):
+        self.efectivo.total = str(self.total)
+        self.efectivo.open()
+
+    def salir_efectivo(self, cancelar=True):
+        if cancelar:
+            self.show_botonera('../db/privado/cobrar.json')
+        else:
+            self.pedido.efectivo = self.efectivo.efectivo.replace("€", "")
+            self.pedido.cambio = self.efectivo.cambio.replace("€", "")
+            self.tpv.abrir_cajon()
+            self.tpv.mostrar_inicio()
+            self.tpv.imprimirTicket(self.pedido.guardar_pedido())
+        self.efectivo.dismiss()
+
     def exit_sug(self, key, w, txt, ln):
         if txt != "":
             if "sug" not in ln.obj:
                 ln.obj["sug"] = []
 
             ln.obj["sug"].append(txt)
-            db = JsonStore("db/sugerencias.json")
+            db = JsonStore("../db/sugerencias.json")
             sug = self.modal.sug
             db.put(ln.obj.get("text").lower(), db=sug)
             self.rf_parcial(w, ln)
-            self.modal.dismiss()
+        self.modal.dismiss()
 
 
     def sugerencia(self, w, linea):
         try:
             name = linea.obj.get('text').lower()
-            db = JsonStore("db/sugerencias.json")
+            db = JsonStore("../db/sugerencias.json")
             if not db.exists(name):
                 db.put(name, db=[])
             self.modal.sug = db[name].get("db")
@@ -180,7 +213,7 @@ class PedidoController(BoxLayout):
 
 
     def linea_nueva(self):
-        db = "db/clases.json"
+        db = "../db/clases.json"
         self.show_botonera(db)
         self.clase = None
         self.promocion = None
@@ -240,34 +273,62 @@ class PedidoController(BoxLayout):
 
     def show_botonera(self, db):
         self.storage = JsonStore(db)
-        if self.storage.exists('titulo'):
+        if self.storage.exists('db'):
             if self.storage.exists('selectable'):
                 self.botonera.selectable = True
             else:
                 self.botonera.selectable = False
-
-            self.botonera.titulo = str(self.storage['titulo'].get('text'))
+            lista = self.storage['db'].get('lista')
+            num = len(lista)
+            if num <= 4:
+                self.botonera.cols = 1
+            elif num > 4 and num <= 12:
+                self.botonera.cols = 3
+            else:
+                self.botonera.cols = 4
+            title = 'None'
+            if self.clase != None:
+                title = str(self.clase['text'])
+            self.botonera.title = title
             self.botonera.botones = []
-            self.botonera.botones = json_to_list(
-                                        self.storage['db'].get('lista'))
+            self.botonera.botones = self.storage['db'].get('lista')
 
 
     def nuevo_pedido(self, clase):
         self.onPress([Wrap(clase)])
+        self.clear_pedidos()
+
+    def clear_pedidos(self):
         self.lista.rm_all_widgets()
         self.pedido = Pedido()
         self.btnPedido.disabled = True
         self.btnAtras.disabled = False
-        self.precio = 0
+        self.total = 0
         self.des = "Pedido {0: >10} articulos".format(0)
         self.dbCliente = None
 
+    def aparcar_pedido(self):
+        if self.dbCliente == None:
+            self.tpv.mostrar_inicio()
+            self.pedido.aparcar_pedido()
+
+    def recuperar_pedido(self, db):
+        self.clear_pedidos()
+        self.pedido.cargar_pedido(db)
+        lineas = db.get("db")['lineas']
+        for linea in lineas:
+            self.pedido.add_linea(linea)
+            self.add_linea()
+            self.refresh_linea()
+            self.linea_nueva()
+
+
 
     def hacer_pedido(self):
-        if not self.dbCliente and self.precio > 0:
+        if not self.dbCliente and self.total > 0:
             self.btnPedido.disabled = True
             self.btnAtras.disabled = True
-            self.show_botonera('db/privado/llevar.json')
+            self.show_botonera('../db/privado/llevar.json')
         else:
             if self.dbCliente:
                 self.pedido.para_llevar = "Domicilio"
@@ -277,5 +338,5 @@ class PedidoController(BoxLayout):
                 self.tpv.mostrar_inicio()
                 self.tpv.imprimirTicket(self.pedido.guardar_pedido())
             else:
-                self.show_botonera("db/privado/num_avisador.json")
+                self.show_botonera("../db/privado/num_avisador.json")
                 self.pedido.modo_pago = "Efectivo"

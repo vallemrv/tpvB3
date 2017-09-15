@@ -11,22 +11,24 @@
         BoxLayout:
             size_hint_x: .6
             orientation: 'vertical'
+            spacing: 5
             LabelColor:
-                bgColor: "#FFFFFF"
-                text: "Lista de pedidos"
-                size_hint_y: .1
-                color: "#000000"
+                bgColor: "#000000"
+                text: "Pedidos pendientes de cobro"
+                size_hint_y: None
+                height: '70dp'
+                color: "#FFFFFF"
             ValleListView:
                 id: _listado_pedidos
-                bColor: "#FFFFFF"
+                bgColor: "#000000"
         BoxLayout:
             spacing: 5
-            padding: 5
             size_hint_x: .4
             orientation: 'vertical'
             LabelColor:
                 bgColor: "#000000"
-                size_hint_y: .1
+                size_hint_y: None
+                height: "70dp"
                 text: root.des
             ValleListView:
                 id: _pedido
@@ -48,13 +50,23 @@
                     text: "{0:.2f} €".format(root.precio)
             BoxLayout:
                 size_hint_y: .2
-                Button:
+                ButtonColor:
                     id: _btnPedido
                     size_hint_x: .4
-                    text: 'Cobrar'
+                    text: 'imprimir'
+                    on_press: root.imprimirTk()
+                ButtonColor:
+                    id: _btnPedido
+                    size_hint_x: .4
+                    text: "Efectivo"
+                    on_press: root.cobrar_targeta()
+                ButtonIcon:
+                    id: _btnTargeta
+                    size_hint_x: .2
+                    icon: res.FA_CREDIT_CARD
                     on_press: root.cobrar()
-                Button:
+                ButtonIcon:
                     size_hint_x: .2
                     id: _btnAtras
-                    text: 'Salir'
+                    icon: res.FA_EXIT
                     on_press: root.salir()

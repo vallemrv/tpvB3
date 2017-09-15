@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 04-Sep-2017
+# @Last modified time: 13-Sep-2017
 # @License: Apache license vesion 2.0
 
 
@@ -22,9 +22,10 @@ Builder.load_string('''
     spacing: 5
     orientation: 'horizontal'
     LabelClicable:
-        color: .9,.9,.9, 1
-        font_size: 16
-        texto: str("  {0}  {1:.2f} €".format(root.texto, root.total)).decode("utf-8")
+        bgColor: "#2f2f2f"
+        color: "#999999"
+        font_size: '16dp'
+        text: "{0}  {1:.2f} €".format(root.text, root.total)
     ButtonImg:
         size_hint: None, 1
         width: self.height
@@ -35,5 +36,5 @@ Builder.load_string('''
 class LineaArqueo(BoxLayout):
     tag = ObjectProperty(None, allownone=True)
     borrar = ObjectProperty(None, allownone=True)
-    texto = StringProperty("")
+    text = StringProperty("")
     total = NumericProperty(0.0)

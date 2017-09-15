@@ -1,6 +1,7 @@
 <Sugerencias>:
     lista: _lista
     txtSug: _txtInput
+    size_hint: .8, .8
     canvas:
         Color:
             rgba: 1,1,1,1
@@ -14,22 +15,23 @@
         GridLayout:
             cols: 1
             padding: 20
-            size_hint: .9, .9
+            size_hint: .95, .95
             BoxLayout:
                 spacing: 5
                 orientation: 'horizontal'
                 BoxLayout:
                     orientation: "vertical"
                     spacing: 5
-                    Label:
+                    LabelColor:
                         text: "Sugerencias"
                         size_hint_y: None
-                        height: 40
-                        font_size: 30
-                        color: 0, 0, 0, 1
+                        height: '70dp'
+                        font_size: '30dp'
+                        color: "#ffffff"
+                        bgColor: "#000000"
                     ValleListView:
                         id: _lista
-                        bColor: "#FFFFFF"
+                        bgColor: "#000000"
                 AnchorLayout:
                     anchor_x: 'center'
                     anchor_y: 'top'
@@ -38,27 +40,28 @@
                         cols: 1
                         spacing: 5
                         size_hint_y: None
-                        height: len(self.children) * 90
-                        Label:
+                        height: '380dp'
+                        LabelColor:
                             text: "Descrpicion"
                             size_hint_y: None
-                            height: 40
-                            font_size: 30
-                            color: 0,0,0,1
+                            height: "70dp"
+                            font_size: '30dp'
+                            color: '#ffffff'
+                            bgColor: '#000000'
                         LabelColor:
                             bgColor: '#333333'
-                            height: 90
+                            size_hint_y: None
+                            height: '90dp'
                             text: root.des
-                            font_size: '24dp'
+                            font_size: '19dp'
                             color: '#ffffff'
-                            text_size: self.size
-                            halign: 'left'
-                            valign: 'middle'
                         TextInput:
                             size_hint_y: None
                             id: _txtInput
                             text: root.texto
-                            font_size: 30
+                            font_size: "30dp"
+                            height: '50dp'
+                            multiline: False
                         Button:
                             size_hint_y: None
                             text: "Salir"

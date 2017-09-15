@@ -4,29 +4,29 @@
     btnAtras: _btnAtras
     botonera: _botonera
     orientation: 'horizontal'
-    spacing: 5
-    AnchorLayout:
-        anchor_x: 'center'
-        anchor_y: 'center'
-        size_hint_x: .6
-        GridButtons:
-            size_hint: .9, .9
-            completo: False
-            onPress: root.onPress
-            font_size: 20
-            id: _botonera
+    spacing: 10
+    size_hint: .95, .95
+    GridButtons:
+        cols: 4
+        onPress: root.onPress
+        font_size_title: "40dp"
+        font_size: "20dp"
+        fgColor: "#FFFFFF"
+        id: _botonera
     BoxLayout:
         spacing: 5
-        padding: 5
-        size_hint_x: .4
+        size_hint_x: .45
         orientation: 'vertical'
         LabelColor:
-            bgColor: "#000000FF"
-            size_hint_y: .1
+            bgColor: "#000000"
+            size_hint_y: .15
+            font_size: "20dp"
             text: root.des
+            color: "#ffffff"
         ValleListView:
+            cheight: "70dp"
             id: _lista
-            bgColor: "#000000FF"
+            bgColor: "#000000"
         BoxLayout:
             canvas.before:
                 Color:
@@ -35,27 +35,33 @@
                     size: self.size
                     pos: self.pos
             orientation: 'horizontal'
-            size_hint_y: .1
+            size_hint_y: .15
             Label:
                 font_size: 35
                 text: 'Total:'
             Label:
                 font_size: 35
-                text: "{0:.2f} €".format(root.precio)
+                text: "{0:.2f} €".format(root.total)
         BoxLayout:
             size_hint_y: .15
-            Button:
+            ButtonColor:
                 id: _btnPedido
                 size_hint_x: .7
                 text: 'Hacer Pedido'
                 on_press: root.hacer_pedido()
-            Button:
+            ButtonColor:
                 size_hint_x: .3
                 id: _btnAtras
                 text: 'Atras'
                 on_press: root.atras()
         BoxLayout:
-            size_hint_y: .1
-            Button:
+            size_hint_y: .15
+            ButtonColor:
+                font_size: "15dp"
                 text: 'Cancelar el pedido'
                 on_press: root.tpv.mostrar_inicio()
+            ButtonColor:
+                font_size: "15dp"
+                id: _btnAparcar
+                text: 'Aparcar pedio'
+                on_press: root.aparcar_pedido()

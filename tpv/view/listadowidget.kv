@@ -11,23 +11,27 @@
         BoxLayout:
             size_hint_x: .6
             orientation: 'vertical'
+            spacing: 5
             LabelColor:
-                bColor: "#FFFFFF"
+                bgColor: "#000000"
                 text: "Lista de pedidos"
-                size_hint_y: .1
-                color: '#333333'
+                size_hint_y: None
+                height: "70dp"
+                color: '#ffffff'
+                border_size: 0
             ValleListView:
                 id: _listado_pedidos
-                bgColor: "#FFFFFF"
+                bgColor: "#000000"
         BoxLayout:
             spacing: 5
-            padding: 5
             size_hint_x: .4
             orientation: 'vertical'
             LabelColor:
                 bgColor: "#000000"
-                size_hint_y: .1
+                size_hint_y: None
+                height: "70dp"
                 text: root.des
+                color: '#ffffff'
             ValleListView:
                 id: _pedido
                 bgColor: "#000000"
@@ -48,18 +52,18 @@
                     text: "{0:.2f} €".format(root.precio)
             BoxLayout:
                 size_hint_y: .2
-                Button:
+                ButtonColor:
                     id: _btnPedido
                     size_hint_x: .4
                     text: 'Pedido'
                     on_press: root.imprimir()
-                Button:
+                ButtonColor:
                     id: _btnTicket
                     size_hint_x: .4
                     text: 'Ticket'
                     on_press: root.imprimirTk()
-                Button:
+                ButtonIcon:
                     size_hint_x: .2
                     id: _btnAtras
-                    text: 'Salir'
+                    icon: res.FA_EXIT
                     on_press: root.salir()

@@ -1,0 +1,12 @@
+{"titulo": {"text":"Cobros"},  "db": {"lista": [
+  {
+    "text": "Efectivo",
+    "bgColor": "#c2d7f2",
+    "tipo": "cobros"
+  },
+  {
+    "text": "Targeta",
+    "bgColor": "#c2d7f2",
+    "tipo": "cobros"
+  }
+]}}

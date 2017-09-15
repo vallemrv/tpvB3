@@ -1,5 +1,7 @@
 <TextSize@TextInput>:
-    font_size: 20
+    font_size: '20dp'
+    multiline: False
+
 <Arqueo>:
     conteo: _conteo
     gastos: _gastos
@@ -36,7 +38,7 @@
                 TextSize:
                     id: _des
                     size_hint_y: .2
-                    hint_text: str("Descripción gasto").decode('utf-8')
+                    hint_text: unicode("Descripción gasto")
                 TextSize:
                     id: _gasto
                     size_hint_y: .2
@@ -47,7 +49,7 @@
                     on_press: root.add_gasto(_des, _gasto)
             TextSize:
                 id: _cambio
-                size_hint_y: .05
+                size_hint_y: .1
                 hint_text: "Cambio remanente"
                 text: "200"
             BoxLayout:

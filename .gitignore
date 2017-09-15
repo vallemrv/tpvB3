@@ -5,11 +5,10 @@ __pycache__/
 .DS_Store
 *.pyo
 *.pyc
+cloud/gestioncloud/
 
-db.sqlite3
 
-
-db/
+db.back/
 test/
 localhost/localhost/
 

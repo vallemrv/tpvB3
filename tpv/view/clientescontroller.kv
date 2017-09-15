@@ -1,5 +1,5 @@
 <TextGrande@TextInput>:
-    font_size: 50
+    font_size: '35dp'
 
 <Find>:
     anchor_x: 'center'
@@ -8,10 +8,12 @@
     BoxLayout:
         spacing: 10
         size_hint: .5, None
-        height: 70
+        height: '60dp'
         TextGrande:
             hint_text: 'Telefono'
             id: _txtTlf
+            multiline: False
+            focus: True
         Button:
             size_hint_x: .2
             text: "Aceptar"
@@ -29,14 +31,16 @@
     nombre: _nombre
     dir: _dir
     notas: _notas
-    list: _list
+    listDirecciones: _list
+    email: _email
+    apellido: _apellido
     BoxLayout:
         orientation: 'vertical'
         spacing: 10
-        size_hint: .8, .8
+        size_hint: .95, .95
         BoxLayout:
             size_hint_y: None
-            height: 70
+            height: '60dp'
             TextGrande:
                 size_hint_x: .4
                 hint_text: "Telefono"
@@ -44,16 +48,28 @@
             TextGrande:
                 hint_text: "Nombre"
                 id: _nombre
+        TextGrande:
+            size_hint_y: None
+            height: '60dp'
+            hint_text: "Apellido"
+            id: _apellido
+        TextGrande:
+            size_hint_y: None
+            height: '60dp'
+            hint_text: "email"
+            id: _email
         BoxLayout:
             size_hint_y: None
-            height: 100
+            height: '100dp'
             TextGrande:
                 font_size: 35
-                size_hint_x: .7
-                hint_text: str("Dirección").decode('utf-8')
+                size_hint_x: .8
+                hint_text: unicode("Dirección")
                 id: _dir
-            ButtonImg:
+            ButtonIcon:
+                size_hint_x: .2
                 id: _btnAdd
+                icon: res.FA_CHECK
                 on_press: root.add_dir()
         ValleListView:
             size_hint_y: .4
@@ -66,7 +82,7 @@
             size_hint_y: .2
             Button:
                 text: "Pedir"
-                on_press: root.pedir(root.tlf.text)
+                on_press: root.pedir(root.db)
             Button:
                 text: "Guardar cliente"
                 on_press: root.guardar()

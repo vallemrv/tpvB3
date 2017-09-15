@@ -3,7 +3,7 @@
 # @Date:   04-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 04-Sep-2017
+# @Last modified time: 15-Sep-2017
 # @License: Apache license vesion 2.0
 
 
@@ -12,9 +12,9 @@ from kivy.event import EventDispatcher
 from kivy.properties import (StringProperty, ObjectProperty,
                              ListProperty, BooleanProperty)
 
+from valle_libs.utils import parse_float
 
-
-class Linea():
+class Linea(EventDispatcher):
 
     def __init__(self, obj, pun=0):
         self.puntero = pun
@@ -25,7 +25,8 @@ class Linea():
         db = None
         num = len(self.obj.get("preguntas"))
         if self.puntero < num:
-            db = self.obj.get('preguntas')[self.puntero]
+            nombre = self.obj.get('preguntas')[self.puntero]
+            db = "../db/preguntas/%s.json" % nombre
             self.puntero = self.puntero + 1
         return db
 
@@ -42,7 +43,8 @@ class Linea():
 
     def getPrecio(self):
         total = parse_float(self.obj.get('precio'))
-        for i in range(len(self.obj.get('modificadores'))):
+        num_mod =len(self.obj.get('modificadores')) if "modificadores" in self.obj else 0
+        for i in range(num_mod):
             mod = self.obj['modificadores'][i]
             total = total + self._getPrecioMod(mod)
         if self.promocion is not None:
@@ -51,7 +53,8 @@ class Linea():
 
     def getTotal(self):
         total = parse_float(self.obj.get('precio'))
-        for i in range(len(self.obj.get('modificadores'))):
+        num_mod =len(self.obj.get('modificadores')) if "modificadores" in self.obj else 0
+        for i in range(num_mod):
             mod = self.obj['modificadores'][i]
             total = total + self._getPrecioMod(mod)
         total = total * self.obj['cant']
@@ -61,7 +64,8 @@ class Linea():
 
     def _getPrecioMod(self, mod):
         total = parse_float(mod.get('precio'))
-        for i in range(len(mod.get('modificadores'))):
+        num_mod =len(mod.get('modificadores')) if "modificadores" in mod else 0
+        for i in range(num_mod):
             aux = mod['modificadores'][i]
             total = total + self._getPrecioMod(aux)
         return total
@@ -69,18 +73,34 @@ class Linea():
     def getTexto(self):
         texto = self.obj.get('text')
         sug = ""
-        for i in range(len(self.obj.get('modificadores'))):
+        num_mod =len(self.obj.get('modificadores')) if "modificadores" in self.obj else 0
+        for i in range(num_mod):
             mod = self.obj['modificadores'][i]
             texto = texto + " " + self._getTextoMod(mod)
         if "sug" in self.obj:
             sug += " "
             for sg in self.obj["sug"]:
                 sug += sg
-        return '{0: >3} {1}{2}'.format(self.obj['cant'], texto, sug)
+        return '{0: >4} {1}{2}'.format(self.obj['cant'], texto, sug)
+
+
+    def getDescripcion(self):
+        texto = ''
+        sug = ""
+        num_mod =len(self.obj.get('modificadores')) if "modificadores" in self.obj else 0
+        for i in range(num_mod):
+            mod = self.obj['modificadores'][i]
+            texto = texto + " " + self._getTextoMod(mod)
+        if "sug" in self.obj:
+            sug = ", ".join(self.obj["sug"])
+        return '{0} {1}'.format(texto, sug)
+
+
 
     def _getTextoMod(self, mod):
         texto = mod.get('text')
-        for i in range(len(mod.get('modificadores'))):
+        num_mod =len(mod.get('modificadores')) if "modificadores" in mod else 0
+        for i in range(num_mod):
             aux = mod['modificadores'][i]
             texto = texto + " " + self._getTextoMod(aux)
         return texto
@@ -103,8 +123,8 @@ class Constructor(EventDispatcher):
 
     def add_modificador(self, obj):
         db = None
-        num = len(obj.get("preguntas"))
-        if num > 0:
+        num_preg = len(obj.get("preguntas")) if "preguntas" in obj else 0
+        if num_preg > 0:
             mod = Linea(obj)
             db = mod.get_pregunta()
             self.pila_modificadores.append(mod)
