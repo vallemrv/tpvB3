@@ -3,7 +3,7 @@
 # @Email:  valle.mrv@gmail.com
 # @Filename: __init__.py
 # @Last modified by:   valle
-# @Last modified time: 04-Sep-2017
+# @Last modified time: 19-Sep-2017
 # @License: Apache license vesion 2.0
 
 
@@ -14,6 +14,10 @@ sys.setdefaultencoding('UTF8')
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT_DIR = os.path.dirname(BASE_DIR)
+
+URL_SERVER = "http://btres.elbrasilia.com/"
+IP_PRINTER_CAJA = "192.168.0.103"
+TOKEN_API = "4pl-1b7b438f2ce88941e147"
 
 os.chdir(BASE_DIR)
 sys.path.append(ROOT_DIR)

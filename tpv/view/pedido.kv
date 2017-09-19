@@ -44,12 +44,12 @@
                 text: "{0:.2f} €".format(root.total)
         BoxLayout:
             size_hint_y: .15
-            ButtonColor:
+            Button:
                 id: _btnPedido
                 size_hint_x: .7
                 text: 'Hacer Pedido'
                 on_press: root.hacer_pedido()
-            ButtonColor:
+            Button:
                 size_hint_x: .3
                 id: _btnAtras
                 text: 'Atras'

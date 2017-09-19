@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 12-Sep-2017
+# @Last modified time: 15-Sep-2017
 # @License: Apache license vesion 2.0
 
 from kivy.uix.anchorlayout import AnchorLayout
@@ -28,14 +28,13 @@ class Clientes(AnchorLayout):
     def guardar(self):
         self.db.save(telefono=self.tlf.text,
                      nombre=self.nombre.text,
-                     apellido=self.apellido.text,
+                     apellido="",
                      email=self.email.text,
                      nota=self.notas.text)
 
     def on_db(self, key, value):
         self.tlf.text = self.db.telefono if self.db.telefono is not None else ""
         self.nombre.text = self.db.nombre if self.db.nombre is not None else ""
-        self.apellido.text = self.db.apellido if self.db.apellido is not None else ""
         self.email.text = self.db.email if self.db.email is not None else ""
         self.notas.text = self.db.nota if self.db.nota is not None else ""
         id_direccion = self.db.direccion
@@ -98,5 +97,4 @@ class ClientesController(AnchorLayout):
             self.remove_widget(self.find)
             self.add_widget(self.clientes)
 
-    def hacer_pedido(self):
-        pass
+    

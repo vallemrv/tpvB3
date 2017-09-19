@@ -3,230 +3,157 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 15-Sep-2017
+# @Last modified time: 18-Sep-2017
 # @License: Apache license vesion 2.0
 
 
-from kivy.event import EventDispatcher
-from kivy.properties import StringProperty
-import commands
 from datetime import datetime
+from escpos.printer import Network
+from escpos.escpos import EscposIO
+import locale
+locale.setlocale(locale.LC_TIME, "es_ES")
+import config
 
-class Comandos(object):
-    """docstring for Comandos"""
-    def __init__(self):
-        super(Comandos, self).__init__()
-        self.iniciarImp = chr(27) + chr(64)
-        self.agregarLineas = chr(27) + chr(100) + chr(6)
-        self.cortarPapel = chr(29) + chr(86) + chr(1)
-        self.centrado = chr(27) + chr(97) + chr(1)
-        self.derecha = chr(27) + chr(97) + chr(0x02)
-        self.izquierda = chr(27) + chr(97)+chr(0x00)
-        self.normal = chr(29)+chr(33)+chr(0x00)
-        self.mediana = chr(29)+chr(33)+chr(0x11)
-        self.grande = chr(29)+chr(33)+chr(0x22)
-        self.semigrande = chr(29)+chr(33)+chr(0x02)
-        self.negrita = chr(27) + chr(33) + chr(8)
-        self.no_negrita = chr(27) + chr(33) + chr(0)
-        self.abrirCajon = chr(27) + chr(112) + chr(48)
-        self.impLogo = chr(28) + chr(112) + chr(1) + chr(48)
-        self.saltoLineaFinal = chr(27) + chr(100) + chr(12)
-        self.saltoDeLinea = chr(0xA)
+ip_caja = config.IP_PRINTER_CAJA
 
-comandos = Comandos()
-class DocPrint(EventDispatcher):
-    """docstring for DocPrint"""
+class DocPrint():
 
-    def __init__(self, **arg):
-        super(DocPrint, self).__init__(**arg)
-        self.comandos = Comandos()
-
-    def initDoc(self):
-        self.file = open('print.aux', 'w')
-        self.file.write(self.comandos.iniciarImp)
-
-    def ImprimirLogo(self):
-        self.file.write(self.comandos.impLogo);
+    def abrir_cajon(self, *args):
+        try:
+            printer = Network(ip_caja, timeout=10)
+            printer.cashdraw(2)
+        except:
+            print "Error en la impresora"
 
 
-    def AddNegritaGrande(self):
-		self.file.write(self.comandos.negritaGrande)
+
+    def printDesglose(self, p, fecha, lineas):
+        try:
+            if type(fecha) is datetime:
+                fecha = fecha.strftime("%d/%m/%Y %H:%M:%S")
+            else:
+                fecha = datetime.strptime(fecha, "%Y-%m-%d %H:%M:%S.%f")
+                fecha = fecha.strftime("%d/%m/%Y %H:%M:%S")
+
+            printer = Network(ip_caja, timeout=10)
 
 
-    def abrir_cajon(self, nomImp):
-        self.file.write(self.comandos.iniciarImp)
-        self.file.write(self.comandos.abrirCajon)
-        self.file.close()
-        commands.getoutput('lpr -P {0} print.aux'.format(nomImp))
+            with EscposIO(printer) as p:
+                p.writelines("Cierre de caja", align='center', width=2, height=2)
 
-    def imprimir(self, nomImp):
-        if self.file:
-            self.file.write(self.comandos.agregarLineas)
-            self.file.write(self.comandos.cortarPapel)
-            self.file.close()
-            commands.getoutput('lpr -P {0} print.aux'.format(nomImp))
+                p.writelines(fecha, align='center', width=2, height=2)
+                p.writelines("------------------------------------------",
+                              align='center')
+                p.writelines("")
+                for linea in lineas:
+                    can = linea["can"]
+                    texto_tipo = linea["texto_tipo"]
+                    tipo = linea["tipo"]
+                    p.writelines("Retirar {0: >5} {1} de {2}".format(can, texto_tipo,
+                                                                     tipo), align='center')
 
-    def AddALineamiento(self, aling):
-        if aling == 'centrado':
-            self.file.write(self.comandos.centrado)
-        if aling == 'der':
-            self.file.write(self.comandos.derecha)
-        if aling == 'izq':
-            self.file.write(self.comandos.izquierda)
+                p.writelines("")
+                p.writelines("")
+        except:
+            print "Error en la impresora"
 
-    def AddSize(self, size):
-        if size == 'normal':
-            self.file.write(self.comandos.normal)
-        if size == 'mediana':
-            self.file.write(self.comandos.mediana)
-        if size == 'semigrande':
-            self.file.write(self.comandos.semigrande)
-        if size == 'grande':
-            self.file.write(self.comandos.grande)
-
-    def AddLinea(self, s=None, aling=None, t='normal', negrita=False):
-        if aling != None:
-           self.AddALineamiento(aling)
-
-        if negrita:
-            self.file.write(self.comandos.negrita)
-        else:
-            self.file.write(self.comandos.no_negrita)
-
-        self.AddSize(t)
-
-        if s != None:
-            self.file.write(s)
-
-        self.file.write(self.comandos.saltoDeLinea)
 
     def imprimirTicket(self, p, num,  lineas, fecha, total,
                         efectivo, cambio, cl=None):
+        try:
+            if type(fecha) is datetime:
+                fecha = fecha.strftime("El %a %d-%B a las (%H:%M)")
+            else:
+                fecha = datetime.strptime(fecha, "%Y-%m-%d %H:%M:%S.%f")
+                fecha = fecha.strftime("El %a %d-%B a las (%H:%M)")
 
-        self.initDoc()
-        self.AddLinea()
-        self.AddLinea(s='BTres', aling='centrado', t='grande', negrita=True)
-        self.AddLinea(s='Pizzeria y Hamburgeseria', aling='centrado',
-                      t='mediana', negrita=True)
-        self.AddLinea(s='Plaza San lazaro, 9, local 2', aling='centrado',
-                      t='normal', negrita=False)
-        self.AddLinea(s='NIF: 52527453F', aling='centrado',
-                      t='normal', negrita=False)
-        self.AddLinea(s='TLF: 958092462', aling='centrado',
-                      t='normal', negrita=False)
-        self.AddLinea()
-        self.AddLinea()
-        self.AddLinea(s="Cant  Descripcion                       Total ",
-                      aling='centrado')
-        self.AddLinea(s="----------------------------------------------",
-                      aling='centrado')
-        for ln in lineas:
-            tipo = ln.tipo if ln.tipo in ("pizzas, burger") else ""
-            self.AddLinea(s="{0: >4} {1:>10} {2: >25} {3:.2f} €".format(ln.cant, tipo, ln.text,
-                                                      float(ln.total)), aling='centrado', negrita=True)
-            des = ln.des.replace(ln.text, "")
-            chunks, chunk_size = len(des), 34
-            sub = [ des[i:i+chunk_size] for i in range(0, chunks, chunk_size) ]
-            for s in sub:
-                self.AddLinea(s="{0: <4} {1: <35}".format("", s),
-                              aling='centrado', negrita=False)
+            printer = Network(ip_caja, timeout=10)
 
 
-        self.AddLinea(s="Total: {0:0.2f}  ".format(total),
-                      aling='izq', t='mediana')
-        self.AddLinea(s="Efectivo: {0:0.2f}  ".format(efectivo),
-                      aling='izq', t='normal')
-        self.AddLinea(s="Cambio: {0:0.2f}  ".format(cambio),
-                      aling='izq', t='normal')
+            with EscposIO(printer) as p:
+                p.printer.set(align='center')
+                p.printer.image("logo.png")
+                p.writelines("Pizzeria y Hamburgeseria", height=2, width=1, text_type='bold', align='center')
+                p.writelines('Plaza San lazaro, 9, local 2', font='a', align='center')
+                p.writelines('NIF: 52527453F', font='b', align='center')
+                p.writelines('Tlf: 958 092 462', font='b', height=2, width=3, align='center')
+                p.writelines('------------------------------------------', align='center')
+                p.writelines('FECHA', height=2, width=2, font='a', align='center')
+                p.writelines(fecha, height=2, width=1, font='b', align='center')
+                p.writelines("Num: %d" % num, text_type='bold',
+                             font='b', align='center')
+                p.writelines('------------------------------------------', align='center')
 
-        if type(fecha) is datetime:
-            fecha = fecha.strftime("%d/%m/%Y %H:%M:%S")
-        else:
-            fecha = datetime.strptime(fecha, "%Y-%m-%d %H:%M:%S.%f")
-            fecha = fecha.strftime("%d/%m/%Y %H:%M:%S")
+                for ln in lineas:
+                    tipo = ln.tipo if ln.tipo in ("pizzas, burger") else ""
+                    if tipo == "":
+                        p.writelines("{0: >3} {1: <33} {2:0.2f}".format(ln.cant, ln.text,
+                                                                 float(ln.total)), align='center',
+                                     text_type='bold')
+                    else:
+                        p.writelines("{0: >3} {1: <7} {2: <25} {3:0.2f}".format(ln.cant, tipo, ln.text,
+                                                                 float(ln.total)), align='center',
+                                     text_type='bold')
+                    if ln.des.strip() != "":
+                        des = ln.des
+                        chunks, chunk_size = len(des), 34
+                        sub = [ des[i:i+chunk_size] for i in range(0, chunks, chunk_size) ]
+                        for s in sub:
+                            p.writelines("{0: <36}".format(s), font="b", align='center')
 
-
-        self.AddLinea(s=fecha, aling='centrado')
-        self.AddLinea()
-        self.AddLinea(s="Factura simplificada", aling='centrado')
-        self.AddLinea(s="Num: {0}".format(num), aling='centrado')
-        self.AddLinea(s="Iva incluido", aling='centrado')
-        self.AddLinea()
-        self.AddLinea(s="Gracias por su visita", aling='centrado')
-        if cl != None and len(cl) > 0:
-            self.AddLinea(s="----------------------------------------------",
-                          aling='centrado')
-            self.AddLinea()
-            self.AddLinea(s="----------------------------------------------",
-                          aling='centrado')
-            cl = cl[0]
-            self.AddLinea(s=cl.nombre, aling='der', t="semigrande")
-            self.AddLinea(s=cl.direcciones.get(query="id=%d"%cl.direccion)[0].direccion,
-                          aling='der', t="semigrande")
-            self.AddLinea(s=cl.telefono, aling='der',  t="semigrande")
-        self.AddLinea()
-        self.imprimir(p)
-
-    def printPedido(self, p, num, lineas, fecha, llevar):
-
-        self.initDoc()
-        self.AddLinea()
-        self.AddLinea(s="Pedido", aling='centrado', t='grande')
-        self.AddLinea(s=llevar, aling='centrado', t='grande')
-        self.AddLinea(s="----------------------------------------------",
-                      aling='centrado', t='grande')
-        for i in range(len(lineas)):
-            ln = lineas[i]
-            self.AddLinea(s="{0}".format(ln.get('des')),
-                          aling='centrado', t='grande')
-        self.AddLinea()
-        self.AddLinea()
-        self.AddLinea(s="Avisador num: {0}".format(num), aling='centrado')
-        self.AddLinea(s=fecha, aling='centrado')
-        self.AddLinea()
-        self.AddLinea()
-        self.imprimir(p)
-
-    def printDesglose(self, p, fecha, lineas):
-
-        self.initDoc()
-        self.AddLinea()
-        self.AddLinea(s="Cierre de caja", aling='centrado', t='grande')
-        if type(fecha) is datetime:
-            fecha = fecha.strftime("%d/%m/%Y %H:%M:%S")
-        else:
-            fecha = datetime.strptime(fecha, "%Y-%m-%d %H:%M:%S.%f")
-            fecha = fecha.strftime("%d/%m/%Y %H:%M:%S")
-
-        self.AddLinea(s=fecha, aling='centrado', t='grande')
-        self.AddLinea(s="----------------------------------------------",
-                      aling='centrado', t='grande')
-        self.AddLinea()
-        for linea in lineas:
-            can = linea["can"]
-            texto_tipo = linea["texto_tipo"]
-            tipo = linea["tipo"]
-            self.AddLinea(s="Retirar {0: >5} {1} de {2}".format(can,
-                                                                texto_tipo,
-                                                                tipo),
-                          aling='centrado', t='grande')
-
-        self.AddLinea()
-        self.AddLinea()
-        self.imprimir(p)
+                p.writelines("")
+                p.writelines("Total: {0:0.2f}  ".format(total),
+                              align='right', height=2)
+                p.writelines("Efectivo: {0:0.2f}  ".format(efectivo),
+                              align='right')
+                p.writelines("Cambio: {0:0.2f}  ".format(cambio),
+                              align='right', )
 
 
+                p.writelines("")
+                p.writelines("Factura simplificada",  text_type='bold', height=2, align='center')
+                p.writelines("Iva incluido",  text_type='bold', height=2, align='center')
+                p.writelines("")
+                p.writelines("Gracias por su visita", text_type='bold', height=2, align='center')
+                if cl != None and len(cl) > 0:
+                    p.writelines("------------------------------------------",
+                                  align='center')
+                    p.writelines("Datos del cliente", align="center", height=2, text_type='bold')
+                    p.writelines("------------------------------------------",
+                                  align='center')
+                    cl = cl[0]
+                    p.writelines(cl.nombre, align='left', width=2, height=2)
+                    p.writelines(cl.direcciones.get(query="id=%d"%cl.direccion)[0].direccion,
+                                  align='left',width=2, height=2)
+                    p.writelines(cl.telefono, align='left', width=2, height=2)
+                p.writelines("")
+                p.writelines("")
+
+        except:
+            print "Error al imprimir el ticket..."
 
 
 if __name__ == '__main__':
     import sys
     import os
+    import locale
+    locale.setlocale(locale.LC_TIME, "es_ES") # swedish
+
     reload(sys)
     sys.setdefaultencoding('UTF8')
+    printer = Network(ip_caja)
+    fecha = datetime.now().strftime("El %a %d-%B a las (%H:%M)")
+    with EscposIO(printer) as p:
+        p.writelines('BTres', font='a', height=4, width=4, align='center')
+        p.writelines("Pizzeria y Hamburgeseria", height=2, width=1, text_type='bold', align='center')
+        p.writelines('Plaza San lazaro, 9, local 2', font='a', align='center')
+        p.writelines('NIF: 52527453F', font='b', align='center')
+        p.writelines('------------------------------------------', align='center')
+        p.writelines('FECHA', height=2, width=2, font='a', align='center')
+        p.writelines(fecha, height=2, width=1, font='b', align='center')
+        p.writelines('------------------------------------------', align='center')
 
 
-    docPrint = DocPrint()
-    docPrint.initDoc()
     '''
     #docPrint.ImprimirLogo()
     docPrint.AddLinea()
@@ -252,26 +179,3 @@ if __name__ == '__main__':
     docPrint.AddLinea(s="Gracias por su visita", aling='centrado')
     docPrint.AddLinea()
     '''
-
-
-    file = open("logo.bin", "r")
-    logo = file.read()
-
-    docPrint.AddLinea(s=comandos.centrado)
-    docPrint.AddLinea(s=logo)
-    docPrint.AddLinea(s=comandos.negrita)
-    docPrint.AddLinea(s=comandos.normal)
-    docPrint.AddLinea(s="finger de queso")
-    docPrint.AddLinea(s=comandos.no_negrita)
-    docPrint.AddLinea(s=comandos.mediana)
-    docPrint.AddLinea(s="Raul Blanco")
-
-    docPrint.AddLinea(s=comandos.semigrande)
-    docPrint.AddLinea(s="Pepito caracol")
-
-    docPrint.AddLinea(s=comandos.agregarLineas)
-    #docPrint.AddLinea(s=chr(0x1D)+"V"+chr(66)+chr(0))
-    #docPrint.AddLinea(s=saltoLineaFinal)
-    docPrint.AddLinea(s=comandos.cortarPapel)
-
-    docPrint.imprimir('_192_168_0_103')

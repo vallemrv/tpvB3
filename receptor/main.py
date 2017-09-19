@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 # coding=utf-8
+# @Author: Manuel Rodriguez <valle>
+# @Date:   02-May-2017
+# @Email:  valle.mrv@gmail.com
+# @Last modified by:   valle
+# @Last modified time: 19-Sep-2017
+# @License: Apache license vesion 2.0
+
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -16,10 +23,18 @@ from kivy.network.urlrequest import UrlRequest
 import json
 import urllib
 
+URL_SERVER = "http://btres.elbrasilia.com"
+
+SEND_DATA = {
+    'token': '4pl-1b7b438f2ce88941e147',
+    'user': 1,
+    'data': ""
+    }
+
 Builder.load_string("""
-#:import CustomListView valle.component.listview.CustomListView
-#:import BotonImg valle.component.botonimg.BotonImg
-#:import LabelClicable valle.component.labelclicable.LabelClicable
+#:import ValleListView components.listview
+#:import BotonImg components.buttons
+#:import LabelClicable components.labels
 
 <Pedidos>:
     anchor_x: 'center'
@@ -64,7 +79,7 @@ Builder.load_string("""
     AnchorLayout:
         anchor_x: 'center'
         anchor_y: 'center'
-        CustomListView:
+        ValleListView:
             size_hint: 1, 1
             id: _listview
     AnchorLayout:
@@ -79,7 +94,7 @@ Builder.load_string("""
                 text_size: self.size
                 halign: 'center'
                 valign: 'middle'
-            BotonImg:
+            ButtonImg:
                 src: './img/papelera.png'
                 on_press: root.rm(root, root.tag)
 
@@ -120,7 +135,7 @@ class Pedidos(AnchorLayout):
 
     def servido(self, root):
         tag = root.tag
-        s = tag.servido.get()
+        s = tag.servido
         s = "False" if s == "True" else "True"
         root.bgColor = (0, .01, 0, 1) if s == "True" else (.1, .1, .1, 1)
         tag.servido.set(s)
@@ -134,7 +149,7 @@ class Pedidos(AnchorLayout):
 
 
     def mostra_pedidos(self, dt):
-        pedidos = Pedido().find("servido='False'")
+        pedidos = Pedido().getAll(query="servido='False'")
 
         for p in pedidos:
             if not p.ID in self.listapedidos:
@@ -161,35 +176,20 @@ class Pedidos(AnchorLayout):
         Clock.schedule_once(self.mostra_pedidos, 6)
 
     def got_json(self, result, val):
+        print val, 'holaaaaaaa', result
         val = json.loads(val)
         for s in  val:
             fl = s.get('fl')
             db = s.get('db')
-            p = Pedido()
-            p.fecha.set(db.get("fecha"))
-            p.modo_pago.set(db.get("modo_pago"))
-            p.num_avisador.set(db.get("num_avisador"))
-            p.para_llevar.set(db.get("para_llevar"))
-            p.num_tlf.set(db.get("num_tlf"))
-            p.total.set(db.get("total"))
+            p = Pedido(**db)
             p.save()
             for l in db.get("lineas"):
-                linea = LineasPedido()
-                linea.cant.set(l.get("cant"))
-                linea.des.set(l.get("des"))
-                linea.precio.set(l.get("precio"))
-                linea.text.set(l.get("text"))
-                linea.total.set(l.get("total"))
-                linea.tipo.set(l.get("tipo"))
-                linea.imprimible.set(self.esImprimible(l))
+                linea = LineasPedido(**l)
+                linea.imprimible = self.esImprimible(l)
+                liena.save()
                 p.lineas.add(linea)
 
-            data={"fl":fl}
-            data = urllib.urlencode(data)
-            headers = {'Content-type': 'application/x-www-form-urlencoded',
-                       'Accept': 'text/json'}
-            r = UrlRequest("http://192.168.0.102:8000/pedidos/servido/",
-                            on_success=self.echo, req_body=data, req_headers=headers, method="POST")
+
 
         Clock.schedule_once(self.pedidos, 5)
 
@@ -203,7 +203,20 @@ class Pedidos(AnchorLayout):
             return "True"
 
     def pedidos(self, dt):
-        r = UrlRequest("http://192.168.0.102:8000/pedidos/", self.got_json)
+        SEND_DATA["data"]= json.dumps(
+            {'get':{
+                'db': 'arqueos',
+                "pedidos":{
+                    'lineaspedido':{}
+                }
+            }}
+        )
+        data = urllib.urlencode(SEND_DATA)
+        headers = {'Content-type': 'application/x-www-form-urlencoded',
+                   'Accept': 'text/json'}
+        r = UrlRequest(URL_SERVER+"/themagicapi/qson_django/",
+                       on_success=self.got_json, req_body=data,
+                       req_headers=headers, method="POST")
 
 
 class AppRun(App):

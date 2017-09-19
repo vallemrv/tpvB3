@@ -4,14 +4,13 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 15-Sep-2017
+# @Last modified time: 18-Sep-2017
 # @License: Apache license vesion 2.0
 
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.storage.jsonstore import JsonStore
 from kivy.properties import ObjectProperty, NumericProperty, StringProperty
 from kivy.lang import Builder
-from kivy.clock import Clock
 from glob import glob
 from os import rename
 from components.labels import LabelClicable
@@ -19,6 +18,7 @@ from models.db.pedidos import Pedidos
 from modals import Efectivo
 from datetime import datetime
 from valle_libs.tpv.impresora import DocPrint
+import threading
 
 
 Builder.load_file('view/listadopdwidget.kv')
@@ -40,7 +40,7 @@ class ListadoPdWidget(AnchorLayout):
     def cobrar_targeta(self):
         if self.selected:
             pd = self.selected.get("db")
-            pd.modo_pago = "Efectivo"
+            pd.modo_pago = "Targeta"
             pd.efectivo = 0.00
             pd.cambio = 0.00
             pd.estado = "PG_SI"
@@ -53,6 +53,7 @@ class ListadoPdWidget(AnchorLayout):
         self.efectivo.open()
 
     def salir_efectivo(self, cancelar=True):
+        self.efectivo.dismiss()
         if cancelar == False:
             pd = self.selected.get("db")
             pd.modo_pago = "Efectivo"
@@ -62,7 +63,7 @@ class ListadoPdWidget(AnchorLayout):
             pd.save()
             self.tpv.abrir_cajon()
             self.tpv.mostrar_inicio()
-        self.efectivo.dismiss()
+
 
     def salir(self):
         self.tpv.mostrar_inicio()
@@ -84,6 +85,8 @@ class ListadoPdWidget(AnchorLayout):
                 id = clientes[0].id
                 if id != None:
                     direccion = clientes[0].direcciones.get(query="id=%d"%id)[0].direccion
+            else:
+                direccion = db.para_llevar
 
             btn = LabelClicable(bgColor="#444444",
                                 font_size="16dp",
@@ -95,7 +98,7 @@ class ListadoPdWidget(AnchorLayout):
                 fecha = datetime.strptime(db.fecha, "%Y-%m-%d %H:%M:%S.%f")
                 fecha = fecha.strftime("%H:%M:%S")
 
-            texto = "{0: >25} {2}  Total: {1:5.2f} €".format(fecha, db.total, direccion)
+            texto = "{0: <10} {2: <25}  Total: {1:5.2f} €".format(fecha, db.total, direccion)
             btn.text = texto
             btn.bind(on_press=self.onPress)
             self.lista.add_linea(btn)
@@ -125,18 +128,7 @@ class ListadoPdWidget(AnchorLayout):
 
 
     def imprimirTk(self):
-        self.salir()
-        Clock.schedule_once(self.imprimirTicket, .5)
-
-    def imprimirTicket(self, dt):
-        if self.selected:
-            pd = self.selected.get("db")
-            llevar = pd.para_llevar
-            cl = None
-            if llevar == "Domicilio":
-                cl = pd.clientes.get()
-
-            docPrint = DocPrint()
-            docPrint.imprimirTicket("caja", pd.id,
-                                     pd.lineaspedido.get(), pd.fecha,
-                                     pd.total, pd.entrega, pd.cambio, cl)
+        if self.selected != None:
+            self.tpv.imprimirTicket(self.selected)
+            self.salir()
+            

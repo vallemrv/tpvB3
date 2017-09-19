@@ -17,7 +17,7 @@ from kivy.lang import Builder
 Builder.load_string("""
 <Efectivo>:
     botonera: _botonera
-    background_color: .3,0,0,.3
+    background_color: 0,0,0,.6
     size_hint: .7, .7
     AnchorLayout:
         size_hint: .95, .95

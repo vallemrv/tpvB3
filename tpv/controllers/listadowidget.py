@@ -3,16 +3,16 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 15-Sep-2017
+# @Last modified time: 18-Sep-2017
 # @License: Apache license vesion 2.0
 
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.storage.jsonstore import JsonStore
 from kivy.properties import ObjectProperty, NumericProperty, StringProperty
-from kivy.clock import Clock
 from kivy.lang import Builder
 from glob import glob
 from datetime import datetime
+import threading
 
 from valle_libs.tpv.impresora import DocPrint
 from models.db.pedidos import Pedidos
@@ -49,7 +49,7 @@ class ListadoWidget(AnchorLayout):
                                 color="#ffffff")
             btn.tag = {"db": db}
             fecha = datetime.strptime(db.fecha, "%Y-%m-%d %H:%M:%S.%f")
-            texto = "{0: >25}   Avisador: {1: >6}   Total: {2:5.2f} €".format(
+            texto = "{0: <10}   Avisador: {1: <26}   Total: {2:5.2f} €".format(
                          fecha.strftime("%H:%M:%S"), db.num_avisador,
                          db.total)
             btn.text = texto
@@ -79,31 +79,13 @@ class ListadoWidget(AnchorLayout):
             self.pedido.add_linea(btn)
         self.precio = total
 
-    def imprimir(self):
-        self.salir()
-        Clock.schedule_once(self.hacer_pedido, .5)
-
     def imprimirTk(self):
-        self.salir()
-        Clock.schedule_once(self.imprimirTicket, .5)
+        if self.selected != None:
+            self.tpv.imprimirTicket(self.selected)
+            self.salir()
+            
 
-    def imprimirTicket(self, dt):
-        if self.selected:
-            pd = self.selected.get("db")
-            llevar = pd.para_llevar
-            cl = None
-            if llevar == "Domicilio":
-                cl = pd.clientes.get()
-
-            docPrint = DocPrint()
-            docPrint.imprimirTicket("caja", pd.id,
-                                    pd.lineaspedido.get(), pd.fecha,
-                                    pd.total, float(pd.entrega),
-                                    float(pd.cambio), cl)
-
-
-
-    def hacer_pedido(self, dt):
+    def hacer_pedido(self):
         if self.selected:
             pd = self.selected.get("db")
             pd.estado = "PG_NO"

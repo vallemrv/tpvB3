@@ -7,6 +7,8 @@ __pycache__/
 *.pyc
 cloud/gestioncloud/
 
+db.*
+db/
 
 db.back/
 test/

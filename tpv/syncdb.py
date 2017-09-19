@@ -2,7 +2,7 @@
 # @Date:   02-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 12-Sep-2017
+# @Last modified time: 19-Sep-2017
 # @License: Apache license vesion 2.0
 
 import config
@@ -13,7 +13,7 @@ from kivy.storage.jsonstore import JsonStore
 
 
 data = {
-    'token': '4p9-d0df1e8d292e6a07262d',
+    'token': config.TOKEN_API,
     'user': 1,
     'data': ""
     }
@@ -34,7 +34,7 @@ def get_clases():
             }
         }
     data['data'] = json.dumps(get_clases)
-    r = requests.post("http://localhost:8000/themagicapi/qson_django/", data=data)
+    r = requests.post(config.URL_SERVER+"/themagicapi/qson_django/", data=data)
     clases = r.json()
     db = JsonStore("../db/clases.json")
     lista = []
@@ -107,4 +107,12 @@ def get_clases():
     db.put('db', lista=lista)
 
 
-get_clases()
+#get_clases()
+
+data = {
+    'username': 'btres',
+    'password': 'calamatraca'
+}
+
+r = requests.post("http://btres.elbrasilia.com/token/new.json",  data=data)
+print r.json()

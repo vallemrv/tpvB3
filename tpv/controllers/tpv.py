@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 14-Sep-2017
+# @Last modified time: 18-Sep-2017
 # @License: Apache license vesion 2.0
 
 from kivy.uix.anchorlayout import AnchorLayout
@@ -17,6 +17,7 @@ from kivy.clock import Clock
 from glob import glob
 from os import rename, path
 from datetime import datetime
+import threading
 
 Builder.load_file('view/tpv.kv')
 
@@ -33,7 +34,6 @@ class Tpv(AnchorLayout):
         self.arqueo = Arqueo(tpv=self)
         self.content.add_widget(self.inicio)
         self.docPrint = DocPrint()
-        Clock.schedule_once(self.enviar_pedido, .5)
 
     def onPress_seccion(self, btns):
         for btn in btns:
@@ -52,9 +52,9 @@ class Tpv(AnchorLayout):
 
     def imprimirTicket(self, pd):
         self.pd = pd
-        Clock.schedule_once(self.imprimir, .5)
+        threading.Thread(target=self.imprimir).start()
 
-    def imprimir(self, dt):
+    def imprimir(self):
         llevar = self.pd.para_llevar
         cl = None
         if llevar == "Domicilio":
@@ -67,12 +67,13 @@ class Tpv(AnchorLayout):
 
 
     def abrir_cajon(self):
-        self.docPrint.initDoc()
+        threading.Thread(target=self.cash_asincrono).start()
+
+
+    def cash_asincrono(self):
         self.docPrint.abrir_cajon('caja')
 
 
-    def enviar_pedido(self, pd):
-        pass
 
     def recuperar_pedido(self, db):
         self.pedido.recuperar_pedido(db)
@@ -80,6 +81,7 @@ class Tpv(AnchorLayout):
         self.content.add_widget(self.pedido)
 
     def mostrar_inicio(self):
+        self.sync_db()
         self.content.clear_widgets()
         self.content.add_widget(self.inicio)
 
@@ -109,10 +111,18 @@ class Tpv(AnchorLayout):
         self.content.remove_widget(self.inicio)
         self.content.add_widget(self.parking)
 
+    def sync_db(self):
+        threading.Thread(target=self.run_sync_db).start()
+
+    def run_sync_db(self):
+        import os
+        os.system("python ./syncdb_send.py")
+
+
 
     def refresh(self):
-        Clock.schedule_once(self.run_refresh, .5)
+        threading.Thread(target=self.run_refresh).start()
 
-    def run_refresh(self, st):
+    def run_refresh(self):
         import os
         os.system("python ./syncdb.py")

@@ -2,7 +2,7 @@
 # @Date:   13-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 13-Sep-2017
+# @Last modified time: 17-Sep-2017
 # @License: Apache license vesion 2.0
 
 
@@ -22,6 +22,8 @@ class Pedidos(models.Model):
     entrega = models.DecimalField(max_digits=20, decimal_places=2)
     cambio = models.DecimalField(max_digits=20, decimal_places=2)
     modify = models.DateTimeField(auto_now=True)
+    def __unicode__(self):
+        return u"{0} - {1} - {2}".format(self.id, self.estado, self.total)
 
 
 
@@ -35,6 +37,8 @@ class Clientes(models.Model):
     fecha_add = models.DateField(auto_now_add=True)
     modify = models.DateTimeField(auto_now=True)
     direccion = models.IntegerField(null=True)
+    def __unicode__(self):
+        return u"{0} - {1} - {2}".format(self.telefono, self.nombre, self.email)
 
 
 class Direcciones(models.Model):
@@ -43,6 +47,8 @@ class Direcciones(models.Model):
     codigo = models.CharField(max_length=10, null=True)
     clientes = models.ForeignKey(Clientes, on_delete=models.CASCADE)
     modify = models.DateTimeField(auto_now=True)
+    def __unicode__(self):
+        return u"{0}".format(self.direccion)
 
 
 
@@ -55,6 +61,8 @@ class LineasPedido(models.Model):
     tipo = models.CharField(max_length=50)
     pedidos = models.ForeignKey(Pedidos, on_delete=models.CASCADE)
     modify = models.DateTimeField(auto_now=True)
+    def __unicode__(self):
+        return u"{0} - {1} - {2} - {3}".format(self.cant, self.text, self.precio, self.total)
 
 
 
@@ -62,6 +70,9 @@ class Gastos(models.Model):
     des = models.CharField(max_length=100)
     gasto = models.DecimalField(max_digits=20, decimal_places=2)
     modify = models.DateTimeField(auto_now=True)
+    def __unicode__(self):
+        return u"{0} - {1}".format(self.des, self.gasto)
+
 
 class Conteo(models.Model):
     can = models.IntegerField()
@@ -69,6 +80,10 @@ class Conteo(models.Model):
     total =  models.DecimalField(max_digits=20, decimal_places=2)
     texto_tipo = models.EmailField(max_length=100, null=True, blank=True)
     modify = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return u"{0} - {1} - {2}".format(self.can, self.tipo, self.total)
+
 
 class Arqueos(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
@@ -82,3 +97,9 @@ class Arqueos(models.Model):
     gastos = models.ManyToManyField(Gastos)
     conteo = models.ManyToManyField(Conteo)
     modify = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return u"{0} - {1} - {2} - {3} - {4} - {5}".format(self.fecha.strftime("%d/%m/%Y-%H:%M"),
+                                                    self.caja_dia, self.efectivo,
+                                                    self.total_gastos,
+                                                    self.targeta, self.descuadre)

@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 15-Sep-2017
+# @Last modified time: 18-Sep-2017
 # @License: Apache license vesion 2.0
 
 from kivy.uix.boxlayout import BoxLayout
@@ -69,8 +69,9 @@ class PedidoController(BoxLayout):
                 else:
                     self.pedido.cambio = 0.00
                     self.pedido.efectivo = 0.00
-                    self.tpv.mostrar_inicio()
                     self.tpv.imprimirTicket(self.pedido.guardar_pedido())
+                    self.tpv.mostrar_inicio()
+
             elif tipo == 'llevar':
                 self.show_botonera('../db/privado/num_avisador.json')
                 self.pedido.para_llevar = btn.tag.get('text')
@@ -80,8 +81,9 @@ class PedidoController(BoxLayout):
                     self.pedido.modo_pago = "Efectivo"
                     self.pedido.cambio = 0.00
                     self.pedido.efectivo = 0.00
-                    self.tpv.mostrar_inicio()
                     self.pedido.guardar_pedido()
+                    self.tpv.mostrar_inicio()
+
             elif tipo == 'num':
                 self.show_botonera('../db/privado/cobrar.json')
                 self.pedido.num_avisador = btn.tag.get("text")
@@ -144,15 +146,17 @@ class PedidoController(BoxLayout):
         self.efectivo.open()
 
     def salir_efectivo(self, cancelar=True):
+        self.efectivo.dismiss()
         if cancelar:
             self.show_botonera('../db/privado/cobrar.json')
         else:
             self.pedido.efectivo = self.efectivo.efectivo.replace("€", "")
             self.pedido.cambio = self.efectivo.cambio.replace("€", "")
+            self.tpv.imprimirTicket(self.pedido.guardar_pedido())
             self.tpv.abrir_cajon()
             self.tpv.mostrar_inicio()
-            self.tpv.imprimirTicket(self.pedido.guardar_pedido())
-        self.efectivo.dismiss()
+
+
 
     def exit_sug(self, key, w, txt, ln):
         if txt != "":
@@ -309,8 +313,9 @@ class PedidoController(BoxLayout):
 
     def aparcar_pedido(self):
         if self.dbCliente == None:
-            self.tpv.mostrar_inicio()
             self.pedido.aparcar_pedido()
+            self.tpv.mostrar_inicio()
+
 
     def recuperar_pedido(self, db):
         self.clear_pedidos()
@@ -335,8 +340,9 @@ class PedidoController(BoxLayout):
                 self.pedido.dbCliente = self.dbCliente
                 self.pedido.num_avisador = "Domicilio"
                 self.pedido.modo_pago = "Efectivo"
-                self.tpv.mostrar_inicio()
                 self.tpv.imprimirTicket(self.pedido.guardar_pedido())
+                self.tpv.mostrar_inicio()
+
             else:
                 self.show_botonera("../db/privado/num_avisador.json")
                 self.pedido.modo_pago = "Efectivo"
