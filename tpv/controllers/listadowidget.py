@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 18-Sep-2017
+# @Last modified time: 26-Sep-2017
 # @License: Apache license vesion 2.0
 
 from kivy.uix.anchorlayout import AnchorLayout
@@ -19,6 +19,7 @@ from models.db.pedidos import Pedidos
 from components.labels import LabelClicable
 from datetime import datetime, date
 import os
+
 
 Builder.load_file('view/listadowidget.kv')
 
@@ -40,8 +41,8 @@ class ListadoWidget(AnchorLayout):
         self.precio = 0
         self.pedido.rm_all_widgets()
 
-    def mostrar_lista(self):
-        pedidos = Pedidos().getAll(query="estado LIKE 'PG_%'")
+    def rellenar_pedidos(self):
+        pedidos = Pedidos().getAll(query="estado LIKE '%PG_%'")
         self.lista.rm_all_widgets()
         for db in pedidos:
             btn = LabelClicable(bgColor="#444444",
@@ -55,8 +56,11 @@ class ListadoWidget(AnchorLayout):
             btn.text = texto
             btn.bind(on_release=self.onPress)
             self.lista.add_linea(btn)
+        self.tpv.hide_spin()
 
-
+    def mostrar_lista(self):
+        threading.Thread(target=self.rellenar_pedidos).start()
+        self.tpv.show_spin()
 
     def onPress(self, btn):
         self.pedido.rm_all_widgets()
@@ -83,7 +87,7 @@ class ListadoWidget(AnchorLayout):
         if self.selected != None:
             self.tpv.imprimirTicket(self.selected)
             self.salir()
-            
+
 
     def hacer_pedido(self):
         if self.selected:

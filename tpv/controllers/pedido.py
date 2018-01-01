@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 18-Sep-2017
+# @Last modified time: 26-Sep-2017
 # @License: Apache license vesion 2.0
 
 from kivy.uix.boxlayout import BoxLayout
@@ -58,7 +58,6 @@ class PedidoController(BoxLayout):
         self.linea_nueva()
 
     def onPress(self, botones):
-
         for i in range(len(botones)):
             btn = botones[i]
             tipo = btn.tag.get('tipo')
@@ -155,6 +154,7 @@ class PedidoController(BoxLayout):
             self.tpv.imprimirTicket(self.pedido.guardar_pedido())
             self.tpv.abrir_cajon()
             self.tpv.mostrar_inicio()
+            self.tpv.mostrar_men_cobro("Cambio "+ self.efectivo.cambio)
 
 
 

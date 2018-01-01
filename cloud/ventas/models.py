@@ -2,7 +2,7 @@
 # @Date:   13-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 17-Sep-2017
+# @Last modified time: 26-Sep-2017
 # @License: Apache license vesion 2.0
 
 
@@ -25,6 +25,9 @@ class Pedidos(models.Model):
     def __unicode__(self):
         return u"{0} - {1} - {2}".format(self.id, self.estado, self.total)
 
+    class Meta:
+        verbose_name = "Pedido"
+
 
 
 class Clientes(models.Model):
@@ -37,8 +40,18 @@ class Clientes(models.Model):
     fecha_add = models.DateField(auto_now_add=True)
     modify = models.DateTimeField(auto_now=True)
     direccion = models.IntegerField(null=True)
+
+    def pedidos_totales(self):
+        return self.pedidos.count()
+
+    def direccion_principal(self):
+        return Direcciones.objects.get(pk=self.direccion)
+
     def __unicode__(self):
         return u"{0} - {1} - {2}".format(self.telefono, self.nombre, self.email)
+
+    class Meta:
+        verbose_name = "Cliente"
 
 
 class Direcciones(models.Model):
@@ -49,6 +62,8 @@ class Direcciones(models.Model):
     modify = models.DateTimeField(auto_now=True)
     def __unicode__(self):
         return u"{0}".format(self.direccion)
+    class Meta:
+        verbose_name = "Direccione"
 
 
 
@@ -67,23 +82,37 @@ class LineasPedido(models.Model):
 
 
 class Gastos(models.Model):
-    des = models.CharField(max_length=100)
+    des = models.CharField("Descripcion", max_length=100)
     gasto = models.DecimalField(max_digits=20, decimal_places=2)
-    modify = models.DateTimeField(auto_now=True)
+    modify = models.DateTimeField("Modificado", auto_now=True)
     def __unicode__(self):
         return u"{0} - {1}".format(self.des, self.gasto)
+    class Meta:
+        verbose_name = "Gasto"
 
 
 class Conteo(models.Model):
-    can = models.IntegerField()
-    tipo =  models.DecimalField(max_digits=20, decimal_places=2)
+    can = models.IntegerField("Cantidad")
+    tipo =  models.DecimalField("Tipo de moneda", max_digits=20, decimal_places=2)
     total =  models.DecimalField(max_digits=20, decimal_places=2)
-    texto_tipo = models.EmailField(max_length=100, null=True, blank=True)
-    modify = models.DateTimeField(auto_now=True)
+    texto_tipo = models.CharField(max_length=100, null=True, blank=True)
+    modify = models.DateTimeField("Modificado", auto_now=True)
 
     def __unicode__(self):
         return u"{0} - {1} - {2}".format(self.can, self.tipo, self.total)
 
+class PedidosExtra(models.Model):
+    importe = models.DecimalField(max_digits=20, decimal_places=2)
+    numero_pedido =  models.IntegerField()
+    modo_pago =  models.CharField(max_length=50, null=True, blank=True, default="Efectivo")
+    modify = models.DateTimeField(auto_now=True)
+    estado =  models.CharField(max_length=50, null=True, blank=True, default="no_arqueado")
+
+    class Meta:
+        verbose_name = "Pedidos Extra"
+
+    def __unicode__(self):
+        return u"{0} - {1} - {2}".format(self.importe, self.numero_pedido, self.modo_pago)
 
 class Arqueos(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
@@ -98,8 +127,11 @@ class Arqueos(models.Model):
     conteo = models.ManyToManyField(Conteo)
     modify = models.DateTimeField(auto_now=True)
 
+
     def __unicode__(self):
         return u"{0} - {1} - {2} - {3} - {4} - {5}".format(self.fecha.strftime("%d/%m/%Y-%H:%M"),
                                                     self.caja_dia, self.efectivo,
                                                     self.total_gastos,
                                                     self.targeta, self.descuadre)
+    class Meta:
+        verbose_name = "Arqueo"

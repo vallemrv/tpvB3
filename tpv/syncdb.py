@@ -2,7 +2,7 @@
 # @Date:   02-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 19-Sep-2017
+# @Last modified time: 26-Sep-2017
 # @License: Apache license vesion 2.0
 
 import config
@@ -14,7 +14,7 @@ from kivy.storage.jsonstore import JsonStore
 
 data = {
     'token': config.TOKEN_API,
-    'user': 1,
+    'user': config.TOKEN_USER,
     'data': ""
     }
 
@@ -106,13 +106,15 @@ def get_clases():
 
     db.put('db', lista=lista)
 
+def get_token(username, password):
+    data = {
+        "username" : username,
+        "password": password
+    }
 
-#get_clases()
+    r = requests.post(config.URL_SERVER+"/token/new.json", data=data)
+    print r.json()
 
-data = {
-    'username': 'btres',
-    'password': 'calamatraca'
-}
 
-r = requests.post("http://btres.elbrasilia.com/token/new.json",  data=data)
-print r.json()
+get_clases()
+#get_token("btres","calamatraca")

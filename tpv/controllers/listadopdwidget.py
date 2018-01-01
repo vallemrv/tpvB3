@@ -4,7 +4,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 18-Sep-2017
+# @Last modified time: 27-Sep-2017
 # @License: Apache license vesion 2.0
 
 from kivy.uix.anchorlayout import AnchorLayout
@@ -63,6 +63,8 @@ class ListadoPdWidget(AnchorLayout):
             pd.save()
             self.tpv.abrir_cajon()
             self.tpv.mostrar_inicio()
+            self.tpv.mostrar_men_cobro("Cambio "+ self.efectivo.cambio)
+
 
 
     def salir(self):
@@ -75,6 +77,10 @@ class ListadoPdWidget(AnchorLayout):
 
 
     def mostrar_lista(self):
+        threading.Thread(target=self.run_mostrar_lista).start()
+        self.tpv.show_spin()
+
+    def run_mostrar_lista(self):
         self.lista.rm_all_widgets()
         self.pedido.rm_all_widgets()
 
@@ -83,10 +89,13 @@ class ListadoPdWidget(AnchorLayout):
             direccion = ""
             if len(clientes) > 0:
                 id = clientes[0].id
+                direccion = ""
                 if id != None:
-                    direccion = clientes[0].direcciones.get(query="id=%d"%id)[0].direccion
+                    direcciones = clientes[0].direcciones.get(query="id=%d"%id)
+                if len(direcciones) > 0:
+                    direccion = direcciones[0].direccion
             else:
-                direccion = db.para_llevar
+                direccion = ""
 
             btn = LabelClicable(bgColor="#444444",
                                 font_size="16dp",
@@ -98,10 +107,12 @@ class ListadoPdWidget(AnchorLayout):
                 fecha = datetime.strptime(db.fecha, "%Y-%m-%d %H:%M:%S.%f")
                 fecha = fecha.strftime("%H:%M:%S")
 
-            texto = "{0: <10} {2: <25}  Total: {1:5.2f} €".format(fecha, db.total, direccion)
+            texto = "{0: <10}  Total: {1:5.2f} €   {3: <20} {2: <30} ".format(fecha, db.total,
+                                                                      direccion, db.para_llevar)
             btn.text = texto
             btn.bind(on_press=self.onPress)
             self.lista.add_linea(btn)
+        self.tpv.hide_spin()
 
     def onPress(self, btn):
         self.pedido.rm_all_widgets()
@@ -131,4 +142,3 @@ class ListadoPdWidget(AnchorLayout):
         if self.selected != None:
             self.tpv.imprimirTicket(self.selected)
             self.salir()
-            

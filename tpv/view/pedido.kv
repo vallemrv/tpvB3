@@ -7,6 +7,7 @@
     spacing: 10
     size_hint: .95, .95
     GridButtons:
+        size_hint_x: .6
         cols: 4
         onPress: root.onPress
         font_size_title: "40dp"
@@ -15,7 +16,7 @@
         id: _botonera
     BoxLayout:
         spacing: 5
-        size_hint_x: .45
+        size_hint_x: .4
         orientation: 'vertical'
         LabelColor:
             bgColor: "#000000"
@@ -24,7 +25,7 @@
             text: root.des
             color: "#ffffff"
         ValleListView:
-            cheight: "70dp"
+            cheight: "65dp"
             id: _lista
             bgColor: "#000000"
         BoxLayout:

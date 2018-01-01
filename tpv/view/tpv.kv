@@ -1,12 +1,36 @@
 #:import GridButtons components.gridbuttons
 #:import * components.buttons
 #:import * components.labels
+#:import Spin components.spin.Spin
 #:import ValleListView components.listview
 #:import res components.resources
 #:import tpv_res config.tpvconfig
 <tpv>:
     content: _content
+    mensajes: _mensajes
+    spin: _spin
     AnchorLayout:
         anchor_x: 'center'
         anchor_y: 'center'
         id: _content
+    AnchorLayout:
+        anchor_y: 'center'
+        anchor_x: 'center'
+        id: _mensajes
+    Spin:
+        id: _spin
+
+
+<MensajeCobro>:
+    anchor_x: 'center'
+    anchor_y: 'bottom'
+    AnchorLayout:
+        anchor_y: 'center'
+        anchor_x: 'center'
+        size_hint: .45, .2
+        LabelColor:
+            size_hint: .8, .8
+            bgColor: "#000000"
+            color: "#ffffff"
+            text: root.text
+            font_size: "45dp"

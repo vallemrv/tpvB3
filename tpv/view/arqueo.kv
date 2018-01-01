@@ -5,20 +5,21 @@
 <Arqueo>:
     conteo: _conteo
     gastos: _gastos
+    ingresos: _ingresos
     cambio: _cambio.text
     anchor_x: 'center'
     anchor_y: 'center'
     BoxLayout:
-        size_hint: .9, .9
+        size_hint: .98, .98
         spacing: 10
         GridLayout:
             cols: 1
-            size_hint_x: .2
+            size_hint_x: .25
             spacing: 20
             GridLayout:
                 cols: 1
                 spacing: 10
-                size_hint_y: .4
+                size_hint_y: .3
                 TextSize:
                     id: _can
                     size_hint_y: .2
@@ -28,13 +29,13 @@
                     size_hint_y: .2
                     hint_text: "Tipo de moneda"
                 Button:
-                    size_hint_y: .6
+                    size_hint_y: .4
                     text: 'Agregar conteo'
                     on_press: root.add_conteo(_can, _tipo)
             GridLayout:
                 cols: 1
                 spacing: 10
-                size_hint_y: .4
+                size_hint_y: .3
                 TextSize:
                     id: _des
                     size_hint_y: .2
@@ -44,14 +45,45 @@
                     size_hint_y: .2
                     hint_text: "Importe de gasto"
                 Button:
-                    size_hint_y: .6
+                    size_hint_y: .4
                     text: 'Agregar gasto'
                     on_press: root.add_gasto(_des, _gasto)
+            GridLayout:
+                cols: 1
+                spacing: 10
+                size_hint_y: .3
+                TextSize:
+                    id: _num_pd
+                    size_hint_y: .25
+                    hint_text: unicode("Numero de pedidos")
+                TextSize:
+                    id: _importe
+                    size_hint_y: .25
+                    hint_text: "Importe"
+                BoxLayout:
+                    size_hint_y: .15
+                    orientation: 'horizontal'
+                    CheckBox:
+                        size_hint_x: .2
+                        color: 0,1,0,1
+                        active: True
+                        id: _modo_pago
+                    LabelClicable:
+                        text: "Cobrado con targeta"
+                        color: "#000000"
+                        font_size: "12dp"
+                        on_release: _modo_pago.active = not _modo_pago.active
+                Button:
+                    size_hint_y: .3
+                    text: 'Agregar ingreso'
+                    on_press: root.add_ingreso(_num_pd, _importe, _modo_pago)
+
+
             TextSize:
                 id: _cambio
-                size_hint_y: .1
+                size_hint_y: .07
                 hint_text: "Cambio remanente"
-                text: "200"
+                text: root.text_cambio
             BoxLayout:
                 size_hint_y: .15
                 Button:
@@ -83,3 +115,14 @@
             ValleListView:
                 size_hint_y: .9
                 id: _gastos
+        GridLayout:
+            size_hint_x: .4
+            cols: 1
+            Label:
+                text: "Lista de Ingresos"
+                color: 0, 0, 0, 1
+                font_size: 25
+                size_hint_y: .1
+            ValleListView:
+                size_hint_y: .9
+                id: _ingresos

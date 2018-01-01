@@ -5,7 +5,7 @@
 # @Email:  valle.mrv@gmail.com
 # @Filename: relationship.py
 # @Last modified by:   valle
-# @Last modified time: 06-Sep-2017
+# @Last modified time: 20-Sep-2017
 # @License: Apache license vesion 2.0
 
 class RelationShip(object):
@@ -19,16 +19,16 @@ class RelationShip(object):
         else:
             self.fieldName = fieldName
 
-    def remove(self, child):
+    def delete(self, child):
         from models import Model
         if self.tipo == "MANY":
-            child.remove()
+            child.delete()
         if self.tipo == "MANYTOMANY":
             reg = Model(tableName=self.parent.relationName, dbName=self.parent.dbName)
             query = "{0}={1}".format("ID"+self.parent.tableName, self.parent.ID)
             query += " AND {0}={1}".format("ID"+self.fieldName, child.ID)
             reg.load_first_by_query(query=query)
-            reg.remove()
+            reg.delete()
 
     def add(self, child):
         if self.tipo == "MANY":
@@ -56,7 +56,7 @@ class RelationShip(object):
                 setattr(reg, "ID"+self.fieldName, child.ID)
                 reg.save()
 
-    def get(self, condition={}):
+    def get(self, **condition):
         from models import Model
         if self.tipo == "ONE":
             this = Model(tableName=self.name, dbName=self.parent.dbName)

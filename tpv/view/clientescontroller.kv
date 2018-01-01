@@ -76,10 +76,7 @@
             size_hint_y: .2
             Button:
                 text: "Pedir"
-                on_press: root.pedir(root.db)
-            Button:
-                text: "Guardar cliente"
-                on_press: root.guardar()
+                on_press: root.hacer_pedido(root.db)
             Button:
                 text: "Cancelar"
                 on_press: root.salir()

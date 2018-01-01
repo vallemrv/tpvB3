@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 13-Sep-2017
+# @Last modified time: 30-Sep-2017
 # @License: Apache license vesion 2.0
 
 from kivy.uix.boxlayout import BoxLayout
@@ -54,7 +54,7 @@ class LineaWidget(BoxLayout):
         self.btnPromo = ButtonImg()
         self.btnPromo.size_hint = None, 1
         self.btnPromo.src = './img/promocion.jpeg'
-        self.btnPromo.width = self.btnPromo.height
+        self.btnPromo.width = "70dp"
         self.btnPromo.bind(on_press=self.aplicar_promo)
 
 

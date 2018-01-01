@@ -4,15 +4,15 @@
 # @Date:   04-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 04-Sep-2017
+# @Last modified time: 27-Sep-2017
 # @License: Apache license vesion 2.0
-
-
 
 import config
 from kivy.app import App
 from controllers.tpv import Tpv
 from kivy.config import Config
+from kivy.clock import Clock
+Clock.max_iteration = 20
 
 class TpvApp(App):
 

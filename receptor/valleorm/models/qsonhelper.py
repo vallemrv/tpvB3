@@ -3,7 +3,7 @@
 # @Email:  valle.mrv@gmail.com
 # @Filename: controllers.py
 # @Last modified by:   valle
-# @Last modified time: 06-Sep-2017
+# @Last modified time: 20-Sep-2017
 # @License: Apache license vesion 2.0
 
 import os
@@ -238,10 +238,10 @@ class RmHelper(HelperBase):
             for dchild in decoder["childs"]["decoders"]:
                 childs = getattr(r, dchild['tb']).get(dchild["condition"])
                 hasChild = True
-                row_send[dchild['tb']] = Model.removeRows(childs)
+                row_send[dchild['tb']] = Model.deleteRows(childs)
             if not hasChild:
-                row_send = {"ID": r.ID, "remove": "True"}
-                r.remove()
+                row_send = {"ID": r.ID, "delete": "True"}
+                r.delete()
                 hasChild = False
 
             self.JSONResult['rm'][tb].append(row_send)

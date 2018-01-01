@@ -3,13 +3,13 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 14-Sep-2017
+# @Last modified time: 01-Oct-2017
 # @License: Apache license vesion 2.0
 
 
 
 from kivy.uix.anchorlayout import AnchorLayout
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty, StringProperty
 from kivy.lang import Builder
 from kivy.storage.jsonstore import JsonStore
 from kivy.clock import Clock
@@ -20,18 +20,21 @@ from controllers.lineaarqueo import LineaArqueo
 from valle_libs.tpv.impresora import DocPrint
 from valle_libs.utils import parse_float
 
-from models.db import Arqueos, Pedidos, Conteo, Gastos
 
+from models.db import Arqueos, Pedidos, Conteo, Gastos, PedidosExtra
+import threading
 
 Builder.load_file("view/arqueo.kv")
 
 class Arqueo(AnchorLayout):
     tpv = ObjectProperty(None)
+    text_cambio = StringProperty("300")
 
     def nuevo_arqueo(self):
         self.lista_conteo = []
         self.lista_gastos = []
         self.lista_ticket = []
+        self.lista_ingresos = []
         self.fecha = ""
         self.caja_dia = 0.0
         self.efectivo = 0.0
@@ -39,9 +42,10 @@ class Arqueo(AnchorLayout):
         self.total_gastos = 0.0
         self.conteo.rm_all_widgets()
         self.gastos.rm_all_widgets()
-        Clock.schedule_once(self.get_ticket, 0.5)
+        self.ingresos.rm_all_widgets()
+        threading.Thread(target=self.get_ticket).start()
 
-    def get_ticket(self, dt):
+    def get_ticket(self):
         db = Pedidos()
         for tk in db.getAll(query="estado LIKE 'PG_%'"):
             self.lista_ticket.append(tk)
@@ -50,6 +54,11 @@ class Arqueo(AnchorLayout):
                 self.targeta += tk.total
 
     def arquear(self):
+        self.tpv.show_spin()
+        self.tpv.mostrar_inicio()
+        threading.Thread(target=self.run_arqueo).start()
+
+    def run_arqueo(self):
         arqueo = Arqueos()
         self.efectivo = self.efectivo - parse_float(self.cambio)
         descuadre =  (self.total_gastos +
@@ -76,11 +85,15 @@ class Arqueo(AnchorLayout):
             g.save()
             arqueo.gastos.add(g)
 
-        self.fecha = arqueo.fecha
-        Clock.schedule_once(self.imprime_desglose, 0.5)
-        self.tpv.mostrar_inicio()
+        for ingreso in self.lista_ingresos:
+            ing = PedidosExtra(**ingreso)
+            ing.save()
+            arqueo.pedidosextra.add(ing)
 
-    def imprime_desglose(self, dt):
+        self.fecha = arqueo.fecha
+        self.imprime_desglose()
+
+    def imprime_desglose(self):
         desglose = []
         retirar = 0
         for ls in self.lista_conteo:
@@ -103,8 +116,10 @@ class Arqueo(AnchorLayout):
             else:
                 break
 
+        self.tpv.hide_spin()
         printDoc = DocPrint()
         printDoc.printDesglose("caja", self.fecha, desglose)
+
 
 
     def add_conteo(self, _can, _tipo):
@@ -143,3 +158,28 @@ class Arqueo(AnchorLayout):
         self.total_gastos -= linea.total
         self.lista_gastos.remove(linea.tag)
         self.gastos.rm_linea(linea)
+
+    def add_ingreso(self, num_pd, importe, modo_pago):
+        _num_pd = num_pd.text
+        _importe = importe.text
+        linea = LineaArqueo(borrar=self.borrar_ingreso)
+        _modo_pago = "Efectivo" if not modo_pago.active else "Targeta"
+        linea.text = u"Peddos {0} modo pago {1}  ".format(_num_pd, _modo_pago)
+        linea.total = parse_float(_importe)
+        linea.tag = {"numero_pedido": _num_pd, "importe": _importe,
+                     "modo_pago": _modo_pago, "estado": "arqueado"}
+        if _modo_pago == "Targeta":
+            self.targeta += linea.total
+        self.caja_dia += linea.total
+        num_pd.text = importe.text = ""
+        modo_pago.active = False
+        self.lista_ingresos.append(linea.tag)
+        self.ingresos.add_linea(linea)
+
+    def borrar_ingreso(self, linea):
+        modo_pago = linea.tag.get("modo_pago")
+        if modo_pago == "Targeta":
+            self.targeta -= linea.total
+        self.caja_dia -= linea.total
+        self.lista_ingresos.remove(linea.tag)
+        self.ingresos.rm_linea(linea)

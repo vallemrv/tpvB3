@@ -5,7 +5,7 @@
 # @Email:  valle.mrv@gmail.com
 # @Filename: models.py
 # @Last modified by:   valle
-# @Last modified time: 06-Sep-2017
+# @Last modified time: 20-Sep-2017
 # @License: Apache license vesion 2.0
 
 
@@ -19,7 +19,7 @@ from relationship import RelationShip
 class Model(object):
     GLOBAL_DB_NAME = "db.sqlite3"
     def __init__(self, tableName=None,
-                 model=None, dbName=None, **options):
+                 model=None, dbName=GLOBAL_DB_NAME, **options):
         self.lstCampos = []
         self.foreingKeys = []
         self.ID = -1
@@ -28,23 +28,19 @@ class Model(object):
             self.tableName = self.__class__.__name__.lower()
         else:
             self.tableName = tableName
-        if dbName == None:
-            self.dbName = Model.GLOBAL_DB_NAME
-        else:
-            self.dbName = dbName
-        self.__crea_tb_models__()
+        self.dbName = dbName
         self.model = model
+        self.__crea_tb_models__()
 
         if self.model == None:
-            self.model = Model.getModel(dbName=self.dbName, tableName=self.tableName)
+            self.__loadModels__()
+
 
         if self.model != None:
-            self.__compare_models__()
             self.__init_model__()
         elif not type(self) is Model:
             self.__init_campos__()
 
-        self.__crearDb__()
         for k, v in options.items():
             isWordReserver = k == 'columns' or k == 'limit' or k == 'offset'
             isWordReserver = isWordReserver or k == 'query' or k == 'order'
@@ -53,6 +49,8 @@ class Model(object):
                 self.load_first_by_query(**options)
             elif k == 'pk':
                 self.load_by_pk(v)
+            elif k == "id":
+                self.ID = v
             else:
                 setattr(self, k, v)
 
@@ -161,7 +159,12 @@ class Model(object):
                              "relationName":relationship.name,
                              "fieldName": key
                              })
+
+        self.__save_model__(base64.b64encode(json.dumps(self.model)))
         self.__init_model__()
+        self.__crearDb__()
+
+
 
     def __crear_tb_nexo__(self, relationName, fieldName):
         if not self.__find_db_nexo__(self.tableName, relationName):
@@ -229,11 +232,13 @@ class Model(object):
         db.close()
         if reg:
             self.model = json.loads(base64.b64decode(reg[0]))
-            self.__init_model__()
 
     def __cargarDatos__(self, **datos):
         for k, v in datos.items():
+
             if k=="ID":
+                self.ID = v
+            elif k=="id":
                 self.ID = v
             else:
                 setattr(self, "_"+k, Field(dato=v))
@@ -275,28 +280,22 @@ class Model(object):
     def save(self, **condition):
         self.__cargarDatos__(**condition)
         self.ID = -1 if self.ID == None else self.ID
-        if self.ID == -1:
-            keys =[]
-            vals = []
-            for key in self.lstCampos:
-                _val = getattr(self, "_"+key)
-                val = getattr(self, key)
-                keys.append(key)
-                vals.append(unicode(_val.pack(val)))
-            cols = ", ".join(keys)
-            values = ", ".join(vals)
-            sql = u"INSERT INTO {0} ({1}) VALUES ({2});".format(self.tableName,
-                                                               cols, values);
-        else:
-            vals = []
-            for key in self.lstCampos:
-                _val = getattr(self, "_"+key)
-                val = getattr(self, key)
+        keys =[]
+        vals = []
+        for key in self.lstCampos:
+            _val = getattr(self, "_"+key)
+            val = getattr(self, key)
+            keys.append(key)
+            vals.append(unicode(_val.pack(val)))
 
-                vals.append(u"{0} = {1}".format(key, unicode(_val.pack(val))))
-            values = ", ".join(vals)
-            sql = u"UPDATE {0}  SET {1} WHERE ID={2};".format(self.tableName,
-                                                             values, self.ID);
+        if self.ID > 0:
+            keys.append("ID")
+            vals.append(str(self.ID))
+        cols = ", ".join(keys)
+        values = ", ".join(vals)
+        sql = u"INSERT OR REPLACE INTO {0} ({1}) VALUES ({2});".format(self.tableName,
+                                                           cols, values);
+
         db = sqlite3.connect(self.dbName)
         cursor= db.cursor()
         cursor.execute(sql)
@@ -305,7 +304,7 @@ class Model(object):
         db.commit()
         db.close()
 
-    def remove(self):
+    def delete(self):
         self.ID = -1 if self.ID == None else self.ID
         sql = u"DELETE FROM {0} WHERE ID={1};".format(self.tableName,
                                                      self.ID)
@@ -402,11 +401,11 @@ class Model(object):
         return lista
 
     @staticmethod
-    def removeRows(registros):
+    def deleteRows(registros):
         lista = []
         for r in registros:
             lista.append({'ID': r.ID, 'success': True})
-            r.remove()
+            r.delete()
         return lista
 
     @staticmethod
@@ -435,7 +434,7 @@ class Model(object):
         return registros
 
     @staticmethod
-    def dropDB(dbName):
+    def dropDB(dbName=GLOBAL_DB_NAME):
         sql = "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE '%sqlite%';"
         db = sqlite3.connect(dbName)
         cursor= db.cursor()
@@ -447,7 +446,7 @@ class Model(object):
         db.close()
 
     @staticmethod
-    def exitsTable(dbName, tableName):
+    def exitsTable(tableName,  dbName=GLOBAL_DB_NAME):
         sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='%s';"
         sql = sql % tableName
         db = sqlite3.connect(dbName)
@@ -459,7 +458,7 @@ class Model(object):
         return reg != None
 
     @staticmethod
-    def getModel(dbName, tableName):
+    def getModel(tableName, dbName=GLOBAL_DB_NAME):
         sql = "SELECT model FROM models_db WHERE table_name='%s'" % tableName
         db = sqlite3.connect(dbName)
         cursor= db.cursor()
@@ -471,7 +470,7 @@ class Model(object):
             return json.loads(base64.b64decode(reg[0]))
 
     @staticmethod
-    def alter_model(dbName, tableName):
+    def alter_model(tableName, dbName=GLOBAL_DB_NAME):
         strModel = base64.b64encode(json.dumps(model))
         sql = u"INSERT OR REPLACE INTO models_db (table_name, model) VALUES ('{0}','{1}');"
         sql = sql.format(tableName, strModel)
@@ -482,7 +481,7 @@ class Model(object):
         db.close()
 
     @staticmethod
-    def alter_constraint(dbName, tableName, columName, parent):
+    def alter_constraint(columName, parent, tableName, dbName=GLOBAL_DB_NAME):
         sql = u"ALTER TABLE {0} ADD COLUMN {1} INTEGER REFERENCES {2}(ID) ON DELETE CASCADE;"
         sql = sql.format(tableName, columName, parent)
         db = sqlite3.connect(dbName)
@@ -492,7 +491,7 @@ class Model(object):
         db.close()
 
     @staticmethod
-    def alter(dbName, tableName, field):
+    def alter(tableName, field,  dbName=GLOBAL_DB_NAME):
         sql = u"ALTER TABLE {0} ADD COLUMN {1} {2} DEFAULT {3};"
         sql = sql.format(tableName, field["fieldName"], field["fieldTipo"], field["fieldDato"])
         db = sqlite3.connect(dbName)

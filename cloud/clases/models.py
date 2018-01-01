@@ -2,7 +2,7 @@
 # @Date:   04-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 12-Sep-2017
+# @Last modified time: 21-Sep-2017
 # @License: Apache license vesion 2.0
 
 
@@ -15,8 +15,13 @@ from django.db import models
 class ClasesPreguntas(models.Model):
     nombre = models.CharField(max_length=50)
     modify = models.DateTimeField(auto_now=True)
+    def preguntas(self):
+        return Preguntas.objects.filter(clasespreguntas__id=self.id).count()
+
     def __unicode__(self):
         return self.nombre
+    class Meta:
+        verbose_name = "Grupo Pregunta"
 
 
 class Familias(models.Model):
@@ -24,6 +29,9 @@ class Familias(models.Model):
 
     def __unicode__(self):
         return self.nombre
+
+    class Meta:
+        verbose_name = "Familia de productos"
 
 
 
@@ -38,11 +46,17 @@ class Productos(models.Model):
     familias = models.ForeignKey(Familias, blank=True)
     ignore = models.CharField(max_length=150, blank=True, default="")
 
+    def nombre_familia(self):
+        return self.familias.nombre
+
     def __unicode__(self):
         return u"{0} - tipo: {1}".format(self.nombre, self.familias.__unicode__())
 
     class Meta:
-        ordering = ('orden', 'nombre', "familias")
+        ordering = ("familias", "orden", "nombre")
+        verbose_name = "Producto"
+
+
 
 
 class Ingredientes(models.Model):
@@ -58,6 +72,7 @@ class Ingredientes(models.Model):
 
     class Meta:
         ordering = ('orden', 'nombre')
+        verbose_name = "Ingrediente"
 
 
 
@@ -72,12 +87,15 @@ class Clases(models.Model):
     clasespreguntas = models.ManyToManyField(ClasesPreguntas,  blank=True)
     modify = models.DateTimeField(auto_now=True)
 
+    def numero_productos(self):
+        return self.productos.count()
+
     def __unicode__(self):
         return self.nombre
 
     class Meta:
         ordering = ('orden', 'nombre')
-
+        verbose_name = "Clase"
 
 
 
@@ -94,6 +112,7 @@ class Preguntas(models.Model):
 
     class Meta:
         ordering = ('orden', 'nombre')
+        verbose_name = "Pregunta"
 
 
 
@@ -102,3 +121,5 @@ class Sugerencias(models.Model):
     productos = models.ForeignKey('Productos', on_delete=models.CASCADE)
     def __unicode__(self):
         return self.sugerencia
+    class Meta:
+        verbose_name = "Sugerencia"
