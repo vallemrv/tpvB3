@@ -15,4 +15,15 @@ Tpv realizado desde cero con tecnologías, Python, Nativescript y agular
   [python-ormsqlite](https://github.com/vallemrv/python-ormsqlite.git)
   [kivy-componets](https://github.com/vallemrv/kivy-component.git)
 
-  He probado Nativescript con nodejs pero no puedo evitar que me guste pyhon. Asi que remodelo todo el sistema para utilizar DJango para el servidor, Kivy.org para las interfaces de graficas para todos los dispositivos.
+  He probado Nativescript con nodejs. Es un tecnologia para migusto excepcinal. Pero no puedo evitar la atracción por python. Asi que remodelo todo el sistema para utilizar DJango para el servidor, Kivy para las interfaces graficas de todos los dispositivos.
+
+
+# 1 de Enero de 2018
+
+ Remodelo todos las librerias para utilizar Django me ha enamorado. Es un framework impresionante. Kivy sin embargo es un poco mas lento. Pero es impresionante que pueda utilizarse el codigo en todos los dispositivos. Con lo que seguiré utilizando lo, porque hasta ahora,  no hay ningu framework de python que funcione en todas los dispositivos con la facilidad que lo hace kivy.
+ 
+ He cambiado algunas librerias y otras las he remodelado.
+ 
+  [django-sql-decoder](https://github.com/vallemrv/django-sql-decoder.git)
+  [kivy-ormsqlite](https://github.com/vallemrv/kivy-ormsqlite.git)
+  [kivy-componets](https://github.com/vallemrv/kivy-component.git)
