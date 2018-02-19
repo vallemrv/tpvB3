@@ -1,0 +1,41 @@
+{% extends "base_admin.html" %}
+
+{% block content %}
+<div class="bg-light p-3 mb-3">
+    <h2>Contabilidad</h2>
+</div>
+<div id="main-content" class="bg-light p-3 mb-3">
+  <div class="row">
+        <div class="col-6 col-md-4 col-lg-3">
+          <a href="{% url 'Conta:lista_proveedores' %}" class="btn btn-primary btn-inicio">Proveedores</a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+          <a href="{% url 'Conta:lista_cuentas' %}" class="btn btn-primary btn-inicio">Cuentas</a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+          <a href="{% url 'Conta:lista_subcuentas' %}" class="btn btn-primary btn-inicio">Sub. Cuentas</a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+          <a href="{% url 'Conta:al_elegir_proveedor' %}" class="btn btn-primary btn-inicio">Mercancia</a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+          <a href="{% url 'en_construccion' %}" class="btn btn-primary btn-inicio">Pagos mercancia</a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+          <a href="{% url 'Conta:elegir_cuenta' %}" class="btn btn-primary btn-inicio">Gastos</a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+          <a href="{% url 'Conta:al_elegir_proveedor' %}" class="btn btn-primary btn-inicio">Mercaderia</a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+          <a href="{% url 'Conta:lista_ingresos' %}" class="btn btn-primary btn-inicio">Ingresos</a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+          <a href="{% url 'en_construccion' %}" class="btn btn-primary btn-inicio">Saldos</a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+          <a href="{% url 'en_construccion' %}" class="btn btn-primary btn-inicio">Balances</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}

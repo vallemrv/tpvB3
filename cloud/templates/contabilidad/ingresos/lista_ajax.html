@@ -1,0 +1,38 @@
+{% load global_tag %}
+{% load conta_tag %}
+{% if query %}
+  <div id="content_main" class="bg-light p-3 mb-3 content-table">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Importe</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in query %}
+        <tr>
+          <td>{{ c.fecha }}</td>
+          <td>{{ c.importe }}</td>
+          <td class="text-center">
+            <a href="{% url 'en_construccion' %}" class="btn btn-primary btn-accion ">
+              <span class="fa fa-search"></span></a>
+            <a href="{% url 'Conta:ingresos' id=c.id %}" class="btn btn-primary btn-accion">
+              <span class="fa fa-edit"></span></a>
+            <a href="{% url 'Conta:rm_ingreso' id=c.id %}" class="btn btn-primary btn-accion">
+                <span class="fa fa-trash"></span></a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container pl-3">
+          <h1 class="display-3">Upps!</h1>
+          <p class="lead">No se ha encotrado ninguna coincidencia....</p>
+      </div>
+    </div>
+{% endif %}

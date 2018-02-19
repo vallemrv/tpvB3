@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 26-Sep-2017
+# @Last modified time: 16-Feb-2018
 # @License: Apache license vesion 2.0
 
 from kivy.uix.anchorlayout import AnchorLayout
@@ -60,6 +60,7 @@ class Tpv(AnchorLayout):
         self.hide_spin()
 
     def mostrar_men_cobro(self, men):
+        self.hidden_men_cobro()
         self.men_cobro = MensajeCobro(self)
         self.men_cobro.show(men)
 
@@ -101,10 +102,10 @@ class Tpv(AnchorLayout):
         llevar = self.pd.para_llevar
         cl = None
         if llevar == "Domicilio":
-            cl = self.pd.clientes.get()
+            cl = self.pd.clientes_set.get()
 
         self.docPrint.imprimirTicket("caja", self.pd.id,
-                                     self.pd.lineaspedido.get(), self.pd.fecha,
+                                     self.pd.lineaspedido_set.get(), self.pd.fecha,
                                      self.pd.total, float(self.pd.entrega),
                                      float(self.pd.cambio), cl)
 
@@ -163,9 +164,9 @@ class Tpv(AnchorLayout):
         threading.Thread(target=self.run_sync_db).start()
 
     def run_sync_db(self):
-        import os
-        os.system("python ./syncdb_send.py")
-
+        #import os
+        #os.system("python ./syncdb_send.py")
+        pass
 
 
     def refresh(self):

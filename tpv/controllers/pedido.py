@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 26-Sep-2017
+# @Last modified time: 12-Feb-2018
 # @License: Apache license vesion 2.0
 
 from kivy.uix.boxlayout import BoxLayout
@@ -294,8 +294,8 @@ class PedidoController(BoxLayout):
             if self.clase != None:
                 title = str(self.clase['text'])
             self.botonera.title = title
-            self.botonera.botones = []
-            self.botonera.botones = self.storage['db'].get('lista')
+            self.botonera.buttons = []
+            self.botonera.buttons = self.storage['db'].get('lista')
 
 
     def nuevo_pedido(self, clase):

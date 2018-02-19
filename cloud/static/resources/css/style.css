@@ -1,0 +1,121 @@
+/**
+ * @Author: Manuel Rodriguez <valle>
+ * @Date:   27-Sep-2017
+ * @Email:  valle.mrv@gmail.com
+ * @Last modified by:   valle
+ * @Last modified time: 06-Jan-2018
+ * @License: Apache license vesion 2.0
+ */
+
+body{
+  padding-top: 65px;
+  margin: 0px;
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 100vh;
+  background-color: rgb(213, 213, 213)
+}
+
+p {
+  padding: 0px;
+  margin: 0px;
+}
+
+footer{
+  background-color: rgb(105, 105, 105);
+  padding: 1em;
+  width: 100%;
+  align-self: flex-end;
+  text-align: center;
+}
+
+textarea{
+  height: 95px;
+  max-height: 150px;
+  min-height: 50px;
+}
+
+
+.tt-menu {
+	background-color: #FFFFFF;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	border-radius: 8px;
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	margin-top: 12px;
+	padding: 8px 5px;
+	width: 300px;
+}
+
+.sign{
+   margin-top: -65px;
+   padding-top: -65px;
+   min-height: 100vh;
+   display: block;
+}
+
+.sketchpad{
+  border: Solid 1px;
+}
+
+.content-table{
+  overflow: scroll;
+}
+
+.main-page{
+  padding: .5em;
+  margin: 0px;
+}
+
+.page-header{
+   padding: 1em 2em 1em 2em;
+   margin-bottom: 2em;
+   text-transform: uppercase;
+}
+
+.login-page{
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-main{
+  width: 50%;
+  min-width: 300px;
+}
+
+.login-head{
+  text-align: center;
+  padding: 1.5em;
+  background-color: rgb(136, 219, 255)
+}
+
+.login-block{
+  padding: 1.5em;
+}
+
+.btn-inicio{
+  width: 100%;
+  height: 95%;
+  /* margin-bottom: .5em; */
+  white-space: normal !important;
+  padding-top: 2.5em;
+  padding-bottom: 2.5em;
+}
+
+.btn-accion{
+  width: 2.5em;
+  height: 95%;
+  margin: .2em;
+}
+
+.img-marcas{
+   max-height: 50px;
+}
+
+.body-find{
+  text-align: center;
+  min-height: 25em;
+}

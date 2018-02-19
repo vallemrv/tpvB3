@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 26-Sep-2017
+# @Last modified time: 16-Feb-2018
 # @License: Apache license vesion 2.0
 
 
@@ -124,6 +124,7 @@ class DocPrint():
                 p.writelines(cl.nombre, align='left', width=2, height=2)
                 p.writelines(cl.direcciones.get(query="id=%d"%cl.direccion)[0].direccion,
                               align='left',width=2, height=2)
+                p.writelines(cl.nota, align='left', width=2, height=2)
                 p.writelines(cl.telefono, align='left', width=2, height=2)
             p.writelines("")
             p.writelines("")

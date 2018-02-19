@@ -2,44 +2,31 @@
 # @Date:   02-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 26-Sep-2017
+# @Last modified time: 19-Feb-2018
 # @License: Apache license vesion 2.0
 
 import config
-import requests
 import json
 
 from kivy.storage.jsonstore import JsonStore
+from models.db import Clases, Productos, Ingredientes, ClasesPreguntas, Preguntas
+from valleorm.qson import  QSonSender, QSon
 
 
-data = {
-    'token': config.TOKEN_API,
-    'user': config.TOKEN_USER,
-    'data': ""
-    }
 
-def get_clases():
-    get_clases={
-        "get":{
-            'db': "clases",
-            "clases":{
-                "order": "orden",
-                'productos':{"order": "orden, nombre",
-                             "ingredientes":{"order": "orden, nombre"}
-                             },
-                'clasespreguntas':{
-                    "preguntas":{"order": "orden, nombre"}
-                }
-              }
-            }
-        }
-    data['data'] = json.dumps(get_clases)
-    r = requests.post(config.URL_SERVER+"/themagicapi/qson_django/", data=data)
-    clases = r.json()
+class ClasesSender(QSonSender):
+    db_name = "clases"
+    url = config.URL_SERVER+"/simpleapi/"
+    token = ""
+
+
+def on_success(obj, result):
+    clases =  result.get("get")
+
     db = JsonStore("../db/clases.json")
     lista = []
-    for clase in clases.get('get')["clases"]:
-
+    for clase in clases.get("clases"):
+        print clase.items()
         row_clase = {
             'text': clase["nombre"],
             'bgColor': clase["color"],
@@ -76,7 +63,7 @@ def get_clases():
                     row_ing = {
                         'text': ing["nombre"],
                         'bgColor': ing["color"],
-                        "precio" : ing["precio"]
+                        "precio" : ing["precio"] if "precio" in ing else 0
                     }
                     lista_ing.append(row_ing)
                 db_ing.put("selectable", estado=True)
@@ -106,15 +93,16 @@ def get_clases():
 
     db.put('db', lista=lista)
 
-def get_token(username, password):
-    data = {
-        "username" : username,
-        "password": password
-    }
 
-    r = requests.post(config.URL_SERVER+"/token/new.json", data=data)
-    print r.json()
-
+def get_clases():
+    sender = ClasesSender()
+    qson = QSon("Clases")
+    qson_p = QSon("Productos")
+    qson_p.append_child(QSon("Ingredientes"))
+    qson.append_child(qson_p)
+    qson_p = QSon("ClasesPreguntas")
+    qson_p.append_child(QSon("Preguntas"))
+    qson.append_child(qson_p)
+    sender.filter(on_success, qson=(qson,), wait=True)
 
 get_clases()
-#get_token("btres","calamatraca")

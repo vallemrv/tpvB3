@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Albaran {{obj.id}}</title>
+    <style media="screen">
+        img{
+          display:block;
+          margin:auto;
+          width:96%;
+          }
+    </style>
+  </head>
+  <body>
+
+    <img src="{% url 'Conta:view_doc_albaran' id=obj.id %}" alt="Albaran {{obj.id}}">
+  </body>
+</html>

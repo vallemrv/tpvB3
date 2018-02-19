@@ -13,26 +13,26 @@
             orientation: 'vertical'
             spacing: 5
             LabelColor:
-                bgColor: "#000000"
+                bg_color: "#000000"
                 text: "Pedidos aparcados"
                 size_hint_y: None
                 height: '70dp'
                 color: "#FFFFFF"
-            ValleListView:
+            MenuListView:
                 id: _listado_pedidos
-                bgColor: "#000000"
+                bg_color: "#000000"
         BoxLayout:
             spacing: 5
             size_hint_x: .4
             orientation: 'vertical'
             LabelColor:
-                bgColor: "#000000"
+                bg_color: "#000000"
                 size_hint_y: None
                 height: "70dp"
                 text: root.des
-            ValleListView:
+            MenuListView:
                 id: _pedido
-                bgColor: "#000000"
+                bg_color: "#000000"
             BoxLayout:
                 canvas.before:
                     Color:

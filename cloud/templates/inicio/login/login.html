@@ -1,0 +1,46 @@
+{%load static %}
+{% load global_tag %}
+{% include 'header_admin.html' %}
+
+<style media="screen">
+    body{
+      padding: 0px;
+      margin: 0px;
+      min-height: 100vh;
+    }
+</style>
+<div class="login-page">
+  <div class="login-main table table-bordered">
+    	 <div class="login-head">
+				<h2>{% brand 'title'%}</h2>
+			</div>
+
+			<div class="login-block">
+        {% if mensaje %}
+        <div class="alert alert-success alert-dismissable">
+          <button aria-hidden="true" data-dismiss="alert" class="close" type="button"> × </button>
+              {{ mensaje }}
+          </div>
+        {% endif %}
+				<form method="post">
+          {% csrf_token %}
+          {% for field in form %}
+            <div class="form-group">
+              <label for="{{field.name}}">{{ field.label }}</label>
+              {{ field|addcss:"form-control" }}
+            </div>
+          {% endfor %}
+					<button class="btn btn-primary" type="submit">Entra</button>
+				</form>
+        <p><a class="float-right pb-3" href="{% url 'password_reset' %}">Recuperar contraseña</a></p>
+			</div>
+    </div>
+</div>
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="{% static 'js/jquery-3.2.1.min.js' %}" ></script>
+<script src="{% static 'js/popper.min.js' %}" ></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+</body>
+</html>

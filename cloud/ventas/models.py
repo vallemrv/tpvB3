@@ -2,7 +2,7 @@
 # @Date:   13-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 26-Sep-2017
+# @Last modified time: 14-Feb-2018
 # @License: Apache license vesion 2.0
 
 
@@ -17,18 +17,16 @@ class Pedidos(models.Model):
     modo_pago = models.CharField(max_length=50)
     para_llevar = models.CharField(max_length=50)
     num_avisador = models.CharField(max_length=50)
-    total = models.DecimalField(max_digits=20, decimal_places=2)
+    total = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
     estado = models.CharField(max_length=10, default="PG_NO")
-    entrega = models.DecimalField(max_digits=20, decimal_places=2)
-    cambio = models.DecimalField(max_digits=20, decimal_places=2)
+    entrega = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
+    cambio = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
     modify = models.DateTimeField(auto_now=True)
     def __unicode__(self):
         return u"{0} - {1} - {2}".format(self.id, self.estado, self.total)
 
     class Meta:
         verbose_name = "Pedido"
-
-
 
 class Clientes(models.Model):
     nombre = models.CharField(max_length=50)
@@ -53,7 +51,6 @@ class Clientes(models.Model):
     class Meta:
         verbose_name = "Cliente"
 
-
 class Direcciones(models.Model):
     direccion = models.CharField(max_length=150)
     localidad = models.CharField(max_length=50, default="Grandada", null=True)
@@ -63,39 +60,34 @@ class Direcciones(models.Model):
     def __unicode__(self):
         return u"{0}".format(self.direccion)
     class Meta:
-        verbose_name = "Direccione"
-
-
+        verbose_name = "Direccion"
 
 class LineasPedido(models.Model):
     text = models.CharField(max_length=50)
     des = models.TextField(null=True)
     cant = models.IntegerField()
-    precio = models.DecimalField(max_digits=20, decimal_places=2)
-    total = models.DecimalField(max_digits=20, decimal_places=2)
+    precio = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
+    total = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
     tipo = models.CharField(max_length=50)
     pedidos = models.ForeignKey(Pedidos, on_delete=models.CASCADE)
     modify = models.DateTimeField(auto_now=True)
     def __unicode__(self):
         return u"{0} - {1} - {2} - {3}".format(self.cant, self.text, self.precio, self.total)
 
-
-
 class Gastos(models.Model):
-    des = models.CharField("Descripcion", max_length=100)
-    gasto = models.DecimalField(max_digits=20, decimal_places=2)
+    des = models.CharField("Descripcion", max_length=100, default="Nada")
+    gasto = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
     modify = models.DateTimeField("Modificado", auto_now=True)
     def __unicode__(self):
         return u"{0} - {1}".format(self.des, self.gasto)
     class Meta:
         verbose_name = "Gasto"
 
-
 class Conteo(models.Model):
     can = models.IntegerField("Cantidad")
-    tipo =  models.DecimalField("Tipo de moneda", max_digits=20, decimal_places=2)
-    total =  models.DecimalField(max_digits=20, decimal_places=2)
-    texto_tipo = models.CharField(max_length=100, null=True, blank=True)
+    tipo =  models.DecimalField("Tipo de moneda", max_digits=20, decimal_places=2, null=True, default=0.0)
+    total =  models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
+    texto_tipo = models.CharField(max_length=100, default="Euros", blank=True)
     modify = models.DateTimeField("Modificado", auto_now=True)
 
     def __unicode__(self):
@@ -116,12 +108,12 @@ class PedidosExtra(models.Model):
 
 class Arqueos(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
-    caja_dia = models.DecimalField(max_digits=20, decimal_places=2)
-    efectivo = models.DecimalField(max_digits=20, decimal_places=2)
-    cambio = models.DecimalField(max_digits=20, decimal_places=2)
-    total_gastos = models.DecimalField(max_digits=20, decimal_places=2)
-    targeta = models.DecimalField(max_digits=20, decimal_places=2)
-    descuadre = models.DecimalField(max_digits=20, decimal_places=2)
+    caja_dia = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
+    efectivo = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
+    cambio = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
+    total_gastos = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
+    targeta = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
+    descuadre = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
     pedidos = models.ManyToManyField(Pedidos)
     gastos = models.ManyToManyField(Gastos)
     conteo = models.ManyToManyField(Conteo)

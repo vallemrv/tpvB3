@@ -1,0 +1,112 @@
+{% extends "base_admin.html" %}
+{% load global_tag %}
+{% load static %}
+{% block content %}
+<div class="bg-light page-header">
+  <div class="row">
+    <div class="col-12 col-md-7">
+      <h2>Mercancias</h2>
+    </div>
+    <div class="col-12 col-md-4">
+      <form id="form_find" onsubmit="get_albaranes(); return false" class="form-inline my-2 my-lg-0" method="post">
+          {% csrf_token %}
+          <input class="form-control mr-sm-2" type="text" name="filter" placeholder="Buscar" aria-label="Search">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+          {% if not 'Editar' in mensaje %}
+            <button class="btn btn-primary ml-2" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                  <span class="fa fa-plus"></span>
+                </button>
+          {% endif %}
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="bg-light p-3 mb-3">
+<div class="row">
+   <div class="col-6">
+     <b>{{ p.nombre }}</b>
+   </div>
+   <div class="col-6">
+      <b>{{ p.CIF }}</b>
+   </div>
+</div>
+</div>
+
+<div class="bg-light p-3 mb-3 {% if not 'Editar' in mensaje %} collapse {% endif %}" id="collapseExample">
+  <div class="p-3">
+    <h3>{{mensaje}}</h3>
+  </div>
+  <form method="post" action="{% url 'Conta:albaranes' id=pk %}"  enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-row">
+        {% for field in form %}
+          {% if field.name == 'fecha' %}
+            <div class="form-group col-sm-6">
+                <label for="{{field.name}}">{{ field.label }}</label>
+                <div class='input-group date'>
+                    {{ field|addcss:"form-control" }}
+                    <span class="input-group-addon">
+                        <span class="fa fa-calendar"></span>
+                    </span>
+                  </div>
+              </div>
+          {% elif field.name == 'pagado' %}
+             <div class="col-md-6">
+               <div class="form-group">
+                 <label class="form-check-label" for="{{field.name}}" >{{ field.label }}
+                  </label>
+                 <div class="form-check  pl-4">
+                  {{ field|addcss:'align-middle'}}
+                 </div>
+               </div>
+             </div>
+
+            {% elif field.name == 'aviso' %}
+              <div class="form-group col-md-6">
+                <label for="{{field.name}}" class="mr-2">{{ field.label }} </label>
+                {{ field|addcss:"form-control is-invalid" }}
+              </div>
+          {% else %}
+          <div class="form-group col-md-6">
+            <label for="{{field.name}}">{{ field.label }}</label>
+            {{ field|addcss:"form-control" }}
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <button type="submit" class="btn btn-primary">Enviar formulario</button>
+  </form>
+</div>
+
+<div id="content_main" class="bg-light p-3 mb-3 content-table">
+   {% include "contabilidad/albaranes/lista_ajax.html" %}
+</div>
+
+{% include "borrar_dialog.html" %}
+
+
+
+<script type="text/javascript">
+
+
+    function get_albaranes(){
+      datos = $("#form_find").serialize();
+      $.post("{% url 'Conta:find_albaran' %}", datos, function(res){
+          $("#content_main").html(res)
+
+      });
+      return false;
+    }
+
+    $('#id_fecha').pickadate({
+      format: 'dd/mm/yyyy',
+      formatSubmit: 'dd/mm/yyyy',
+      hiddenName: true
+
+    });
+
+
+</script>
+
+{% endblock content %}

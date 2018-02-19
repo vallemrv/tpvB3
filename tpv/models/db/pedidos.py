@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-
 # @Author: Manuel Rodriguez <valle>
 # @Date:   11-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 13-Sep-2017
+# @Last modified time: 15-Feb-2018
 # @License: Apache license vesion 2.0
 
 
-from valleorm.django import models
+from valleorm import models
 
 class Pedidos(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
@@ -21,8 +20,6 @@ class Pedidos(models.Model):
     cambio = models.DecimalField(max_digits=20, decimal_places=2)
     modify = models.DateTimeField(auto_now=True)
 
-
-
 class Clientes(models.Model):
     nombre = models.CharField(max_length=50)
     apellido = models.CharField(max_length=100, null=True)
@@ -33,7 +30,6 @@ class Clientes(models.Model):
     fecha_add = models.DateField(auto_now_add=True)
     modify = models.DateTimeField(auto_now=True)
     direccion = models.IntegerField(null=True)
-
 
 class Direcciones(models.Model):
     direccion = models.CharField(max_length=150)

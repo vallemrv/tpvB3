@@ -3,7 +3,7 @@
 # @Date:   04-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 15-Sep-2017
+# @Last modified time: 14-Feb-2018
 # @License: Apache license vesion 2.0
 
 from kivy.event import EventDispatcher
@@ -112,7 +112,8 @@ class Pedido(EventDispatcher):
                                     'precio': obj.getPrecio(),
                                     'total': obj.getTotal(),
                                     'tipo': obj.obj.get("tipo")})
-            db.lineaspedido.add(linea)
+            linea.pedidos_id = db.id
+            linea.save()
 
     def guardar_pedido(self):
         db = Pedidos()

@@ -2,11 +2,11 @@
 # @Date:   13-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 26-Sep-2017
+# @Last modified time: 18-Feb-2018
 # @License: Apache license vesion 2.0
 
 
-from valleorm.django import models
+from valleorm import models
 
 
 class Gastos(models.Model):
@@ -36,7 +36,7 @@ class Arqueos(models.Model):
     total_gastos = models.DecimalField(max_digits=20, decimal_places=2)
     targeta = models.DecimalField(max_digits=20, decimal_places=2)
     descuadre = models.DecimalField(max_digits=20, decimal_places=2)
-    pedidos = models.ManyToManyField("Pedidos", main_module="models.db.pedidos")
+    pedidos = models.ManyToManyField("Pedidos")
     pedidosextra = models.ManyToManyField(PedidosExtra)
     gastos = models.ManyToManyField(Gastos)
     conteo = models.ManyToManyField(Conteo)

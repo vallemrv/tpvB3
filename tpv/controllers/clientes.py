@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 26-Sep-2017
+# @Last modified time: 16-Feb-2018
 # @License: Apache license vesion 2.0
 
 from kivy.uix.anchorlayout import AnchorLayout
@@ -33,7 +33,7 @@ class Clientes(AnchorLayout):
                      nota=self.notas.text)
         if self.db.direccion == None and not add_dir:
             d = Direcciones(direccion=self.dir.text)
-            self.db.direcciones.add(d)
+            self.db.direcciones_set.add(d)
             self.db.direccion = d.id
             self.db.save()
 
@@ -50,7 +50,7 @@ class Clientes(AnchorLayout):
         self.dir.text = ''
         direcciones = []
         if id_direccion != None:
-            direcciones = self.db.direcciones.get(query="id=%d" % id_direccion)
+            direcciones = self.db.direcciones_set.get(query="id=%d" % id_direccion)
         if len(direcciones) > 0:
             self.dir.text = direcciones[0].direccion
         self.rellena_list()
@@ -58,14 +58,14 @@ class Clientes(AnchorLayout):
 
     def rellena_list(self):
         self.listDirecciones.rm_all_widgets()
-        for l in self.db.direcciones.get():
+        for l in self.db.direcciones_set.get():
             btn = LabelClicable(text=l.direccion)
             btn.tag = l
             btn.bind(on_press=self.sel_dir)
             self.listDirecciones.add_linea(btn)
 
     def sel_dir(self, btn):
-        direccion = self.db.direcciones.get(query="id=%d" % btn.tag.id)
+        direccion = self.db.direcciones_set.get(query="id=%d" % btn.tag.id)
         if len(direccion) > 0:
             self.dir.text = direccion[0].direccion
             self.db.direccion = btn.tag.id
@@ -73,11 +73,11 @@ class Clientes(AnchorLayout):
 
     def add_dir(self):
         list = self.db
-        direccion = self.db.direcciones.get(query="direccion='%s'" % self.dir.text)
+        direccion = self.db.direcciones_set.get(query="direccion='%s'" % self.dir.text)
         if len(direccion) <= 0:
             self.guardar(add_dir=True)
             direccion = Direcciones(direccion=self.dir.text)
-            self.db.direcciones.add(direccion)
+            self.db.direcciones_set.add(direccion)
             self.db.direccion = direccion.id
             self.db.save()
         self.rellena_list()
@@ -108,7 +108,9 @@ class ClientesController(AnchorLayout):
     def aceptar(self, numTlf):
         if len(numTlf) == 9:
             db = ClientesModel()
-            db.load_first_by_query(query="telefono='%s'" % numTlf)
+            cs = db.filter(query="telefono='%s'" % numTlf)
+            if len(cs) > 0:
+                db = cs[0]
             if db.id == -1:
                 db.telefono = numTlf
             self.clientes.db = db

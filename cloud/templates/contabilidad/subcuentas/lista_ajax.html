@@ -1,0 +1,52 @@
+{% load global_tag %}
+{% if query %}
+<div class="bg-light p-3 mb-3 content-table">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th class="text-center">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in query %}
+      <tr>
+        <td>{{ c.nombre }}</td>
+        <td>{{ c.descripcion }}</td>
+        <td class="text-center">
+          {% if opcion == 'lista' %}
+          <button onclick="historial({{c.id}});" class="btn btn-primary btn-accion">
+            <span class="fa fa-search"></span></button>
+          <a href="{% url 'Conta:subcuentas' id=c.id %}" class="btn btn-primary btn-accion">
+            <span class="fa fa-edit"></span></a>
+          <a href="{% url 'Conta:rm_subcuenta' id=c.id %}" class="btn btn-primary btn-accion">
+              <span class="fa fa-trash"></span></a>
+          {% else %}
+          <button onclick="set_subcuenta({{c.id}});" class="btn btn-primary">
+              <span class="fa fa-check"></span>
+            </button>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <script type="text/javascript">
+    function historial(id){
+      $.get("{% url 'Conta:set_subcuenta'  %}"+id, function(res){
+          if (res == "perfect"){
+              location.href = "{% url 'Conta:lista_gastos' %}";
+           }
+      });
+    }
+  </script>
+</div>
+{% else %}
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container pl-3">
+          <h1 class="display-3">Upps!</h1>
+          <p class="lead">No se ha encotrado ninguna coincidencia....</p>
+      </div>
+    </div>
+{% endif %}

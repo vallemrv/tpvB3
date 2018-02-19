@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 01-Oct-2017
+# @Last modified time: 13-Feb-2018
 # @License: Apache license vesion 2.0
 
 
@@ -47,7 +47,7 @@ class Arqueo(AnchorLayout):
 
     def get_ticket(self):
         db = Pedidos()
-        for tk in db.getAll(query="estado LIKE 'PG_%'"):
+        for tk in db.filter(query="estado LIKE 'PG_%'"):
             self.lista_ticket.append(tk)
             self.caja_dia += tk.total
             if tk.modo_pago == "Targeta":

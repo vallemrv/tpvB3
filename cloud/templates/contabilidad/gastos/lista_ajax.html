@@ -1,0 +1,48 @@
+{% load global_tag %}
+{% load conta_tag %}
+{% if query %}
+  <div id="content_main" class="bg-light p-3 mb-3 content-table">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          {% if cuenta %}
+          <th>Cuenta</th>
+            {% else %}
+          <th>Fecha</th>
+          {% endif %}
+          <th>Importe</th>
+          <th>Pagado</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in query %}
+        <tr>
+          {% if cuenta %}
+            <td>{{ c.cuenta }}</td>
+          {% else %}
+          <td>{{ c.fecha }}</td>
+          {% endif %}
+          <td>{{ c.importe }}</td>
+          <td>{{ c|pagado }}</td>
+          <td class="text-center">
+            <a href="{% url 'en_construccion' %}" class="btn btn-primary btn-accion ">
+              <span class="fa fa-search"></span></a>
+            <a href="{% url 'Conta:gastos' id=c.id %}" class="btn btn-primary btn-accion">
+              <span class="fa fa-edit"></span></a>
+            <button onclick='show_borrar("{% url 'Conta:rm_gasto' id=c.id %}");' class="btn btn-primary btn-accion">
+                <span class="fa fa-trash"></span></button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container pl-3">
+          <h1 class="display-3">Upps!</h1>
+          <p class="lead">No se ha encotrado ninguna coincidencia....</p>
+      </div>
+    </div>
+{% endif %}

@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 13-Sep-2017
+# @Last modified time: 12-Feb-2018
 # @License: Apache license vesion 2.0
 
 from kivy.uix.boxlayout import BoxLayout
@@ -20,6 +20,7 @@ Builder.load_string('''
     spacing: 20
     GridButtons:
         cols: 4
+        column_color: 'bgColor'
         id: _content
         font_size_title: '35dp'
 
@@ -96,6 +97,6 @@ class Inicio(BoxLayout):
 
     def show_button_inicio(self):
         src = JsonStore('../db/clases.json')
-        self.content.botones = []
-        self.content.botones = src['db'].get('lista')
+        self.content.buttons = []
+        self.content.buttons = src['db'].get('lista')
         self.content.onPress = self.tpv.onPress_seccion

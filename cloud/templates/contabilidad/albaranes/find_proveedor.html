@@ -1,0 +1,52 @@
+{% extends "base_admin.html" %}
+{% load global_tag %}
+{% block content %}
+
+<div class="bg-light page-header">
+   <div class="row">
+     <div class="col-12 col-md-7">
+       <h3>Elegir proveedor</h3>
+     </div>
+     <div class="col-12 col-md-5">
+       <form id="form_find" onsubmit="get_proveedores(); return false" class="form-inline my-2 my-lg-0 d-inline" method="post">
+           {% csrf_token %}
+           <input class="form-control mr-sm-2" type="text" name="filter" placeholder="Buscar" aria-label="Search">
+           <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+           <a href="{% url 'Conta:salir_proveedores' %}" class="btn btn-primary">
+             <span class="fa fa-sign-out"></span>
+           </a>
+       </form>
+     </div>
+   </div>
+</div>
+
+
+  <div id="content_main">
+      {% include "contabilidad/albaranes/lista_ajax.html" %}
+  </div>
+
+
+
+
+<script type="text/javascript">
+
+  function set_proveedor(id){
+    $.get("{% url 'Conta:set_proveedor_none'  %}"+id, function(res){
+        if (res == "perfect"){
+            location.href = "{% url 'Conta:lista_albaranes' %}";
+         }
+    });
+  }
+
+
+  function get_proveedores(){
+    datos = $("#form_find").serialize();
+    $.post("{% url 'Conta:find_proveedores'  %}", datos, function(res){
+         $("#content_main").removeClass("collapse");
+         $("#content_main").empty().append(res);
+    });
+    return false;
+  }
+
+</script>
+{% endblock content %}

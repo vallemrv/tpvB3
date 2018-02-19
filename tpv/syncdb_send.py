@@ -2,8 +2,9 @@
 # @Date:   02-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 27-Sep-2017
+# @Last modified time: 18-Feb-2018
 # @License: Apache license vesion 2.0
+
 
 import config
 import requests
@@ -20,6 +21,7 @@ data = {
     'user': config.TOKEN_USER,
     'data': ''
     }
+
 
 def sync_send():
     db = JsonStore("../db/sync.json")
@@ -38,21 +40,21 @@ def sync_send():
     }
 
     p = Pedidos()
-    modify = p.getAll(query='modify > "%s" AND estado <> "arqueado"' % text_hora)
+    modify = p.filter(query='modify > "%s" AND estado <> "arqueado"' % text_hora)
 
     for m in modify:
-        lineas = m.lineaspedido.get()
+        lineas = LineasPedido.filter(pedidos_id=m.id)
         pedido_send = m.toDICT()
         sync["add"]["pedidos"].append(pedido_send)
         if len(lineas) > 0:
             pedido_send["lineaspedido"] = []
             for l in lineas:
                 pedido_send["lineaspedido"].append(l.toDICT())
-        clientes = m.clientes.get()
+        clientes = m.clientes_set.get()
         if len(clientes) > 0:
             pedido_send["clientes"] = []
             for c in clientes:
-                direcciones = c.direcciones.get()
+                direcciones = c.direcciones_set.get()
                 clientes_sync = c.toDICT()
                 if len(direcciones) > 0:
                     clientes_sync["direcciones"] = []
@@ -62,7 +64,7 @@ def sync_send():
 
 
     a = Arqueos()
-    arqueos = a.getAll(query='modify > "%s"' % text_hora)
+    arqueos = a.filter(query='modify > "%s"' % text_hora)
 
     for arq in arqueos:
         arq_send = arq.toDICT()
@@ -94,15 +96,16 @@ def sync_send():
 
     if len(modify) > 0 or len(arqueos) > 0:
         data["data"] = json.dumps(sync)
-        r = requests.post(config.URL_SERVER+"/themagicapi/qson_django/", data=data)
+        r = requests.post(config.URL_SERVER+"/simpleapi/", data=data)
         f = open("error.html", "w")
         f.write(r.content)
         result = r.json()
         if result["success"] == True:
-            print result
+            print (result)
             text_hora = str(datetime.now())
             db.put("db", date=text_hora)
 
 
 
-sync_send()
+
+#sync_send()

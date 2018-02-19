@@ -4,7 +4,7 @@
 # @Date:   13-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 15-Sep-2017
+# @Last modified time: 13-Feb-2018
 # @License: Apache license vesion 2.0
 
 
@@ -111,7 +111,7 @@ class Efectivo(ModalView):
     text_efectivo = StringProperty("")
     text_total = StringProperty("")
     efectivo = StringProperty("0.00 €")
-    botones = ListProperty([
+    buttons = ListProperty([
         {'text': '1', "bgColor":'#999999', 'num': '1'},
         {'text': '2', "bgColor":'#999999', 'num': '2'},
         {'text': '3', "bgColor":'#999999', 'num': '3'},
@@ -130,7 +130,7 @@ class Efectivo(ModalView):
 
     def __init__(self, **kargs):
         super(Efectivo, self).__init__(**kargs)
-        self.botonera.botones = self.botones
+        self.botonera.buttons = self.buttons
 
 
     def on_total(self, w, v):

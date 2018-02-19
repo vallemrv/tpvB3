@@ -1,0 +1,36 @@
+{% extends "base_admin.html" %}
+{% load global_tag %}
+{% block content %}
+<div class="bg-light page-header">
+  <div class="row">
+    <div class="col-12 col-md-5">
+        <h3 class="">Cuetas de gastos</h3>
+    </div>
+    <div class="col-12 col-md-5">
+      <form class="form-inline my-2 my-lg-0" method="post">
+          {% csrf_token %}
+          <input class="form-control mr-sm-2" type="text" name="filter" placeholder="Buscar" aria-label="Search">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+          <a href="{% url 'Conta:cuentas'  %}" class="btn btn-primary ml-3"><span class="fa fa-plus"></span></a>
+      </form>
+    </div>
+  </div>
+
+
+</div>
+
+<div id="content_main">
+  {% include "contabilidad/cuentas/lista_ajax.html" %}
+</div>
+
+<script type="text/javascript">
+  function get_cuentas(){
+    datos = $("#form_find").serialize();
+    $.post("{% url 'Conta:lista_cuentas'  %}", datos, function(res){
+         $("#content_main").empty().append(res);
+    });
+    return false;
+  }
+</script>
+
+{% endblock content %}

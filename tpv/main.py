@@ -2,11 +2,12 @@
 
 # @Author: Manuel Rodriguez <valle>
 # @Date:   04-Sep-2017
-# @Email:  valle.mrv@gmail.com
+# @Email:  valle.mrv@gmail.coim
 # @Last modified by:   valle
-# @Last modified time: 27-Sep-2017
+# @Last modified time: 18-Feb-2018
 # @License: Apache license vesion 2.0
 
+import os
 import config
 from kivy.app import App
 from controllers.tpv import Tpv
@@ -19,7 +20,8 @@ class TpvApp(App):
     def __init__(self, **kargs):
         super(TpvApp, self).__init__(**kargs)
         self.title = 'BTRES'
-        self.icon = "img/logo.jpg"
+        path = os.path.abspath(__file__)
+        self.icon = os.path.join(path, "img/logo.jpg")
 
     def build(self):
         return Tpv()

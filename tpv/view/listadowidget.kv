@@ -13,28 +13,28 @@
             orientation: 'vertical'
             spacing: 5
             LabelColor:
-                bgColor: "#000000"
+                bg_color: "#333333"
                 text: "Lista de pedidos"
                 size_hint_y: None
                 height: "70dp"
                 color: '#ffffff'
                 border_size: 0
-            ValleListView:
+            MenuListView:
                 id: _listado_pedidos
-                bgColor: "#000000"
+                bg_color: "#333333"
         BoxLayout:
             spacing: 5
             size_hint_x: .4
             orientation: 'vertical'
             LabelColor:
-                bgColor: "#000000"
+                bg_color: "#3333333"
                 size_hint_y: None
                 height: "70dp"
                 text: root.des
                 color: '#ffffff'
-            ValleListView:
+            MenuListView:
                 id: _pedido
-                bgColor: "#000000"
+                bg_color: "#333333"
             BoxLayout:
                 canvas.before:
                     Color:

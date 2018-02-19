@@ -4,12 +4,13 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 27-Sep-2017
+# @Last modified time: 17-Feb-2018
 # @License: Apache license vesion 2.0
 
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.storage.jsonstore import JsonStore
-from kivy.properties import ObjectProperty, NumericProperty, StringProperty
+from kivy.properties import (ObjectProperty, NumericProperty, StringProperty,
+                             DictProperty, ListProperty)
 from kivy.lang import Builder
 from glob import glob
 from os import rename
@@ -20,16 +21,13 @@ from datetime import datetime
 from valle_libs.tpv.impresora import DocPrint
 import threading
 
-
 Builder.load_file('view/listadopdwidget.kv')
-
 
 class ListadoPdWidget(AnchorLayout):
     tpv = ObjectProperty(None)
     precio = NumericProperty(0)
     des = StringProperty('Pedido')
-
-
+    db_lista = ListProperty([])
 
     def __init__(self, **kargs):
         super(ListadoPdWidget, self).__init__(**kargs)
@@ -45,8 +43,10 @@ class ListadoPdWidget(AnchorLayout):
             pd.cambio = 0.00
             pd.estado = "PG_SI"
             pd.save()
+            self.lista.rm_linea(self.selected)
             self.tpv.abrir_cajon()
             self.tpv.mostrar_inicio()
+
 
     def mostrar_efectivo(self):
         self.efectivo.total = str(self.precio)
@@ -55,12 +55,13 @@ class ListadoPdWidget(AnchorLayout):
     def salir_efectivo(self, cancelar=True):
         self.efectivo.dismiss()
         if cancelar == False:
-            pd = self.selected.get("db")
+            pd = self.selected.tag.get("db")
             pd.modo_pago = "Efectivo"
             pd.efectivo = self.efectivo.efectivo.replace("€", "")
             pd.cambio = self.efectivo.cambio.replace("€", "")
             pd.estado = "PG_SI"
             pd.save()
+            self.lista.rm_linea(self.selected)
             self.tpv.abrir_cajon()
             self.tpv.mostrar_inicio()
             self.tpv.mostrar_men_cobro("Cambio "+ self.efectivo.cambio)
@@ -68,30 +69,35 @@ class ListadoPdWidget(AnchorLayout):
 
 
     def salir(self):
+        self.clear_self_widget()
         self.tpv.mostrar_inicio()
+
+    def clear_all(self):
+        pass
 
     def clear_self_widget(self):
         self.selected = None
         self.precio = 0
         self.pedido.rm_all_widgets()
 
-
     def mostrar_lista(self):
-        threading.Thread(target=self.run_mostrar_lista).start()
         self.tpv.show_spin()
+        threading.Thread(target=self.run_mostrar_lista).start()
+
 
     def run_mostrar_lista(self):
-        self.lista.rm_all_widgets()
-        self.pedido.rm_all_widgets()
 
-        for db in Pedidos().getAll(query="estado LIKE 'NPG_%'"):
-            clientes = db.clientes.get()
+        for db in Pedidos.filter(query="estado LIKE 'NPG_%'"):
+            if db.id in self.db_lista:
+                continue
+            self.db_lista.append(db.id)
+            clientes = db.clientes_set.get()
             direccion = ""
             if len(clientes) > 0:
                 id = clientes[0].id
                 direccion = ""
                 if id != None:
-                    direcciones = clientes[0].direcciones.get(query="id=%d"%id)
+                    direcciones = clientes[0].direcciones_set.get()
                 if len(direcciones) > 0:
                     direccion = direcciones[0].direccion
             else:
@@ -116,8 +122,9 @@ class ListadoPdWidget(AnchorLayout):
 
     def onPress(self, btn):
         self.pedido.rm_all_widgets()
-        self.selected = btn.tag
-        lineas = self.selected.get("db").lineaspedido.get()
+        self.selected = btn
+        db = self.selected.tag.get("db")
+        lineas = db.lineaspedido_set.get()
         total = 0
         for item in lineas:
             btn = LabelClicable(bgColor="#444444",
