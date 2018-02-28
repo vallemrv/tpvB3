@@ -1,0 +1,82 @@
+<TextGrande@TextInput>:
+    font_size: '35dp'
+
+<Find>:
+    anchor_x: 'center'
+    anchor_y: 'center'
+    txt: _txtTlf
+    BoxLayout:
+        spacing: 10
+        size_hint: .5, None
+        height: '60dp'
+        TextGrande:
+            hint_text: 'Telefono'
+            id: _txtTlf
+            multiline: False
+            focus: True
+        Button:
+            size_hint_x: .2
+            text: "Aceptar"
+            on_press: root.aceptar(_txtTlf.text)
+        Button:
+            size_hint_x: .2
+            text: "Salir"
+            on_press: root.salir()
+
+
+<ClientesWidget>:
+    anchor_x: 'center'
+    anchor_y: 'center'
+    tlf: _tlf
+    nombre: _nombre
+    dir: _dir
+    notas: _notas
+    listDirecciones: _list
+    email: _email
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: 10
+        size_hint: .95, .95
+        BoxLayout:
+            size_hint_y: None
+            height: '60dp'
+            TextGrande:
+                size_hint_x: .4
+                hint_text: "Telefono"
+                id: _tlf
+            TextGrande:
+                hint_text: "Nombre"
+                id: _nombre
+        TextGrande:
+            size_hint_y: None
+            height: '60dp'
+            hint_text: "email"
+            id: _email
+        BoxLayout:
+            size_hint_y: None
+            height: '100dp'
+            TextGrande:
+                font_size: 35
+                size_hint_x: .8
+                hint_text: unicode("Dirección")
+                id: _dir
+            ButtonIcon:
+                size_hint_x: .2
+                id: _btnAdd
+                icon: res.FA_CHECK
+                on_press: root.add_dir()
+        ValleListView:
+            size_hint_y: .4
+            id: _list
+        TextGrande:
+            size_hint_y: .3
+            hint_text: "Notas"
+            id: _notas
+        BoxLayout:
+            size_hint_y: .2
+            Button:
+                text: "Pedir"
+                on_press: root.hacer_pedido(root.db)
+            Button:
+                text: "Cancelar"
+                on_press: root.salir()

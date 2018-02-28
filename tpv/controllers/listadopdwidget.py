@@ -4,7 +4,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 17-Feb-2018
+# @Last modified time: 26-Feb-2018
 # @License: Apache license vesion 2.0
 
 from kivy.uix.anchorlayout import AnchorLayout
@@ -35,17 +35,18 @@ class ListadoPdWidget(AnchorLayout):
         self.file = None
         self.efectivo = Efectivo(onExit=self.salir_efectivo)
 
-    def cobrar_targeta(self):
+    def cobrar_tarjeta(self):
         if self.selected:
-            pd = self.selected.get("db")
-            pd.modo_pago = "Targeta"
+            pd = self.selected.tag.get("db")
+            pd.modo_pago = "Tarjeta"
             pd.efectivo = 0.00
             pd.cambio = 0.00
             pd.estado = "PG_SI"
             pd.save()
             self.lista.rm_linea(self.selected)
+            self.db_lista.remove(pd.id)
             self.tpv.abrir_cajon()
-            self.tpv.mostrar_inicio()
+            self.salir()
 
 
     def mostrar_efectivo(self):
@@ -62,10 +63,10 @@ class ListadoPdWidget(AnchorLayout):
             pd.estado = "PG_SI"
             pd.save()
             self.lista.rm_linea(self.selected)
+            self.db_lista.remove(pd.id)
             self.tpv.abrir_cajon()
-            self.tpv.mostrar_inicio()
             self.tpv.mostrar_men_cobro("Cambio "+ self.efectivo.cambio)
-
+            self.salir()
 
 
     def salir(self):

@@ -4,42 +4,40 @@
 # @Date:   02-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 22-Sep-2017
+# @Last modified time: 27-Feb-2018
 # @License: Apache license vesion 2.0
 
 import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
-
+try:
+    reload(sys)
+    sys.setdefaultencoding('utf8')
+except Exception as e:
+    from importlib import sys, reload
+    reload(sys)
 
 from kivy.app import App
 from kivy.uix.anchorlayout import AnchorLayout
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 from kivy.clock import Clock
 from models.pedidos import *
 from kivy.network.urlrequest import UrlRequest
 from datetime import datetime
+from valleorm.qson import QSonSender, QSon
+from kivy.logger import Logger
+
 import json
-import urllib
 import threading
 import time
 
-URL_SERVER = "http://btres.elbrasilia.com"
-
-SEND_DATA = {
-    'token': '4po-8eaed7f5d56569670b0a',
-    'user': 2,
-    'data': ""
-    }
 
 Builder.load_string("""
 #:import ValleListView components.listview
 #:import BotonIcon components.buttons
-#:import LabelClicable components.labels
+#:import * components.labels
 #:import res components.resources
-<Pedidos>:
+<PedidosWidget>:
     anchor_x: 'center'
     anchor_y: 'center'
     scroll: _scroll
@@ -85,10 +83,22 @@ Builder.load_string("""
         ValleListView:
             size_hint: 1, 1
             id: _listview
+            cheight: '60dp'
+            
     AnchorLayout:
         anchor_x: 'center'
         anchor_y: 'top'
-        size_hint: 1, .1
+        size_hint: 1, .2
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: .95, .95
+            LabelColor:
+                text: root.direccion
+                font_size: '12dp'
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'top'
+        size_hint: 1, .2
         BoxLayout:
             orientation: 'horizontal'
             size_hint: .95, .95
@@ -120,6 +130,12 @@ Builder.load_string("""
         on_release: root.borrar(root)
 
 """)
+
+class PedidosSenderQSon(QSonSender):
+    db_name = "ventas"
+    url = "http://btres.elbrasilia.com/simpleapi/"
+    LineasPedido()
+
 class LineaWidget(BoxLayout):
     borrar = ObjectProperty(None, allowNone=True)
 
@@ -127,52 +143,62 @@ class LineaWidget(BoxLayout):
 class PedidoWidget(BoxLayout):
     rm = ObjectProperty(None, allowNone=True)
     tag = ObjectProperty(None, allowNone=True)
+    direccion = StringProperty("No hay direccion")
 
 
-class Pedidos(AnchorLayout):
+class PedidosWidget(AnchorLayout):
 
     stop = threading.Event()
 
     def __init__(self, **kargs):
-        super(Pedidos, self).__init__(**kargs)
-        threading.Thread(target=self.pedidos).start()
-        Clock.schedule_once(self.mostra_pedidos, 5)
+        super(PedidosWidget, self).__init__(**kargs)
+        Logger.debug('Cagada')
         self.listapedidos = []
+        self.modify_pedidos = []
+        self.lock = threading.Lock()
+        threading.Thread(target=self.get_pedidos).start()
+        Clock.schedule_once(self.mostra_pedidos, 5)
+
 
 
     def servido(self, root):
         tag = root.tag
         s = tag.servido
-        s = "False" if s == "True" else "True"
-        root.color = '#beec90' if s == "True" else '#b9b9b9'
+        s = False if s == True else True
         tag.servido = s
         tag.save()
-        query = "IDpedido={0} AND servido='False'".format(tag.IDpedido)
+        self.servir_linea(tag.id)
+        root.color = '#beec90' if s == True else '#b9b9b9'
 
 
     def rm(self, root, tag):
-        self.listapedidos.remove(tag.ID)
+        self.listapedidos.remove(tag.id)
         tag.delete()
+        tag.servido = True
+        self.servir_pedido(tag)
+        if tag.id in self.listapedidos:
+            self.listapedidos.remove(tag.id)
         self.view.remove_widget(root)
 
 
     def mostra_pedidos(self, dt):
-        pedidos = Pedido().getAll(query="servido='False'")
+        pedidos = Pedidos.filter()
         for p in pedidos:
-            if not p.ID in self.listapedidos:
-                self.listapedidos.append(p.ID)
-                ls = p.lineas.get(query="imprimible='True'")
+            if not p.id in self.listapedidos:
+                self.listapedidos.append(p.id)
+                ls = p.lineaspedido_set.get(query="imprimible=1")
                 if len(ls) > 0:
                     pedidowidget = PedidoWidget(rm=self.rm, tag=p)
-                    fecha = datetime.strptime(p.fecha, "%Y-%m-%d %H:%M:%S.%f")
+                    fecha = p.fecha
                     fs = fecha.strftime("%d/%m/%Y %H:%M")
                     texto = "{0}\nnum: {1}\n{2}".format(fs,
                                                        p.num_avisador,
                                                        p.para_llevar)
                     pedidowidget.texto = texto
+                    pedidowidget.direccion = p.direccion
                     for l in ls:
                         linea = LineaWidget(borrar=self.servido)
-                        if l.servido == "True":
+                        if l.servido == True:
                             linea.color = "#beec90"
                         linea.tag = l
                         linea.contenedor = pedidowidget
@@ -181,80 +207,94 @@ class Pedidos(AnchorLayout):
 
                     self.view.add_widget(pedidowidget)
 
-        Clock.schedule_once(self.mostra_pedidos, 6)
+        Clock.schedule_once(self.mostra_pedidos, 1)
 
     def got_json(self, result, val):
-        self.modify_pedidos = []
-        for s in  val["get"]["pedidos"]:
-            self.modify_pedidos.append({
-                "id": s["id"],
-                'estado': s["estado"].replace("NO", "SI")
-            })
-            p = Pedido(**s)
-            p.save()
-            for l in s["lineaspedido"]:
-                linea = LineasPedido(**l)
-                linea.imprimible = self.esImprimible(l)
-                linea.save()
-                p.lineas.add(linea)
+        print val
+        if val["success"] == True:
+            lista_pedidos = []
+            for s in  val["get"]["pedidos"]:
+                if  s["id"] in self.modify_pedidos:
+                    continue
+                p = Pedidos(**s)
+                p.estado = p.estado.replace("NO", "SI")
+                self.modify_pedidos.append(s["id"])
+                lista_pedidos.append(s)
+                for c in s["clientes"]:
+                    for d in c["direcciones"]:
+                        if d["id"] == c["direccion"]:
+                            p.direccion = d["direccion"] + '  Tlf:' + c["telefono"]
+                p.save()
+                for l in s["lineaspedido"]:
+                    linea = LineasPedido(**l)
+                    linea.imprimible = self.esImprimible(l)
+                    linea.save()
+                    p.lineaspedido_set.add(linea)
 
-        self.close_pedidos()
-
+            if len(lista_pedidos) > 0:
+                self.close_pedidos(lista_pedidos)
 
     def echo(self, request, val):
-        print val
+        pass
+
+    def echo_servido(self, request, val):
+        pass
 
     def esImprimible(self, val):
         if val.get("tipo") == "bebidas" or val.get("tipo") == "postres":
-            return "False"
+            return False
         else:
-            return "True"
+            return True
 
-    def pedidos(self):
+    def get_pedidos(self):
         while True:
 
             if self.stop.is_set():
                 # Stop running this thread so the main Python process can exit.
+                print ("Adioooooos....")
                 return
 
-            SEND_DATA["data"]= json.dumps(
-                {'get':{
-                    'db': 'ventas',
-                    "pedidos":{
-                        "query": "estado LIKE '%_NO%'",
-                        'lineaspedido':{}
-                    }
-                }}
-            )
-            data = urllib.urlencode(SEND_DATA)
-            headers = {'Content-type': 'application/x-www-form-urlencoded',
-                       'Accept': 'text/json'}
-            r = UrlRequest(URL_SERVER+"/themagicapi/qson_django/",
-                           on_success=self.got_json, req_body=data,
-                           req_headers=headers, method="POST")
-            time.sleep(6)
+            qsonsender = PedidosSenderQSon()
+            qson = QSon("Pedidos", estado__icontains="_NO")
+            qson.append_child(QSon("LineasPedido"))
+            cl = QSon("Clientes")
+            cl.append_child(QSon("Direcciones"))
+            qson.append_child(cl)
+            qsonsender.filter(self.got_json, qson=(qson,), wait=False)
+            time.sleep(2)
 
-    def close_pedidos(self):
-        SEND_DATA["data"]= json.dumps(
-            {'add':{
-                'db': 'ventas',
-                "pedidos":self.modify_pedidos
-            }}
-        )
+    def servir_linea(self, id):
+        qsonsender = PedidosSenderQSon()
+        qsons = []
+        for s in LineasPedido.filter(id=id):
+            qson = QSon("LineasPedido", reg=s.toDICT())
+            qsons.append(qson)
 
-        data = urllib.urlencode(SEND_DATA)
-        headers = {'Content-type': 'application/x-www-form-urlencoded',
-                   'Accept': 'text/json'}
-        r = UrlRequest(URL_SERVER+"/themagicapi/qson_django/",
-                       on_success=self.echo, req_body=data,
-                       req_headers=headers, method="POST")
+        qsonsender.save(self.echo_servido, qson=qsons, wait=False)
+
+    def servir_pedido(self, p):
+        qsonsender = PedidosSenderQSon()
+        qson = QSon("Pedidos", reg=p.toDICT())
+        qsonsender.save(self.echo_servido, qson=(qson,), wait=False)
+
+
+    def close_pedidos(self, lista_pedidos):
+        qsonsender = PedidosSenderQSon()
+        qsons = []
+        for s in lista_pedidos:
+            s["estado"] = s["estado"].replace("NO", "SI")
+            qson = QSon("Pedidos", reg=s)
+            qsons.append(qson)
+
+        qsonsender.save(self.echo, qson=qsons, wait=False)
+
 
 
 class AppRun(App):
 
     def build(self):
         self.title = "Pedidos"
-        return Pedidos()
+        return PedidosWidget()
 
     def on_stop(self):
         # The Kivy event loop is about to stop, set a stop signal;

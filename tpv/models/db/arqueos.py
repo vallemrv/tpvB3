@@ -2,7 +2,7 @@
 # @Date:   13-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 18-Feb-2018
+# @Last modified time: 20-Feb-2018
 # @License: Apache license vesion 2.0
 
 
@@ -34,7 +34,7 @@ class Arqueos(models.Model):
     efectivo = models.DecimalField(max_digits=20, decimal_places=2)
     cambio = models.DecimalField(max_digits=20, decimal_places=2)
     total_gastos = models.DecimalField(max_digits=20, decimal_places=2)
-    targeta = models.DecimalField(max_digits=20, decimal_places=2)
+    tarjeta = models.DecimalField(max_digits=20, decimal_places=2)
     descuadre = models.DecimalField(max_digits=20, decimal_places=2)
     pedidos = models.ManyToManyField("Pedidos")
     pedidosextra = models.ManyToManyField(PedidosExtra)

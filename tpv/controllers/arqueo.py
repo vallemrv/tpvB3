@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 13-Feb-2018
+# @Last modified time: 23-Feb-2018
 # @License: Apache license vesion 2.0
 
 
@@ -20,7 +20,7 @@ from controllers.lineaarqueo import LineaArqueo
 from valle_libs.tpv.impresora import DocPrint
 from valle_libs.utils import parse_float
 
-
+from modals import Aceptar
 from models.db import Arqueos, Pedidos, Conteo, Gastos, PedidosExtra
 import threading
 
@@ -36,22 +36,33 @@ class Arqueo(AnchorLayout):
         self.lista_ticket = []
         self.lista_ingresos = []
         self.fecha = ""
+        self.cambio = 300.00
         self.caja_dia = 0.0
         self.efectivo = 0.0
-        self.targeta = 0.0
+        self.tarjeta = 0.0
         self.total_gastos = 0.0
         self.conteo.rm_all_widgets()
         self.gastos.rm_all_widgets()
         self.ingresos.rm_all_widgets()
-        threading.Thread(target=self.get_ticket).start()
+        pd = Pedidos.filter(query="estado LIKE 'NPG_%'")
+        if len(pd) > 0:
+            self.aceptar = Aceptar(onExit=self.salir_arqueo)
+            self.aceptar.open()
+        else:
+            threading.Thread(target=self.get_ticket).start()
+
+
+    def salir_arqueo(self):
+        if self.aceptar != None:
+            self.aceptar.dismiss()
+        self.tpv.mostrar_inicio()
 
     def get_ticket(self):
-        db = Pedidos()
-        for tk in db.filter(query="estado LIKE 'PG_%'"):
+        for tk in Pedidos.filter(query="estado LIKE 'PG_%'"):
             self.lista_ticket.append(tk)
             self.caja_dia += tk.total
-            if tk.modo_pago == "Targeta":
-                self.targeta += tk.total
+            if tk.modo_pago == "Tarjeta":
+                self.tarjeta += tk.total
 
     def arquear(self):
         self.tpv.show_spin()
@@ -60,16 +71,18 @@ class Arqueo(AnchorLayout):
 
     def run_arqueo(self):
         arqueo = Arqueos()
+        if self.cambio == "":
+            self.cambio = 300.00
         self.efectivo = self.efectivo - parse_float(self.cambio)
         descuadre =  (self.total_gastos +
-                      self.efectivo + self.targeta) - self.caja_dia
+                      self.efectivo + self.tarjeta) - self.caja_dia
         self.lista_conteo = sorted(self.lista_conteo, key=lambda k: k["tipo"],
                                    reverse=True)
         arqueo.save(caja_dia=self.caja_dia,
                     efectivo=self.efectivo,
                     cambio=self.cambio,
                     total_gastos=self.total_gastos,
-                    targeta=self.targeta,
+                    tarjeta=self.tarjeta,
                     descuadre=descuadre)
         for tk in self.lista_ticket:
             tk.estado = "arqueado"
@@ -163,13 +176,13 @@ class Arqueo(AnchorLayout):
         _num_pd = num_pd.text
         _importe = importe.text
         linea = LineaArqueo(borrar=self.borrar_ingreso)
-        _modo_pago = "Efectivo" if not modo_pago.active else "Targeta"
+        _modo_pago = "Efectivo" if not modo_pago.active else "Tarjeta"
         linea.text = u"Peddos {0} modo pago {1}  ".format(_num_pd, _modo_pago)
         linea.total = parse_float(_importe)
         linea.tag = {"numero_pedido": _num_pd, "importe": _importe,
                      "modo_pago": _modo_pago, "estado": "arqueado"}
-        if _modo_pago == "Targeta":
-            self.targeta += linea.total
+        if _modo_pago == "Tarjeta":
+            self.tarjeta += linea.total
         self.caja_dia += linea.total
         num_pd.text = importe.text = ""
         modo_pago.active = False
@@ -178,8 +191,8 @@ class Arqueo(AnchorLayout):
 
     def borrar_ingreso(self, linea):
         modo_pago = linea.tag.get("modo_pago")
-        if modo_pago == "Targeta":
-            self.targeta -= linea.total
+        if modo_pago == "Tarjeta":
+            self.tarjeta -= linea.total
         self.caja_dia -= linea.total
         self.lista_ingresos.remove(linea.tag)
         self.ingresos.rm_linea(linea)

@@ -2,110 +2,105 @@
 # @Date:   02-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 18-Feb-2018
+# @Last modified time: 21-Feb-2018
 # @License: Apache license vesion 2.0
 
 
 import config
-import requests
-import json
+
+from valle_libs.valleorm.qson import *
 from models.db import *
 from datetime import datetime
 from kivy.storage.jsonstore import JsonStore
 import time
+import json
+import os
+
+path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+url_db = os.path.join(path, "db", "sync.json")
+db = JsonStore(url_db)
 
 
+class SyncVentasSender(QSonSender):
+    db_name = "ventas"
+    url = config.URL_SERVER+"/simpleapi/"
 
-data = {
-    'token': config.TOKEN_API,
-    'user': config.TOKEN_USER,
-    'data': ''
-    }
+class SyncClasesSender(QSonSender):
+    db_name = "clases"
+    url = config.URL_SERVER+"/simpleapi/"
+
+def on_success(obj, result):
+    if result["success"] == True:
+        text_hora = str(datetime.now())
+        db.put("db", date=text_hora)
+        if "arqueos" in result["add"]:
+            borrar_reg()
+
+def sync_send(text_hora):
+    ps = Pedidos.filter(query='modify > "%s" AND estado <> "arqueado"' % text_hora)
+
+    qsons = []
+    for p in ps:
+        qson = QSon("Pedidos", reg=p.toDICT())
+        qsons.append(qson)
+        for l in p.lineaspedido_set.get():
+            qson_child = QSon("LineasPedido", reg=l.toDICT())
+            qson.append_child(qson_child)
+        for c in p.clientes_set.get():
+            qson_child = QSon("Clientes", reg=c.toDICT())
+            qson.append_child(qson_child)
+            for d in c.direcciones_set.get():
+                qson_dir = QSon("Direcciones", reg=d.toDICT())
+                qsons.append(qson_dir)
+
+    if len(qsons) > 0:
+        qsonsender = SyncVentasSender()
+        qsonsender.save(on_success, qsons)
+
+def borrar_reg():
+    ps = Arqueos.filter()
+    for p in ps:
+        for l in p.conteo.get():
+            l.delete()
+        for c in p.gastos.get():
+            c.delete()
+        for d in p.pedidosextra.get():
+            d.delete()
+        for d in p.pedidos.get():
+            d.delete()
+        p.delete()
+
+def sync_arqueos_send(text_hora):
+    ps = Arqueos.filter(query='modify > "%s"' % text_hora)
+    qsons = []
+    for p in ps:
+        qson = QSon("Arqueos", reg=p.toDICT())
+        qsons.append(qson)
+        for l in p.conteo.get():
+            qson_child = QSon("Conteo", reg=l.toDICT())
+            qson.append_child(qson_child)
+        for c in p.gastos.get():
+            qson_child = QSon("Gastos", reg=c.toDICT())
+            qson.append_child(qson_child)
+        for d in p.pedidosextra.get():
+            qson_dir = QSon("PedidosExtra", reg=d.toDICT())
+            qsons.append(qson_dir)
+        for d in p.pedidos.get():
+            qson_dir = QSon("Pedidos", reg=d.toDICT())
+            qsons.append(qson_dir)
 
 
-def sync_send():
-    db = JsonStore("../db/sync.json")
+    if len(qsons) > 0:
+        qsonsender = SyncVentasSender()
+        qsonsender.save(on_success, qsons)
+
+
+if __name__ == '__main__':
+
     if "db" in db:
         text_hora = db.get("db")["date"]
     else:
         text_hora = str(datetime.now())
-        db.put("db", date=text_hora)
 
-    sync = {
-        "add" :{
-            "db": "ventas",
-            "pedidos":[],
-            "arqueos":[]
-        }
-    }
-
-    p = Pedidos()
-    modify = p.filter(query='modify > "%s" AND estado <> "arqueado"' % text_hora)
-
-    for m in modify:
-        lineas = LineasPedido.filter(pedidos_id=m.id)
-        pedido_send = m.toDICT()
-        sync["add"]["pedidos"].append(pedido_send)
-        if len(lineas) > 0:
-            pedido_send["lineaspedido"] = []
-            for l in lineas:
-                pedido_send["lineaspedido"].append(l.toDICT())
-        clientes = m.clientes_set.get()
-        if len(clientes) > 0:
-            pedido_send["clientes"] = []
-            for c in clientes:
-                direcciones = c.direcciones_set.get()
-                clientes_sync = c.toDICT()
-                if len(direcciones) > 0:
-                    clientes_sync["direcciones"] = []
-                    for d in direcciones:
-                        clientes_sync["direcciones"].append(d.toDICT())
-                pedido_send["clientes"].append(clientes_sync)
-
-
-    a = Arqueos()
-    arqueos = a.filter(query='modify > "%s"' % text_hora)
-
-    for arq in arqueos:
-        arq_send = arq.toDICT()
-        sync["add"]["arqueos"].append(arq_send)
-        conteo = arq.conteo.get()
-        if len(conteo) > 0:
-            arq_send["conteo"] = []
-            for c in conteo:
-                arq_send["conteo"].append(c.toDICT())
-        ingresos = arq.pedidosextra.get()
-        if len(ingresos) > 0:
-            arq_send["pedidosextra"] = []
-            for ing in ingresos:
-                arq_send["pedidosextra"].append(ing.toDICT())
-        gastos = arq.gastos.get()
-        if len(gastos) > 0:
-            arq_send["gastos"] = []
-            for g in gastos:
-                gastos_sync = g.toDICT()
-                arq_send["gastos"].append(gastos_sync)
-        pedidos = arq.pedidos.get()
-        if len(pedidos) > 0:
-            arq_send["pedidos"] = []
-            for p in pedidos:
-                arq_send["pedidos"].append({"id": p.id, "estado": "arqueado"})
-
-
-
-
-    if len(modify) > 0 or len(arqueos) > 0:
-        data["data"] = json.dumps(sync)
-        r = requests.post(config.URL_SERVER+"/simpleapi/", data=data)
-        f = open("error.html", "w")
-        f.write(r.content)
-        result = r.json()
-        if result["success"] == True:
-            print (result)
-            text_hora = str(datetime.now())
-            db.put("db", date=text_hora)
-
-
-
-
-#sync_send()
+    sync_send(text_hora)
+    sync_arqueos_send(text_hora)

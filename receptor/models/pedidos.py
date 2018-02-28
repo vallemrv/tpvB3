@@ -3,33 +3,41 @@
 # @Date:   02-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 20-Sep-2017
+# @Last modified time: 26-Feb-2018
 # @License: Apache license vesion 2.0
 
 
-from valleorm.models import Model
-from valleorm.models import  RelationShip
-from valleorm.models import Field
+from valleorm import models
 
-class LineasPedido(Model):
-    text = Field(dato="",tipo="TEXT")
-    des = Field(dato="",tipo="TEXT")
-    cant = Field(dato=1,tipo="INTEGER")
-    precio = Field(dato=0.0,tipo="REAL")
-    total = Field(dato=0.0,tipo="REAL")
-    pedido = RelationShip(name="pedido",  tipo="ONE")
-    servido = Field(dato="False",tipo="TEXT")
-    tipo = Field(dato="",tipo="TEXT")
-    imprimible =  Field(dato="True",tipo="TEXT")
+class Pedidos(models.Model):
+    fecha = models.DateTimeField(auto_now_add=True)
+    modo_pago = models.CharField(max_length=50)
+    para_llevar = models.CharField(max_length=50)
+    num_avisador = models.CharField(max_length=50)
+    direccion = models.CharField(max_length=150,  default="No hay direccion", null=True)
+    total = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
+    estado = models.CharField(max_length=10, default="PG_NO")
+    entrega = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
+    cambio = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
+    modify = models.DateTimeField(auto_now=True)
+    servido = models.BooleanField(default=False)
+    def __unicode__(self):
+        return u"{0} - {1} - {2}".format(self.id, self.estado, self.total)
+
+    class Meta:
+        verbose_name = "Pedido"
 
 
-class Pedido(Model):
-    total = Field(dato=0.0,tipo="REAL")
-    modo_pago = Field(dato="",tipo="TEXT")
-    fecha = Field(dato="",tipo="TEXT")
-    num_avisador = Field(dato="",tipo="TEXT")
-    para_llevar = Field(dato="", tipo="TEXT")
-    numTicket = Field(dato="", tipo="TEXT")
-    num_tlf = Field(dato="",tipo="TEXT")
-    lineas = RelationShip(name='lineaspedido', tipo="MANY")
-    servido = Field(dato="False",tipo="TEXT")
+class LineasPedido(models.Model):
+    text = models.CharField(max_length=50)
+    des = models.TextField(null=True)
+    cant = models.IntegerField()
+    precio = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
+    total = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
+    tipo = models.CharField(max_length=50)
+    pedidos = models.ForeignKey(Pedidos, on_delete=models.CASCADE)
+    modify = models.DateTimeField(auto_now=True)
+    servido = models.BooleanField(default=False)
+    imprimible = models.BooleanField(default=False)
+    def __unicode__(self):
+        return u"{0} - {1} - {2} - {3}".format(self.cant, self.text, self.precio, self.total)

@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 13-Sep-2017
+# @Last modified time: 21-Feb-2018
 # @License: Apache license vesion 2.0
 
 
@@ -22,7 +22,7 @@ Builder.load_string('''
     spacing: 5
     orientation: 'horizontal'
     LabelClicable:
-        bgColor: "#2f2f2f"
+        bg_color: "#2f2f2f"
         color: "#999999"
         font_size: '16dp'
         text: "{0}  {1:.2f} €".format(root.text, root.total)

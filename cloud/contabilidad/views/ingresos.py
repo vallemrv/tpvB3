@@ -4,7 +4,7 @@
 # @Date:   01-Jan-2018
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 09-Jan-2018
+# @Last modified time: 19-Feb-2018
 # @License: Apache license vesion 2.0
 
 from django.forms.models import model_to_dict
@@ -15,7 +15,8 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from contabilidad.models import Ingresos, Proveedores
 from contabilidad.forms import IngresosForm
-from gestion.models import Arqueocaja, Cierrecaja, Ticket, Ticketlineas, Lineaspedido
+from ventas.models import (Arqueos, Pedidos, PedidosExtra,
+                           Conteo, Gastos, LineasPedido)
 from tokenapi.http import JsonResponse
 from datetime import datetime, timedelta
 

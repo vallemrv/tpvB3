@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 16-Feb-2018
+# @Last modified time: 20-Feb-2018
 # @License: Apache license vesion 2.0
 
 from kivy.uix.anchorlayout import AnchorLayout
@@ -103,6 +103,7 @@ class ClientesController(AnchorLayout):
 
     def show_find(self):
         self.clear_widgets()
+        self.find.txt.text = ""
         self.add_widget(self.find)
 
     def aceptar(self, numTlf):

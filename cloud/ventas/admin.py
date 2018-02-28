@@ -2,7 +2,7 @@
 # @Date:   13-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 30-Sep-2017
+# @Last modified time: 19-Feb-2018
 # @License: Apache license vesion 2.0
 
 
@@ -15,8 +15,8 @@ from models import *
 
 @admin.register(Arqueos)
 class ArqueosAdmin(admin.ModelAdmin):
-    list_display = ('fecha', 'caja_dia', "efectivo", "targeta", "cambio", "descuadre")
-    fields = ('caja_dia', "efectivo", "targeta", "cambio", "descuadre", "conteo")
+    list_display = ('fecha', 'caja_dia', "efectivo", "tarjeta", "cambio", "descuadre")
+    fields = ('caja_dia', "efectivo", "tarjeta", "cambio", "descuadre", "conteo")
 
 
 class DireccionInline(admin.TabularInline):

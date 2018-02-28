@@ -1,3 +1,3 @@
-title=Recepcion2
+title=Recepcion
 author=valleapp.com
 orientation=landscape

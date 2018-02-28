@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 16-Feb-2018
+# @Last modified time: 21-Feb-2018
 # @License: Apache license vesion 2.0
 
 from kivy.uix.anchorlayout import AnchorLayout
@@ -164,10 +164,8 @@ class Tpv(AnchorLayout):
         threading.Thread(target=self.run_sync_db).start()
 
     def run_sync_db(self):
-        #import os
-        #os.system("python ./syncdb_send.py")
-        pass
-
+        import os
+        os.system("python ./syncdb_send.py")
 
     def refresh(self):
         threading.Thread(target=self.run_refresh).start()

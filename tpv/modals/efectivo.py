@@ -4,7 +4,7 @@
 # @Date:   13-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 13-Feb-2018
+# @Last modified time: 23-Feb-2018
 # @License: Apache license vesion 2.0
 
 
@@ -131,7 +131,7 @@ class Efectivo(ModalView):
     def __init__(self, **kargs):
         super(Efectivo, self).__init__(**kargs)
         self.botonera.buttons = self.buttons
-
+        self.auto_dismiss=False
 
     def on_total(self, w, v):
         self.text_total = "{0:0.2f} €".format(float(v))

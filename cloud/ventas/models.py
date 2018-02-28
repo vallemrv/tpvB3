@@ -2,7 +2,7 @@
 # @Date:   13-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 14-Feb-2018
+# @Last modified time: 27-Feb-2018
 # @License: Apache license vesion 2.0
 
 
@@ -22,6 +22,7 @@ class Pedidos(models.Model):
     entrega = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
     cambio = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
     modify = models.DateTimeField(auto_now=True)
+    servido = models.BooleanField(default=False)
     def __unicode__(self):
         return u"{0} - {1} - {2}".format(self.id, self.estado, self.total)
 
@@ -29,15 +30,15 @@ class Pedidos(models.Model):
         verbose_name = "Pedido"
 
 class Clientes(models.Model):
-    nombre = models.CharField(max_length=50)
-    apellido = models.CharField(max_length=100, null=True)
-    email = models.EmailField(max_length=100, null=True, blank=True)
-    telefono = models.CharField(max_length=20)
-    nota = models.TextField(null=True)
+    nombre = models.CharField(max_length=50,null=True, blank=True, default="0")
+    apellido = models.CharField(max_length=100,null=True, default="0")
+    email = models.EmailField(max_length=100, null=True, blank=True, default="0")
+    telefono = models.CharField(max_length=20, null=True, blank=True, default="0")
+    nota = models.TextField(null=True, blank=True, default="0")
     pedidos = models.ManyToManyField(Pedidos)
     fecha_add = models.DateField(auto_now_add=True)
     modify = models.DateTimeField(auto_now=True)
-    direccion = models.IntegerField(null=True)
+    direccion = models.IntegerField(null=True, default=0)
 
     def pedidos_totales(self):
         return self.pedidos.count()
@@ -71,6 +72,7 @@ class LineasPedido(models.Model):
     tipo = models.CharField(max_length=50)
     pedidos = models.ForeignKey(Pedidos, on_delete=models.CASCADE)
     modify = models.DateTimeField(auto_now=True)
+    servido = models.BooleanField(default=False)
     def __unicode__(self):
         return u"{0} - {1} - {2} - {3}".format(self.cant, self.text, self.precio, self.total)
 
@@ -112,7 +114,7 @@ class Arqueos(models.Model):
     efectivo = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
     cambio = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
     total_gastos = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
-    targeta = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
+    tarjeta = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
     descuadre = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
     pedidos = models.ManyToManyField(Pedidos)
     gastos = models.ManyToManyField(Gastos)
@@ -124,6 +126,6 @@ class Arqueos(models.Model):
         return u"{0} - {1} - {2} - {3} - {4} - {5}".format(self.fecha.strftime("%d/%m/%Y-%H:%M"),
                                                     self.caja_dia, self.efectivo,
                                                     self.total_gastos,
-                                                    self.targeta, self.descuadre)
+                                                    self.tarjeta, self.descuadre)
     class Meta:
         verbose_name = "Arqueo"

@@ -1,0 +1,51 @@
+<Sugerencias>:
+    txtSug: _txtInput
+    size_hint: .7, .7
+    canvas:
+        Color:
+            rgba: 1,1,1,1
+        Rectangle:
+            size: root.size
+            pos: root.pos
+    des: 'Descrpicion'
+    AnchorLayout:
+        anchor_y: 'center'
+        anchor_x: 'center'
+        GridLayout:
+            cols: 1
+            padding: 20
+            size_hint: .95, .95
+            AnchorLayout:
+                anchor_x: 'center'
+                anchor_y: 'top'
+                size_hint_x: .45
+                GridLayout:
+                    cols: 1
+                    spacing: 5
+                    size_hint_y: None
+                    height: '380dp'
+                    LabelColor:
+                        text: "Descrpicion"
+                        size_hint_y: None
+                        height: "70dp"
+                        font_size: '30dp'
+                        color: '#ffffff'
+                        bgColor: '#000000'
+                    LabelColor:
+                        bgColor: '#333333'
+                        size_hint_y: None
+                        height: '90dp'
+                        text: root.des
+                        font_size: '19dp'
+                        color: '#ffffff'
+                    TextInput:
+                        size_hint_y: None
+                        id: _txtInput
+                        text: root.texto
+                        font_size: "30dp"
+                        height: '50dp'
+                        multiline: False
+                    Button:
+                        size_hint_y: None
+                        text: "Salir"
+                        on_press: root.exit()

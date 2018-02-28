@@ -2,7 +2,7 @@
 # @Date:   10-Feb-2018
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 14-Feb-2018
+# @Last modified time: 19-Feb-2018
 # @License: Apache license vesion 2.0
 
 
@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
                 ('efectivo', models.DecimalField(decimal_places=2, default=0.0, max_digits=20, null=True)),
                 ('cambio', models.DecimalField(decimal_places=2, default=0.0, max_digits=20, null=True)),
                 ('total_gastos', models.DecimalField(decimal_places=2, default=0.0, max_digits=20, null=True)),
-                ('targeta', models.DecimalField(decimal_places=2, default=0.0, max_digits=20, null=True)),
+                ('tarjeta', models.DecimalField(decimal_places=2, default=0.0, max_digits=20, null=True)),
                 ('descuadre', models.DecimalField(decimal_places=2, default=0.0, max_digits=20, null=True)),
                 ('modify', models.DateTimeField(auto_now=True)),
             ],

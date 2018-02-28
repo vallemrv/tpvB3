@@ -1,0 +1,72 @@
+<ListadoPdWidget>:
+    pedido: _pedido
+    lista: _listado_pedidos
+    precio: 0
+    anchor_x: 'center'
+    anchor_y: 'center'
+    BoxLayout:
+        orientation: 'horizontal'
+        spacing: 10
+        size_hint: .9, .9
+        BoxLayout:
+            size_hint_x: .6
+            orientation: 'vertical'
+            spacing: 5
+            LabelColor:
+                bgColor: "#000000"
+                text: "Pedidos pendientes de cobro"
+                size_hint_y: None
+                height: '70dp'
+                color: "#FFFFFF"
+            ValleListView:
+                id: _listado_pedidos
+                bgColor: "#000000"
+        BoxLayout:
+            spacing: 5
+            size_hint_x: .4
+            orientation: 'vertical'
+            LabelColor:
+                bgColor: "#000000"
+                size_hint_y: None
+                height: "70dp"
+                text: root.des
+            ValleListView:
+                id: _pedido
+                bgColor: "#000000"
+            BoxLayout:
+                canvas.before:
+                    Color:
+                        rgba: 0,0,0,1
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+                orientation: 'horizontal'
+                size_hint_y: .1
+                Label:
+                    font_size: 35
+                    text: 'Total:'
+                Label:
+                    font_size: 35
+                    text: "{0:.2f} €".format(root.precio)
+            BoxLayout:
+                size_hint_y: .2
+                ButtonColor:
+                    id: _btnPedido
+                    size_hint_x: .4
+                    text: 'imprimir'
+                    on_press: root.imprimirTk()
+                ButtonColor:
+                    id: _btnPedido
+                    size_hint_x: .4
+                    text: "Efectivo"
+                    on_press: root.cobrar()
+                ButtonIcon:
+                    id: _btnTarjeta
+                    size_hint_x: .2
+                    icon: res.FA_CREDIT_CARD
+                    on_press: root.cobrar_tarjeta()
+                ButtonIcon:
+                    size_hint_x: .2
+                    id: _btnAtras
+                    icon: res.FA_EXIT
+                    on_press: root.salir()

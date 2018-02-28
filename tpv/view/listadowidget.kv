@@ -18,7 +18,7 @@
                 size_hint_y: None
                 height: "70dp"
                 color: '#ffffff'
-                border_size: 0
+                border_size: 1
             MenuListView:
                 id: _listado_pedidos
                 bg_color: "#333333"
@@ -52,6 +52,11 @@
                     text: "{0:.2f} €".format(root.precio)
             BoxLayout:
                 size_hint_y: .2
+                ButtonIcon:
+                    id: _btnTarjeta
+                    size_hint_x: .2
+                    icon: res.FA_CHANGE
+                    on_press: root.cambiar_formapg()
                 ButtonColor:
                     id: _btnPedido
                     size_hint_x: .4
@@ -62,6 +67,7 @@
                     size_hint_x: .4
                     text: 'Ticket'
                     on_press: root.imprimirTk()
+
                 ButtonIcon:
                     size_hint_x: .2
                     id: _btnAtras
