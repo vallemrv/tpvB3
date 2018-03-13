@@ -1,0 +1,134 @@
+{% extends "base_admin.html" %}
+{% load global_tag %}
+{% load venta_tag %}
+{% block content %}
+
+<div class="bg-light page-header">
+  <h3>Desglose arqueo</h3>
+</div>
+
+<div class="bg-light mt-2 page-header">
+  <div class="row">
+    <div class="col-4">
+      {{query.fecha}}
+    </div>
+    <div class="col-4">
+      <b>Total gastos:</b>  {{query.total_gastos}}
+    </div>
+    <div class="col-4">
+      <b>Descuadre:</b> {{query.descuadre}}
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-4 mt-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-8"><b>Total caja:</b></div>
+          <div class="col-4">{{query.caja_dia}}</div>
+      </div>
+      </div>
+      <ul data-spy="scroll" class="list-group list-group-flush view-informes-small">
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-8"><b>Ef. Local:</b></div>
+            <div class="col-4">{{query|efectivo}}</div>
+          </div>
+        </li>
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-8"><b>Tj. Local:</b></div>
+            <div class="col-4">{{query|tarjeta}}</div>
+          </div>
+        </li>
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-8"><b>Tj. Extras:</b></div>
+            <div class="col-4">{{query|extra}}</div>
+          </div>
+        </li>
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-8"><b>Ef. Extras:</b></div>
+            <div class="col-4">{{query|tarjeta_extra}}</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="col-md-4 mt-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-8"><b>T. Extras:</b></div>
+          <div class="col-4">{{query|total_extra}}</div>
+        </div>
+      </div>
+      <ul data-spy="scroll" class="list-group list-group-flush view-informes-small">
+        {% for c in query.pedidosextra.all %}
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-4">{{c.numero_pedido}}</div>
+                <div class="col-4">{{c.modo_pago}}</div>
+                <div class="col-4">{{c.importe}}</div>
+              </div>
+            </li>
+        {% endfor %}
+
+      </ul>
+    </div>
+  </div>
+
+  <div class="col-md-4 mt-2 ">
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-8"><b>T. Gastos:</b></div>
+          <div class="col-4">{{query.total_gastos}}</div>
+        </div>
+      </div>
+      <ul data-spy="scroll" class="list-group list-group-flush view-informes-small">
+        {% for c in query.gastos.all %}
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-8">{{c.des}}</div>
+                <div class="col-4">{{c.gasto}}</div>
+              </div>
+            </li>
+        {% endfor %}
+
+      </ul>
+    </div>
+  </div>
+
+  <div class="col-md-4 mt-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-8"><b>T. Conteo:</b></div>
+          <div class="col-4">{{query|total_conteo}}</div>
+          <div class="col-8"><b>Cambio:</b></div>
+          <div class="col-4">{{query.cambio}}</div>
+        </div>
+      </div>
+      <ul data-spy="scroll" class="list-group list-group-flush view-informes-large">
+        {% for c in query.conteo.all %}
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-4">{{c.can}}</div>
+                <div class="col-4">{{c.tipo}}</div>
+                <div class="col-4">{{c|total}}</div>
+              </div>
+            </li>
+        {% endfor %}
+
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+{% endblock content %}

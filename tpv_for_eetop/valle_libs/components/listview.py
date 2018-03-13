@@ -3,7 +3,7 @@
 # @Email:  valle.mrv@gmail.com
 # @Filename: listview.py
 # @Last modified by:   valle
-# @Last modified time: 08-Sep-2017
+# @Last modified time: 01-Mar-2018
 # @License: Apache license vesion 2.0
 
 
@@ -39,7 +39,7 @@ Builder.load_string('''
 
 class ValleListView(AnchorLayout):
     bgColor = StringProperty("#b0a18a")
-    cheight = NumericProperty("70dp")
+    cheight = NumericProperty("40dp")
 
     def add_linea(self, widget):
         self.list.add_widget(widget)

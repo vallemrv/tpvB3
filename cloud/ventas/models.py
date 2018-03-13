@@ -2,7 +2,7 @@
 # @Date:   13-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 27-Feb-2018
+# @Last modified time: 06-Mar-2018
 # @License: Apache license vesion 2.0
 
 
@@ -23,14 +23,16 @@ class Pedidos(models.Model):
     cambio = models.DecimalField(max_digits=20, decimal_places=2, null=True, default=0.0)
     modify = models.DateTimeField(auto_now=True)
     servido = models.BooleanField(default=False)
+
     def __unicode__(self):
         return u"{0} - {1} - {2}".format(self.id, self.estado, self.total)
 
     class Meta:
         verbose_name = "Pedido"
+        ordering = ["-modify"]
 
 class Clientes(models.Model):
-    nombre = models.CharField(max_length=50,null=True, blank=True, default="0")
+    nombre = models.CharField(max_length=50,null=True, blank=True, default="")
     apellido = models.CharField(max_length=100,null=True, default="0")
     email = models.EmailField(max_length=100, null=True, blank=True, default="0")
     telefono = models.CharField(max_length=20, null=True, blank=True, default="0")
@@ -119,6 +121,7 @@ class Arqueos(models.Model):
     pedidos = models.ManyToManyField(Pedidos)
     gastos = models.ManyToManyField(Gastos)
     conteo = models.ManyToManyField(Conteo)
+    pedidosextra = models.ManyToManyField(PedidosExtra)
     modify = models.DateTimeField(auto_now=True)
 
 

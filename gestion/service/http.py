@@ -3,7 +3,7 @@
 # @Email:  valle.mrv@gmail.com
 # @Filename: http.py
 # @Last modified by:   valle
-# @Last modified time: 16-Aug-2017
+# @Last modified time: 10-Mar-2018
 # @License: Apache license vesion 2.0
 
 from utils.models import (FamiliasModel, ProductosModel, PreguntasModel,
@@ -66,8 +66,8 @@ class Http(EventDispatcher):
         self.__modify__(on_success=on_success, query=query,
                         type_query='add', query_get=query_get, id=id)
 
-    def on_error(self, req,  error):
-        print 'error', error
+    def on_error(self, req,  e):
+        print("[ERROR  ] %s " % e)
 
     def get_model(self, title):
         pass

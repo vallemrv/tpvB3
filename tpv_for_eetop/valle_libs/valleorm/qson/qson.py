@@ -4,10 +4,11 @@
 # @Date:   25-Dec-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 27-Feb-2018
+# @Last modified time: 13-Mar-2018
 # @License: Apache license vesion 2.0
 
 from kivy.network.urlrequest import UrlRequest
+from kivy.core import Logger
 import urllib
 import copy
 import json
@@ -21,23 +22,23 @@ class QSon:
         if reg != None:
             self.reg = reg
         self.filter = {}
-        self.exclude = {}
+        self.exclude = []
         for k, v in filter.items():
             self.filter[k] = v
 
-    def add_filter(**filter):
+    def add_filter(self, **filter):
         for k, v in filter.items():
             self.filter[k] = v
 
-    def add_exclude(**filter):
+    def add_exclude(self, **filter):
+        exclude = {}
         for k, v in filter.items():
-            self.exclude[k] = v
+            exclude[k] = v
+        self.exclude.append(exclude)
 
     def append_child(self, qson):
         if not hasattr(qson, 'field_name'):
             qson.relation_field = qson.db_table.lower()
-        if  qson.relation_field == "clientes":
-            print qson.get_qson()
         self.childs.append(qson)
 
 
@@ -55,72 +56,88 @@ class QSonSender:
     url = None
     token = None
 
-    def save(self, on_success,  qson=[], wait=True):
-        qson_add = {"add": {"db": self.db_name,
-                            "rows": []}}
+    def __init__(self, **args):
+        self.qson_sender = {}
 
-        for m in qson:
-            qson_add["add"]["rows"].append(m.get_qson())
+    def __got_error__(self, req,  *args):
+        req._resp_status = "Error"
+        Logger.debug("got error {0}".format(req.url))
 
-        SEND_DATA = {'data':json.dumps(qson_add)}
+    def __got_fail__(self, req, *args):
+        req._resp_status = "Fail"
+        Logger.debug("got fail {0}".format(req.url))
 
+    def __got_redirect__(self, req, *args):
+        req._resp_status = "Redirect"
+        Logger.debug("got redirect {0}".format(req.url))
+
+
+    def send(self, on_success, wait=True):
+
+        SEND_DATA = {'data':json.dumps(self.qson_sender)}
         data = urllib.urlencode(SEND_DATA)
         headers = {'Content-type': 'application/x-www-form-urlencoded',
                    'Accept': 'text/json'}
         r = UrlRequest(self.url, on_success=on_success, req_body=data,
-                       req_headers=headers, method="POST")
+                       req_headers=headers, method="POST",
+                       on_failure=self.__got_fail__,
+                       on_error=self.__got_error__,
+                       on_redirect=self.__got_redirect__)
+
         if wait:
             r.wait()
 
-    def all(self, on_success, models=[], wait=True):
-        qson_add = {"get": {"db": self.db_name,
-                            "tipo": "all",
-                            "rows": []}}
 
-        for m in models:
-            qson_add["get"]["rows"].append({"db_table":m})
 
-        SEND_DATA = {'data':json.dumps(qson_add)}
-
-        data = urllib.urlencode(SEND_DATA)
+    def send_data(self, on_success, send_data):
+        data = urllib.urlencode(send_data)
         headers = {'Content-type': 'application/x-www-form-urlencoded',
                    'Accept': 'text/json'}
         r = UrlRequest(self.url, on_success=on_success, req_body=data,
-                       req_headers=headers, method="POST")
+                       req_headers=headers, method="POST",
+                       on_failure=self.got_fail,
+                       on_error=self.got_error, debug=True,
+                       on_redirect=self.got_redirect)
+
         if wait:
             r.wait()
 
-    def filter(self, on_success, qson=(), wait=False):
-        qson_add = {"get": {"db": self.db_name,
-                            "tipo": "filter",
-                            "rows": []}}
 
-        for m in qson:
-            qson_add["get"]["rows"].append(m.get_qson())
+    def get_data(self):
+        SEND_DATA = {'data':json.dumps(self.qson_sender)}
+        return SEND_DATA
 
-        SEND_DATA = {'data':json.dumps(qson_add)}
-        data = urllib.urlencode(SEND_DATA)
-        headers = {'Content-type': 'application/x-www-form-urlencoded',
-                   'Accept': 'text/json'}
-        r = UrlRequest(self.url, on_success=on_success, req_body=data,
-                       req_headers=headers, method="POST")
-        if wait:
-            r.wait()
 
-    def delete(self, on_success, qsonqh=(), wait=False):
-        qson_add = {"rm": {"db": self.db_name,
-                           "tipo": "filter",
-                           "rows": []}}
+    def join(self,  *qsons):
+        if not "join" in self.qson_sender:
+            self.qson_sender["join"] =  {"db": self.db_name,
+                                 "rows": []}
+        for m in qsons:
+            self.qson_sender["join"]["rows"].append(m.get_qson())
 
-        for m in qsonqh:
-            qson_add["rm"]["rows"].append(m.get_filter())
 
-        SEND_DATA = {'data':json.dumps(qson_add)}
 
-        data = urllib.urlencode(SEND_DATA)
-        headers = {'Content-type': 'application/x-www-form-urlencoded',
-                   'Accept': 'text/json'}
-        r = UrlRequest(self.url, on_success=on_success, req_body=data,
-                       req_headers=headers, method="POST")
-        if wait:
-            r.wait()
+    def save(self, *qsons):
+        if not "add" in self.qson_sender:
+            self.qson_sender["add"] = {"db": self.db_name,
+                                "rows": []}
+        for m in qsons:
+            self.qson_sender["add"]["rows"].append(m.get_qson())
+
+
+
+
+    def filter(self,  *qsons):
+        if not "get" in self.qson_sender:
+            self.qson_sender['get'] =  {"db": self.db_name,
+                                "rows": []}
+        for m in qsons:
+            self.qson_sender["get"]["rows"].append(m.get_qson())
+
+
+    def delete(self, *qsons):
+        if not "get" in self.qson_sender:
+            self.qson_sender["rm"] = {"db": self.db_name,
+                               "rows": []}
+        for m in qsons:
+            self.qson_sender["rm"]["rows"].append(m.get_filter())

@@ -4,19 +4,13 @@
 # @Date:   29-Aug-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 26-Feb-2018
+# @Last modified time: 18-Feb-2018
 # @License: Apache license vesion 2.0
 
 import sys
 import inspect
 import importlib
-from .constant import constant
-
-try:
-    from exceptions import ValueError
-except:
-    unicode = lambda s: str(s)
-
+from constant import constant
 
 class RelationShip(object):
 
@@ -94,7 +88,7 @@ class ForeignKey(RelationShip):
 
 
     def get_choices(self, **condition):
-        return self.related_class.filter(**condition)
+        return self.related_class.getAll(**condition)
 
     def get_sql_pk(self):
         sql = u"FOREIGN KEY({0}) REFERENCES {1}(id) %s" % self.on_delete

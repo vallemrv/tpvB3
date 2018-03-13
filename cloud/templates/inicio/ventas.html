@@ -1,0 +1,24 @@
+{% extends "base_admin.html" %}
+
+{% block content %}
+<div class="bg-light p-3 mb-3">
+    <h2>Contabilidad</h2>
+</div>
+<div id="main-content" class="bg-light p-3 mb-3">
+  <div class="row">
+        <div class="col-6 col-md-4 col-lg-3">
+          <a href="{% url 'ventas:lista_arqueos' %}" class="btn btn-primary btn-inicio">Arqueos</a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+          <a href="{% url 'ventas:pedidos_pendientes' %}" class="btn btn-primary btn-inicio">Pd. pendientes</a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+          <a href="{% url 'en_construccion' %}" class="btn btn-primary btn-inicio">Inf. articulos</a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+          <a href="{% url 'en_construccion' %}" class="btn btn-primary btn-inicio">Inf. clientes</a>
+        </div>
+
+    </div>
+</div>
+{% endblock content %}

@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 26-Feb-2018
+# @Last modified time: 02-Mar-2018
 # @License: Apache license vesion 2.0
 
 from kivy.uix.anchorlayout import AnchorLayout
@@ -14,13 +14,17 @@ from controllers import (Inicio, PedidoController, ListadoWidget,
                          ListadoPdWidget, ListadoParking,
                          ClientesController, Arqueo)
 from kivy.clock import Clock
+from kivy.lib import osc
 from kivy.properties import ObjectProperty, StringProperty
+from config import config
 from glob import glob
 from os import rename, path
 from datetime import datetime
 import threading
 
+
 Builder.load_file('view/tpv.kv')
+
 
 class MensajeCobro(AnchorLayout):
     tpv = ObjectProperty(None)
@@ -160,7 +164,8 @@ class Tpv(AnchorLayout):
         self.content.add_widget(self.parking)
 
     def sync_db(self):
-        threading.Thread(target=self.run_sync_db).start()
+        osc.sendMsg('/sync_service', ['sync', ], port=config.PORT_SERVICE)
+        #threading.Thread(target=self.run_sync_db).start()
 
     def run_sync_db(self):
         import os

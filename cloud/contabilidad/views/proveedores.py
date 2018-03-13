@@ -4,7 +4,7 @@
 # @Date:   01-Jan-2018
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 08-Jan-2018
+# @Last modified time: 10-Mar-2018
 # @License: Apache license vesion 2.0
 
 from django.db.models import Q
@@ -66,7 +66,7 @@ def rm_proveedores(request, id):
         p.activo = False
         p.save()
     except Exception as e:
-        print e
+        print("[Error  ] %s" % e)
 
     return redirect("Conta:lista_proveedores")
 

@@ -3,7 +3,7 @@
 # @Email:  valle.mrv@gmail.com
 # @Filename: __init__.py
 # @Last modified by:   valle
-# @Last modified time: 27-Feb-2018
+# @Last modified time: 01-Mar-2018
 # @License: Apache license vesion 2.0
 
 
@@ -16,21 +16,13 @@ except:
     from importlib import reload
     reload(sys)
 
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT_DIR = os.path.dirname(BASE_DIR)
-URL_SERVER = "http://btres.elbrasilia.com"
-
-#URL_SERVER = "http://btres.elbrasilia.com/"
-IP_PRINTER_CAJA = "192.168.1.5"
-TOKEN_API = "4td-c40a6792be0f208a284f"
-TOKEN_USER = 2
-
-
 os.chdir(BASE_DIR)
 sys.path.append(ROOT_DIR)
 sys.path.insert(0, os.path.join(ROOT_DIR, "valle_libs"))
 
+from .config import *
 from kivy.config import Config
 
 try: # this is only for pygame window if pygame is avaliable

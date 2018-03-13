@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 16-Feb-2018
+# @Last modified time: 10-Mar-2018
 # @License: Apache license vesion 2.0
 
 
@@ -24,8 +24,8 @@ class DocPrint():
         try:
             printer = Network(ip_caja, timeout=10)
             printer.cashdraw(2)
-        except:
-            print "Error en la impresora"
+        except Exception as e:
+            print("[ERROR  ]  %s" % e)
 
 
 

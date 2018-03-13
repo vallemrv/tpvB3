@@ -1,0 +1,33 @@
+{% load global_tag %}
+{% load receptor_tag %}
+{% if pedidos %}
+ {% for p in pedidos %}
+   <div class="bg-dark col-12 col-md-3 view-pedidos border" id="ped_{{p.id}}">
+      <div class="card h-100" >
+         <div data-spy="scroll" data-target="#navbar-example2" data-offset="0" style="overflow-y: scroll;">
+            <ul class="list-group" >
+            {% for l in  p.lineaspedido_set.all|mostrable %}
+                <li id="lin_{{l.id}}"
+                    class="list-group-item p-1 {% if not l.servido %} {{'bg-primary'}} {% else %}  {{'bg-success'}} {% endif %} mb-2"
+                    data-role="{{l.servido}}"
+                    onclick="servir_linea({{l.id}});">
+                    <p><b>{{l.tipo}}:</b> - {{l.cant}} - {{l.text}}</p>
+                    <p>{{l.des}}</p>
+                  </li>
+            {% endfor %}
+
+            </ul>
+            <div class="card-header p-1">
+                  <p><b>Avisador:</b> {{p.num_avisador}} - {{p.para_llevar}}</p>
+                  <p><b>Hora:</b> {{p.fecha}}</p>
+                  {% if p|hay_cliente %}
+                      <p><b>Direccion:</b> {{p|direccion}}</p>
+                  {% endif %}
+                 <a onclick="servir_pedido({{p.id}});" class="btn btn-warning">Servir</a>
+            </div>
+        </div>
+      </div>
+   </div>
+ {% endfor %}
+
+{% endif %}

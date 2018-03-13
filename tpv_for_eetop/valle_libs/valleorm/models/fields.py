@@ -5,7 +5,7 @@
 # @Email:  valle.mrv@gmail.com
 # @Filename: field.py
 # @Last modified by:   valle
-# @Last modified time: 26-Feb-2018
+# @Last modified time: 02-Mar-2018
 # @License: Apache license vesion 2.0
 
 import importlib
@@ -37,7 +37,7 @@ class Field(object):
         if dato==None:
             dato = self.get_dato()
         if self.null == False and dato == None:
-            raise ValueError("No se puden guardar valores nulos")
+            print ValueError("No se puden guardar valores nulos")
         elif self.null == True and dato == None:
             return 'NULL'
         elif self.tipo in  ["TEXT", "VARCHAR"]:
@@ -127,8 +127,8 @@ class EmailField(CharField):
         self.class_name = 'EmailField'
 
     def set_dato(self, value):
-        if value != None and value!="" and not ("@" in value and "." in value):
-            raise ValueError('Formato email no valido')
+        if value != None and value != "" and not ("@" in value and "." in value):
+            print ValueError('Formato email no valido')
         self.dato = value
 
 
@@ -200,8 +200,10 @@ class DateTimeField(Field):
         if type(value) == datetime:
             self.dato = value
         else:
-            self.dato = datetime.strptime(value.replace("T", " "),"%Y-%m-%d %H:%M:%S.%f")
-
+            try:
+                self.dato = datetime.strptime(value.replace("T", " "),"%Y-%m-%d %H:%M:%S.%f")
+            except:
+                self.dato = datetime.strptime(value.replace("T", " "),"%Y-%m-%d %H:%M:%S")
 
 
 class BooleanField(Field):

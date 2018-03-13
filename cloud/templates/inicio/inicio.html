@@ -10,12 +10,17 @@
           <a href="{%  url 'admin:index'  %}" class="btn btn-primary btn-inicio">Gestion</a>
         </div>
         <div class="col-12 col-md-4">
+          <a href="{% url 'ventas:lista_arqueos' %} " class="btn btn-primary btn-inicio">Arqueos</a>
+        </div>
+        <div class="col-12 col-md-4">
+          <a href="{% url 'ventas:pedidos_pendientes' %} " class="btn btn-primary btn-inicio">Pedidos pendientes</a>
+        </div>
+        <div class="col-12 col-md-4">
           <a href="{% url 'Conta:inicio'  %} " class="btn btn-primary btn-inicio">Contabilidad </a>
         </div>
         <div class="col-12 col-md-4">
           <a href="{% url 'en_construccion' %} " class="btn btn-primary btn-inicio">Almacen</a>
         </div>
-
     </div>
 </div>
 {% endblock content %}

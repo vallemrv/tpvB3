@@ -4,7 +4,7 @@
 # @Date:   01-Jan-2018
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 09-Jan-2018
+# @Last modified time: 10-Mar-2018
 # @License: Apache license vesion 2.0
 
 from django.db.models import Q
@@ -46,7 +46,7 @@ def gastos(request, id=-1):
             obj = Gastos.objects.get(pk=id)
             f = GastosForm(instance=obj)
         except Exception as e:
-            print e
+            print("[ Error en gastos ] %s" % e)
         return render(request, 'contabilidad/gastos/listado.html',
                       {"form": f,
                        "p": p,
@@ -59,13 +59,13 @@ def gastos(request, id=-1):
             reg = Gastos.objects.get(pk=id)
             f = GastosForm(request.POST, request.FILES, instance=reg)
         except Exception as e:
-            print e
+            print("[ Error en gastos ] %s" % e)
 
         if f.is_valid():
             reg = f.save()
             reg.save()
         else:
-            print f.errors
+            print("[ Error en form ] %s" % f.errors)
 
         return redirect("Conta:lista_gastos")
     else:
@@ -77,7 +77,7 @@ def gastos(request, id=-1):
             if 'accion_pk_subcuenta' in request.session:
                 p.gastos.add(obj)
         else:
-            print f.errors
+            print("[ Error en form ] %s" % f.errors)
         return redirect("Conta:lista_gastos")
 
 
@@ -87,7 +87,7 @@ def rm_gasto(request, id):
         obj = Gastos.objects.get(pk=id)
         obj.delete()
     except Exception as e:
-        print e
+        print("[ Error en rm_gasto ] %s" % e)
 
     return redirect("Conta:lista_gastos")
 
@@ -153,13 +153,13 @@ def get_cuenta_activa(request):
             obj = CuentasGastos.objects.get(pk=pk)
             pk = obj.pk
         except Exception as e:
-            print e
+            print("[ Error en get_cuenta_activa ] %s" % e)
     elif 'accion_pk_subcuenta' in request.session:
         pk = request.session["accion_pk_subcuenta"]
         try:
             obj = SubCuentaGastos.objects.get(pk=pk)
             pk = obj.cuenta.pk
         except Exception as e:
-            print e
+            print("[ Error en get_cuenta_activa ] %s" % e)
 
     return obj, pk

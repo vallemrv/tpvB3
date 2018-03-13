@@ -1,0 +1,96 @@
+{% extends "receptor/main.html" %}
+{% load static %}
+{% block content %}
+<div class="row" id="main">
+
+</div>
+
+<div class="text-center" id="sonido">
+  <p>
+    <audio controls  id="audio" class="mt-2" >
+      <source src="{% static 'sound/a1.wav' %}" type="audio/wav">
+          Your browser does not support the audio element.
+    </audio>
+</p>
+  <p>
+  <button type="button" class="btn btn-success float-re" onclick="empezar();">Empezar</button>
+  </p>
+</div>
+
+<script type="text/javascript">
+$(function () {
+         // Correctly decide between ws:// and wss://
+         var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+         var ws_path = ws_scheme + '://' + window.location.host + "/receptor/get";
+         console.log("Connecting to " + ws_path);
+         var socket = new ReconnectingWebSocket(ws_path);
+
+         // Handle incoming messages
+         socket.onmessage = function (message) {
+             // Decode the JSON
+             console.log("Got websocket message " + message.data);
+         };
+
+         // Helpful debugging
+         socket.onopen = function () {
+             console.log("Connected to receptor socket");
+         };
+         socket.onclose = function () {
+             console.log("Disconnected from receptor socket");
+         }
+     });
+
+  function empezar(){
+    $.get("{% url 'all_pedidos' %}", function(res){
+        if (res.trim() !== ""){
+           $("#main").html(res);
+        }
+       setTimeout(get_pedidos, 1000);
+       $("#sonido").addClass("collapse");
+    });
+  }
+
+  function get_pedidos(){
+       $.get("{% url 'get_pedidos' %}", function(res){
+           if (res.trim() !== ""){
+              $("#main").append(res);
+              $("#audio")[0].play();
+           }
+           //setTimeout(get_pedidos, 5000);
+
+
+       });
+  }
+
+  function servir_pedido(id){
+    url = "{% url 'servir_pedido' id=1 %}"
+    url = url.replace("1",id);
+    $.get(url, function(res){
+          $("#ped_"+id).remove();
+    });
+  }
+
+  function servir_linea(id){
+       var linea = $("#lin_"+id)
+       var servido = linea.attr("data-role");
+       if (servido == "False"){
+          servido = "True"
+          linea.removeClass("bg-primary");
+          linea.addClass("bg-success");
+       } else {
+         servido = "False"
+         linea.removeClass("bg-success");
+         linea.addClass("bg-primary")
+       }
+       linea.attr("data-role", servido);
+       url = "{% url 'change_servido' id=1 servido=2 %}"
+       url = url.replace("1",id).replace("2", "servido")
+
+       $.get(url, function(res){
+           console.log("res");
+       });
+  }
+
+
+</script>
+{% endblock content %}

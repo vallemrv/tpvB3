@@ -3,7 +3,7 @@
  * @Date:   27-Sep-2017
  * @Email:  valle.mrv@gmail.com
  * @Last modified by:   valle
- * @Last modified time: 06-Jan-2018
+ * @Last modified time: 10-Mar-2018
  * @License: Apache license vesion 2.0
  */
 
@@ -118,4 +118,19 @@ textarea{
 .body-find{
   text-align: center;
   min-height: 25em;
+}
+
+.view-pedidos {
+  height: 85vh;
+  padding: 0.5em;
+}
+
+.view-informes-small {
+  height: 12em;
+  overflow-y: scroll;
+}
+
+.view-informes-large {
+  height: 28em;
+  overflow-y: scroll;
 }

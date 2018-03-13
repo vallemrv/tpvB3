@@ -4,12 +4,12 @@
 # @Date:   03-Jan-2018
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 08-Jan-2018
+# @Last modified time: 10-Mar-2018
 # @License: Apache license vesion 2.0
 
 
 from django import forms
-from models import *
+from .models import *
 
 class ProveedoresForm(forms.ModelForm):
 

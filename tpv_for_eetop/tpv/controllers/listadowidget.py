@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 26-Feb-2018
+# @Last modified time: 06-Mar-2018
 # @License: Apache license vesion 2.0
 
 from kivy.uix.anchorlayout import AnchorLayout
@@ -97,15 +97,16 @@ class ListadoWidget(AnchorLayout):
         self.tpv.hide_spin()
 
     def mostrar_lista(self):
-        threading.Thread(target=self.rellenar_pedidos).start()
-        self.tpv.show_spin()
+        self.rellenar_pedidos()
+        #threading.Thread(target=self.rellenar_pedidos).start()
+        #self.tpv.show_spin()
 
     def onPress(self, btn):
         self.pedido.rm_all_widgets()
         self.selected = btn
         pedido = self.selected.tag.get("db")
         lineas = pedido.lineaspedido_set.get()
-
+        self.des = "Pedido      %s" % pedido.modo_pago
         total = 0
         for item in lineas:
             btn = LabelClicable(bgColor="#444444",

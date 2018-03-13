@@ -4,7 +4,7 @@
 # @Date:   01-Jan-2018
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 07-Jan-2018
+# @Last modified time: 10-Mar-2018
 # @License: Apache license vesion 2.0
 
 from django.db.models import Q
@@ -64,7 +64,7 @@ def rm_cuentas(request, id):
         p.activo = False
         p.save()
     except Exception as e:
-        print e
+        print("[ERROR  ] %s" % e)
 
     return redirect("Conta:lista_cuentas")
 
@@ -88,7 +88,6 @@ def lista_cuentas(request):
 def find_cuentas(request):
     if request.method == "POST":
         filter = request.POST["filter"]
-        print filter
         filter_query = CuentasGastos.objects.filter(Q(nombre__icontains=filter)).exclude(activo=False)
         return render(request, "contabilidad/cuentas/lista_ajax.html",
                       {'query': filter_query,

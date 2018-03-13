@@ -4,7 +4,7 @@
 # @Date:   01-Jan-2018
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 07-Jan-2018
+# @Last modified time: 10-Mar-2018
 # @License: Apache license vesion 2.0
 
 from django.db.models import Q
@@ -56,7 +56,7 @@ def albaranes(request, id=-1):
             reg = f.save()
             reg.save()
         else:
-            print f.errors
+            print("[ Error en form ] %s" % f.errors)
         return redirect("Conta:lista_albaranes")
     else:
         f = AlbaranForm(request.POST, request.FILES)
@@ -65,7 +65,7 @@ def albaranes(request, id=-1):
             obj.cuenta_id = p.pk
             obj.save()
         else:
-            print f.errors
+            print("[ Error en form ] %s" % f.errors)
         return redirect("Conta:lista_albaranes")
 
 
@@ -77,7 +77,7 @@ def rm_albaran(request, id):
             os.remove(os.path.join(settings.MEDIA_ROOT, obj.doc.name))
         obj.delete()
     except Exception as e:
-        print e
+        print("[ Error en rm_albaran ] %s" % e)
 
     return redirect("Conta:lista_albaranes")
 
@@ -124,11 +124,10 @@ def find_albaran(request):
 
 @login_required(login_url='login_tk')
 def view_doc_albaran(request, id):
-    print id
     try:
         obj = Albaranes.objects.get(pk=id)
     except Exception as e:
-        print e
+        print("[ Error en view_doc_albaran ] %s" % e)
     file_rml = os.path.join(settings.MEDIA_ROOT, obj.doc.name )
     f = open(file_rml, "rb")
     response = HttpResponse(content_type='image/*')
@@ -141,7 +140,7 @@ def viewer_img_albaran(request, id):
     try:
         obj = Albaranes.objects.get(pk=id)
     except Exception as e:
-        print e
+        print("[ Error en viewer_img_albaran ] %s" % e)
     return render(request, "contabilidad/albaranes/image.html",{
         "obj": obj
     })
@@ -153,6 +152,6 @@ def get_proveedor_activo(request):
     try:
         obj = Proveedores.objects.get(pk=pk)
     except Exception as e:
-        print e
+        print("[ Error en get_proveedor_activo ] %s" % e)
 
     return obj

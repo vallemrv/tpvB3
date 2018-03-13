@@ -4,7 +4,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 26-Feb-2018
+# @Last modified time: 06-Mar-2018
 # @License: Apache license vesion 2.0
 
 from kivy.uix.anchorlayout import AnchorLayout
@@ -83,12 +83,12 @@ class ListadoPdWidget(AnchorLayout):
 
 
     def mostrar_lista(self):
-        threading.Thread(target=self.run_mostrar_lista).start()
-        self.tpv.show_spin()
+        self.run_mostrar_lista()
+        #threading.Thread(target=self.run_mostrar_lista).start()
+        #self.tpv.show_spin()
 
     def run_mostrar_lista(self):
         for db in Pedidos.filter(query="estado LIKE 'NPG_%'"):
-            print db.id
             if db.id in self.db_lista:
                 continue
             self.db_lista.append(db.id)
@@ -96,9 +96,10 @@ class ListadoPdWidget(AnchorLayout):
             direccion = ""
             if len(clientes) > 0:
                 id = clientes[0].id
+                dir = clientes[0].direccion
                 direccion = ""
                 if id != None:
-                    direcciones = clientes[0].direcciones_set.get(query="id=%d"%id)
+                    direcciones = clientes[0].direcciones_set.get(query="id=%d"%dir)
                 if len(direcciones) > 0:
                     direccion = direcciones[0].direccion
             else:

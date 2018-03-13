@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 26-Feb-2018
+# @Last modified time: 06-Mar-2018
 # @License: Apache license vesion 2.0
 
 
@@ -13,16 +13,19 @@ from kivy.properties import ObjectProperty, StringProperty
 from kivy.lang import Builder
 from kivy.storage.jsonstore import JsonStore
 from kivy.clock import Clock
+from kivy.lib import osc
 from glob import glob
 from os import rename
+from datetime import datetime
 from time import strftime
 from controllers.lineaarqueo import LineaArqueo
 from valle_libs.tpv.impresora import DocPrint
 from valle_libs.utils import parse_float
-
+from config import config
 from modals import Aceptar
 from models.db import Arqueos, Pedidos, Conteo, Gastos, PedidosExtra
 import threading
+
 
 Builder.load_file("view/arqueo.kv")
 
@@ -48,7 +51,7 @@ class Arqueo(AnchorLayout):
             self.aceptar = Aceptar(onExit=self.salir_arqueo)
             self.aceptar.open()
         else:
-            threading.Thread(target=self.get_ticket).start()
+            self.get_ticket()
 
     def salir_arqueo(self):
         if self.aceptar != None:
@@ -65,19 +68,21 @@ class Arqueo(AnchorLayout):
                 self.tarjeta += tk.total
 
     def arquear(self):
-        self.tpv.show_spin()
-        self.tpv.mostrar_inicio()
-        threading.Thread(target=self.run_arqueo).start()
-
-    def run_arqueo(self):
-        arqueo = Arqueos()
+        self.fecha = str(datetime.now())
         if self.cambio == "":
             self.cambio = 300.00
         self.efectivo = self.efectivo - parse_float(self.cambio)
-        descuadre =  (self.total_gastos +
-                      self.efectivo + self.tarjeta) - self.caja_dia
         self.lista_conteo = sorted(self.lista_conteo, key=lambda k: k["tipo"],
                                    reverse=True)
+        threading.Thread(target=self.imprime_desglose).start()
+        self.run_arqueo()
+
+
+    def run_arqueo(self):
+        arqueo = Arqueos()
+        descuadre =  (self.total_gastos +
+                      self.efectivo + self.tarjeta) - self.caja_dia
+
         arqueo.save(caja_dia=self.caja_dia,
                     efectivo=self.efectivo,
                     cambio=self.cambio,
@@ -85,7 +90,7 @@ class Arqueo(AnchorLayout):
                     tarjeta=self.tarjeta,
                     descuadre=descuadre)
         for tk in self.lista_ticket:
-            tk.estado = "arqueado"
+            tk.estado = "AR_SN"
             arqueo.pedidos.add(tk)
 
         for conteo in self.lista_conteo:
@@ -103,10 +108,13 @@ class Arqueo(AnchorLayout):
             ing.save()
             arqueo.pedidosextra.add(ing)
 
-        self.fecha = arqueo.fecha
-        self.imprime_desglose()
+        osc.sendMsg("/sync_service", ["sync_arqueo"], port=config.PORT_SERVICE)
+        self.tpv.hide_spin()
+
 
     def imprime_desglose(self):
+        self.tpv.show_spin()
+        self.tpv.mostrar_inicio()
         desglose = []
         retirar = 0
         for ls in self.lista_conteo:
@@ -129,7 +137,6 @@ class Arqueo(AnchorLayout):
             else:
                 break
 
-        self.tpv.hide_spin()
         printDoc = DocPrint()
         printDoc.printDesglose("caja", self.fecha, desglose)
 

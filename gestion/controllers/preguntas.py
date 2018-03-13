@@ -5,7 +5,7 @@
 # @Email:  valle.mrv@gmail.com
 # @Filename: productos.py
 # @Last modified by:   valle
-# @Last modified time: 23-Aug-2017
+# @Last modified time: 10-Mar-2018
 # @License: Apache license vesion 2.0
 
 from kivy.event import EventDispatcher
@@ -96,4 +96,4 @@ class PregutasFamilias(EventDispatcher):
         self.asociador.set_botones(self.http.get_datos_button(reg))
 
     def on_press(self, reg):
-        print reg
+        print("[DEBUG  ] %s" %reg)

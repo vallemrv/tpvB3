@@ -2,14 +2,14 @@
 # @Date:   13-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 19-Feb-2018
+# @Last modified time: 10-Mar-2018
 # @License: Apache license vesion 2.0
 
 
 # Register your models here.
 from django.contrib import admin
 from django.apps import apps
-from models import *
+from .models import *
 
 
 

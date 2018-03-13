@@ -2,7 +2,7 @@
 # @Date:   02-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 19-Feb-2018
+# @Last modified time: 10-Mar-2018
 # @License: Apache license vesion 2.0
 
 import config
@@ -26,7 +26,6 @@ def on_success(obj, result):
     db = JsonStore("../db/clases.json")
     lista = []
     for clase in clases.get("clases"):
-        print clase.items()
         row_clase = {
             'text': clase["nombre"],
             'bgColor': clase["color"],

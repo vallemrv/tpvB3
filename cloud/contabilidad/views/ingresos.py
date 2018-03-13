@@ -4,7 +4,7 @@
 # @Date:   01-Jan-2018
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 19-Feb-2018
+# @Last modified time: 10-Mar-2018
 # @License: Apache license vesion 2.0
 
 from django.forms.models import model_to_dict
@@ -43,7 +43,7 @@ def ingresos(request, id=-1):
             f = IngresosForm(instance=obj)
             filter_query = Ingresos.objects.filter()
         except Execiption as e:
-            print e
+            print("[ Error en ingresos ] %s" % e)
         return render(request, 'contabilidad/ingresos/listado.html',
                       {"form": f,
                        "pk": id,
@@ -55,12 +55,12 @@ def ingresos(request, id=-1):
             reg = Ingresos.objects.get(pk=id)
             f = IngresosForm(request.POST, instance=reg)
         except Execiption as e:
-            print e
+            print("[ Error en ingresos ] %s" % e)
         if f.is_valid():
             reg = f.save()
             reg.save()
         else:
-            print f.errors
+            print("[ Error en ingresos ] %s" % f.errors)
         return redirect("Conta:lista_ingresos")
     else:
         f = IngresosForm(request.POST)
@@ -68,7 +68,7 @@ def ingresos(request, id=-1):
             obj = f.save(commit=False)
             obj.save()
         else:
-            print f.errors
+            print("[ Error en ingresos ] %s" % f.errors)
         return redirect("Conta:lista_ingresos")
 
 
@@ -78,7 +78,7 @@ def rm_ingreso(request, id):
         obj = Ingresos.objects.get(pk=id)
         obj.delete()
     except Exception as e:
-        print e
+        print("[ Error en rm_ingreso ] %s" % e)
 
     return redirect("Conta:lista_ingresos")
 
@@ -138,7 +138,6 @@ def calcular_ingreso(request, fecha=None):
 
 
         for c in cajas:
-            print "Error tpv "+c.pk
             arq = Arqueocaja.objects.filter(idcierre=c.pk)
             descuadre = 0
             if len(arq) > 0:

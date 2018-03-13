@@ -2,7 +2,7 @@
 # @Date:   04-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 19-Feb-2018
+# @Last modified time: 10-Mar-2018
 # @License: Apache license vesion 2.0
 
 
@@ -41,9 +41,9 @@ class Productos(models.Model):
     precio = models.DecimalField(decimal_places=2, max_digits=9, null=True,  blank=True)
     color = models.CharField(max_length=10, default="#d898e8")
     orden = models.IntegerField(default=0)
-    clasespreguntas = models.ManyToManyField(ClasesPreguntas, blank=True)
+    clasespreguntas = models.ManyToManyField(ClasesPreguntas,  blank=True)
     modify = models.DateTimeField(auto_now=True)
-    familias = models.ForeignKey(Familias, blank=True)
+    familias = models.ForeignKey(Familias, on_delete=models.CASCADE, blank=True)
     ignore = models.CharField(max_length=150, blank=True, default="")
 
     def nombre_familia(self):

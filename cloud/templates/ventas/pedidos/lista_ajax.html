@@ -1,0 +1,63 @@
+{% load global_tag %}
+{% if query %}
+  <div id="content_main" class="bg-light p-3 mb-3 content-table">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Importe</th>
+          <th>Descripcion</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in query %}
+        <tr>
+          <td>{{ c.fecha }}</td>
+          <td>{{ c.total }}</td>
+          <td>{{ c.para_llevar }}, avisador: {{ c.num_avisador }}</td>
+          <td class="text-center">
+            <a  class="btn btn-primary btn-accion "  data-toggle="collapse" href="#linea_{{c.id}}">
+              <span class="fa fa-search"></span></a>
+          </td>
+        </tr>
+        <tr class="collapse" id="linea_{{c.id}}">
+            <td colspan="4">
+                 <div  class="bg-light p-3 mb-3 content-table">
+                      <table class="table table-striped">
+                       <thead>
+                          <tr>
+                            <th>Cant</th>
+                            <th>Tipo</th>
+                            <th>Descripción</th>
+                            <th>Servido</th>
+                          </tr>
+                        </thead>
+                          <tbody>
+                            {% for l in c.lineaspedido_set.all %}
+                              <tr>
+                                <td>{{ l.cant }}</td>
+                                <td class="text-uppercase">{{ l.tipo }}</td>
+                                <td>{{ l.des }}</td>
+                                <td>{{ l.servido|bool_to_str }}</td>
+                              </tr>
+                             {% endfor %}
+                         </tbody>
+                     </table>
+                   </div>
+
+
+            </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container pl-3">
+          <h1 class="display-3">Upps!</h1>
+          <p class="lead">No se ha encotrado ninguna coincidencia....</p>
+      </div>
+    </div>
+{% endif %}
