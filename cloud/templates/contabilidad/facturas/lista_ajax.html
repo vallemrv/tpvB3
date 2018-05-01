@@ -18,11 +18,11 @@
           <td>{{ c.importe }}</td>
           <td>{{ c|pagado }}</td>
           <td class="text-center">
-            <a href="{% url 'Conta:viewer_img_albaran' id=c.id %}" class="btn btn-primary btn-accion ">
+            <a href="{% url 'conta:viewer_img_albaran' id=c.id %}" class="btn btn-primary btn-accion ">
               <span class="fa fa-search"></span></a>
-            <a href="{% url 'Conta:albaranes' id=c.id %}" class="btn btn-primary btn-accion">
+            <a href="{% url 'conta:albaranes' id=c.id %}" class="btn btn-primary btn-accion">
               <span class="fa fa-edit"></span></a>
-            <a href="{% url 'Conta:rm_albaranes' id=c.id %}" class="btn btn-primary btn-accion">
+            <a href="{% url 'conta:rm_albaranes' id=c.id %}" class="btn btn-primary btn-accion">
                 <span class="fa fa-trash"></span></a>
           </td>
         </tr>

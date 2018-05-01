@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 06-Mar-2018
+# @Last modified time: 17-Mar-2018
 # @License: Apache license vesion 2.0
 
 
@@ -13,18 +13,21 @@ from kivy.properties import ObjectProperty, StringProperty
 from kivy.lang import Builder
 from kivy.storage.jsonstore import JsonStore
 from kivy.clock import Clock
-from kivy.lib import osc
+from kivy.core import Logger
+from kivy.network.urlrequest import UrlRequest
+from controllers.lineaarqueo import LineaArqueo
+from valle_libs.tpv.impresora import DocPrint
+from valle_libs.utils import parse_float
+from models.db import QSon, VentasSender
+from config import config
+from modals import Aceptar
 from glob import glob
 from os import rename
 from datetime import datetime
 from time import strftime
-from controllers.lineaarqueo import LineaArqueo
-from valle_libs.tpv.impresora import DocPrint
-from valle_libs.utils import parse_float
-from config import config
-from modals import Aceptar
-from models.db import Arqueos, Pedidos, Conteo, Gastos, PedidosExtra
+import urllib
 import threading
+import json
 
 
 Builder.load_file("view/arqueo.kv")
@@ -32,6 +35,46 @@ Builder.load_file("view/arqueo.kv")
 class Arqueo(AnchorLayout):
     tpv = ObjectProperty(None)
     text_cambio = StringProperty("300")
+    url = config.URL_SERVER+"/ventas/arquear/"
+
+
+    def __on_success__(self, req, result):
+        self.tpv.hide_spin()
+        if result["success"] == True:
+            desglose = result["desglose"]
+            self.tpv.mostrar_inicio()
+            printDoc = DocPrint()
+            printDoc.printDesglose("caja", self.fecha, desglose)
+
+
+
+    def __got_error__(self, req,  *args):
+        req._resp_status = "Error"
+        Logger.debug("got error {0}".format(req.url))
+        self.tpv.hide_spin()
+
+    def __got_fail__(self, req, *args):
+        req._resp_status = "Fail"
+        Logger.debug("got fail {0}".format(req.url))
+        self.tpv.hide_spin()
+
+    def __got_redirect__(self, req, *args):
+        req._resp_status = "Redirect"
+        Logger.debug("got redirect {0}".format(req.url))
+        self.tpv.hide_spin()
+
+
+    def send(self, data):
+        SEND_DATA = {'data':json.dumps(data)}
+        data = urllib.urlencode(SEND_DATA)
+        headers = {'Content-type': 'application/x-www-form-urlencoded',
+                   'Accept': 'text/json'}
+        r = UrlRequest(self.url, on_success=self.__on_success__, req_body=data,
+                       req_headers=headers, method="POST",
+                       on_failure=self.__got_fail__,
+                       on_error=self.__got_error__,
+                       on_redirect=self.__got_redirect__)
+
 
     def nuevo_arqueo(self):
         self.lista_conteo = []
@@ -46,12 +89,16 @@ class Arqueo(AnchorLayout):
         self.conteo.rm_all_widgets()
         self.gastos.rm_all_widgets()
         self.ingresos.rm_all_widgets()
-        pd = Pedidos.filter(query="estado LIKE 'NPG_%'")
-        if len(pd) > 0:
-            self.aceptar = Aceptar(onExit=self.salir_arqueo)
-            self.aceptar.open()
-        else:
-            self.get_ticket()
+        sender = VentasSender()
+        sender.filter(QSon("Pedidos", estado__contains="NPG"))
+        sender.send(self.comprobar_npg, wait=False)
+
+    def comprobar_npg(self, req, r):
+        if r["success"] == True:
+            if len(r["get"]['pedidos']) > 0:
+                self.aceptar = Aceptar(onExit=self.salir_arqueo)
+                self.aceptar.open()
+
 
     def salir_arqueo(self):
         if self.aceptar != None:
@@ -59,87 +106,38 @@ class Arqueo(AnchorLayout):
         self.tpv.mostrar_inicio()
 
 
-    def get_ticket(self):
-        db = Pedidos()
-        for tk in db.filter(query="estado LIKE 'PG_%'"):
-            self.lista_ticket.append(tk)
-            self.caja_dia += tk.total
-            if tk.modo_pago == "Tarjeta":
-                self.tarjeta += tk.total
-
     def arquear(self):
         self.fecha = str(datetime.now())
         if self.cambio == "":
             self.cambio = 300.00
-        self.efectivo = self.efectivo - parse_float(self.cambio)
+
         self.lista_conteo = sorted(self.lista_conteo, key=lambda k: k["tipo"],
                                    reverse=True)
-        threading.Thread(target=self.imprime_desglose).start()
         self.run_arqueo()
 
 
     def run_arqueo(self):
-        arqueo = Arqueos()
-        descuadre =  (self.total_gastos +
-                      self.efectivo + self.tarjeta) - self.caja_dia
-
-        arqueo.save(caja_dia=self.caja_dia,
-                    efectivo=self.efectivo,
-                    cambio=self.cambio,
-                    total_gastos=self.total_gastos,
-                    tarjeta=self.tarjeta,
-                    descuadre=descuadre)
-        for tk in self.lista_ticket:
-            tk.estado = "AR_SN"
-            arqueo.pedidos.add(tk)
+        arqueo = {'caja_dia': self.caja_dia,
+                  'efectivo':self.efectivo,
+                  'cambio':self.cambio,
+                  'total_gastos':self.total_gastos,
+                  'tarjeta':self.tarjeta,
+                  'descuadre':0,
+                  'conteo':[],
+                  'gastos':[],
+                  'extras': []}
 
         for conteo in self.lista_conteo:
-            c = Conteo(**conteo)
-            c.save()
-            arqueo.conteo.add(c)
+            arqueo['conteo'].append(conteo)
 
-        for gastos in self.lista_gastos:
-            g = Gastos(**gastos)
-            g.save()
-            arqueo.gastos.add(g)
+        for gasto in self.lista_gastos:
+            arqueo['gastos'].append(gasto)
 
-        for ingreso in self.lista_ingresos:
-            ing = PedidosExtra(**ingreso)
-            ing.save()
-            arqueo.pedidosextra.add(ing)
+        for ing in self.lista_ingresos:
+            arqueo['extras'].append(ing)
 
-        osc.sendMsg("/sync_service", ["sync_arqueo"], port=config.PORT_SERVICE)
-        self.tpv.hide_spin()
-
-
-    def imprime_desglose(self):
+        self.send(arqueo)
         self.tpv.show_spin()
-        self.tpv.mostrar_inicio()
-        desglose = []
-        retirar = 0
-        for ls in self.lista_conteo:
-            if self.efectivo - retirar > 0.1:
-                total_linea = ls["total"]
-                subtotal = retirar + total_linea
-                if subtotal <= self.efectivo:
-                    retirar += total_linea
-                    desglose.append(ls)
-                else:
-                    subtotal = self.efectivo - retirar
-                    tipo = parse_float(ls["tipo"])
-                    num = int(subtotal/tipo)
-                    if num > 0:
-                        total_linea = num * tipo
-                        retirar += total_linea
-                        desglose.append({"can": num, "tipo": tipo,
-                                         "total": total_linea,
-                                         "texto_tipo": ls["texto_tipo"]})
-            else:
-                break
-
-        printDoc = DocPrint()
-        printDoc.printDesglose("caja", self.fecha, desglose)
-
 
 
     def add_conteo(self, _can, _tipo):
@@ -190,7 +188,8 @@ class Arqueo(AnchorLayout):
                      "modo_pago": _modo_pago, "estado": "arqueado"}
         if _modo_pago == "Tarjeta":
             self.tarjeta += linea.total
-        self.caja_dia += linea.total
+        else:
+            self.caja_dia += linea.total
         num_pd.text = importe.text = ""
         modo_pago.active = False
         self.lista_ingresos.append(linea.tag)
@@ -200,6 +199,7 @@ class Arqueo(AnchorLayout):
         modo_pago = linea.tag.get("modo_pago")
         if modo_pago == "Tarjeta":
             self.tarjeta -= linea.total
-        self.caja_dia -= linea.total
+        else:
+            self.caja_dia -= linea.total
         self.lista_ingresos.remove(linea.tag)
         self.ingresos.rm_linea(linea)

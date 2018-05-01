@@ -37,7 +37,7 @@
   <div class="p-3">
     <h3>{{mensaje}}</h3>
   </div>
-  <form method="post" action="{% url 'Conta:albaranes' id=pk %}"  enctype="multipart/form-data">
+  <form method="post" action="{% url 'conta:albaranes' id=pk %}"  enctype="multipart/form-data">
     {% csrf_token %}
     <div class="form-row">
         {% for field in form %}
@@ -92,7 +92,7 @@
 
     function get_albaranes(){
       datos = $("#form_find").serialize();
-      $.post("{% url 'Conta:find_albaran' %}", datos, function(res){
+      $.post("{% url 'conta:find_albaran' %}", datos, function(res){
           $("#content_main").html(res)
 
       });

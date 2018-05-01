@@ -3,7 +3,7 @@
  * @Date:   27-Sep-2017
  * @Email:  valle.mrv@gmail.com
  * @Last modified by:   valle
- * @Last modified time: 10-Mar-2018
+ * @Last modified time: 04-Apr-2018
  * @License: Apache license vesion 2.0
  */
 
@@ -133,4 +133,43 @@ textarea{
 .view-informes-large {
   height: 28em;
   overflow-y: scroll;
+}
+
+
+.portada-pedidos {
+   height: 100%;
+   width: 100vw;
+   min-height: 650px;
+   margin: auto;
+   margin-top: 0;
+   margin-bottom: 0;
+   padding: 0;
+   background-image: url("/static/images/btres_portada.jpg");
+   background-repeat: no-repeat;
+   background-size: cover;
+   background-position: right;
+   z-index:100;
+   position:absolute;
+   left:0;top:0
+}
+
+
+.codigo-postal{
+   width: 80%;
+   padding: 1em;
+   margin-left: auto;
+   margin-right: auto;
+
+}
+
+.codigo-postal-int{
+   margin-top: 8em;
+   background-color: rgba(171, 171, 185, .8);
+}
+
+
+.content-pedidos{
+  margin-top: 5em;
+  margin-bottom: 3em;
+  padding: 1em;
 }

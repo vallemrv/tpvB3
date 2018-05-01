@@ -18,9 +18,9 @@
           {% if opcion == 'lista' %}
           <button onclick="historial({{c.id}});" class="btn btn-primary btn-accion">
             <span class="fa fa-search"></span></button>
-          <a href="{% url 'Conta:cuentas' id=c.id %}" class="btn btn-primary btn-accion">
+          <a href="{% url 'conta:cuentas' id=c.id %}" class="btn btn-primary btn-accion">
             <span class="fa fa-edit"></span></a>
-          <a href="{% url 'Conta:rm_cuenta' id=c.id %}" class="btn btn-primary btn-accion">
+          <a href="{% url 'conta:rm_cuenta' id=c.id %}" class="btn btn-primary btn-accion">
               <span class="fa fa-trash"></span></a>
           {% else %}
           <button onclick="set_cuenta({{c.id}});" class="btn btn-primary">
@@ -34,9 +34,9 @@
   </table>
   <script type="text/javascript">
     function historial(id){
-      $.get("{% url 'Conta:set_cuenta'  %}"+id, function(res){
+      $.get("{% url 'conta:set_cuenta'  %}"+id, function(res){
           if (res == "perfect"){
-              location.href = "{% url 'Conta:lista_gastos' %}";
+              location.href = "{% url 'conta:lista_gastos' %}";
            }
       });
     }

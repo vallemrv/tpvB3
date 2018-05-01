@@ -4,18 +4,31 @@
 # @Date:   04-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 06-Mar-2018
+# @Last modified time: 17-Apr-2018
 # @License: Apache license vesion 2.0
 
-import config
+import sys
+import os
+try:
+    reload(sys)
+    sys.setdefaultencoding('UTF8')
+except:
+    from importlib import reload
+    reload(sys)
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(BASE_DIR)
+os.chdir(BASE_DIR)
+sys.path.append(ROOT_DIR)
+sys.path.insert(0, os.path.join(ROOT_DIR, "valle_libs"))
+
 import os
 import sys
-
+import valle_libs.config
 from kivy.app import App
 from controllers.tpv import Tpv
 from kivy.config import Config
 from kivy.clock import Clock
-from kivy.lib import osc
 
 Clock.max_iteration = 20
 
@@ -26,19 +39,16 @@ class TpvApp(App):
         self.title = 'BTRES'
         path = os.path.abspath(__file__)
         self.icon = os.path.join(path, "img/logo.jpg")
-        osc.init()
 
 
     def build(self):
-        import os, threading
-        threading.Thread(target=os.system, args=("python ./service/main.py",)).start()
         return Tpv()
 
     def on_pause(self):
         return True
 
     def on_stop(self):
-        osc.sendMsg("/sync_service", ["finalizar"], port=config.PORT_SERVICE)
+        pass
 
 
 if __name__ == '__main__':

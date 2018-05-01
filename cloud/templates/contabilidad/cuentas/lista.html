@@ -11,7 +11,7 @@
           {% csrf_token %}
           <input class="form-control mr-sm-2" type="text" name="filter" placeholder="Buscar" aria-label="Search">
           <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
-          <a href="{% url 'Conta:cuentas'  %}" class="btn btn-primary ml-3"><span class="fa fa-plus"></span></a>
+          <a href="{% url 'conta:cuentas'  %}" class="btn btn-primary ml-3"><span class="fa fa-plus"></span></a>
       </form>
     </div>
   </div>
@@ -26,7 +26,7 @@
 <script type="text/javascript">
   function get_cuentas(){
     datos = $("#form_find").serialize();
-    $.post("{% url 'Conta:lista_cuentas'  %}", datos, function(res){
+    $.post("{% url 'conta:lista_cuentas'  %}", datos, function(res){
          $("#content_main").empty().append(res);
     });
     return false;

@@ -32,7 +32,6 @@
     dir: _dir
     notas: _notas
     listDirecciones: _list
-    email: _email
     BoxLayout:
         orientation: 'vertical'
         spacing: 10
@@ -47,11 +46,6 @@
             TextGrande:
                 hint_text: "Nombre"
                 id: _nombre
-        TextGrande:
-            size_hint_y: None
-            height: '60dp'
-            hint_text: "email"
-            id: _email
         BoxLayout:
             size_hint_y: None
             height: '100dp'
@@ -79,4 +73,4 @@
                 on_press: root.hacer_pedido(root.db)
             Button:
                 text: "Cancelar"
-                on_press: root.salir()
+                on_press: root.guardar_salir()

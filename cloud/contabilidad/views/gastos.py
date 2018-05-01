@@ -67,7 +67,7 @@ def gastos(request, id=-1):
         else:
             print("[ Error en form ] %s" % f.errors)
 
-        return redirect("Conta:lista_gastos")
+        return redirect("conta:lista_gastos")
     else:
         f = GastosForm(request.POST)
         if f.is_valid():
@@ -78,7 +78,7 @@ def gastos(request, id=-1):
                 p.gastos.add(obj)
         else:
             print("[ Error en form ] %s" % f.errors)
-        return redirect("Conta:lista_gastos")
+        return redirect("conta:lista_gastos")
 
 
 @login_required(login_url='login_tk')
@@ -89,7 +89,7 @@ def rm_gasto(request, id):
     except Exception as e:
         print("[ Error en rm_gasto ] %s" % e)
 
-    return redirect("Conta:lista_gastos")
+    return redirect("conta:lista_gastos")
 
 
 @login_required(login_url='login_tk')

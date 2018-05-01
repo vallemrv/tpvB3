@@ -12,7 +12,7 @@
            {% csrf_token %}
            <input class="form-control mr-sm-2" type="text" name="filter" placeholder="Buscar" aria-label="Search">
            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
-           <a href="{% url 'Conta:salir_proveedores' %}" class="btn btn-primary">
+           <a href="{% url 'conta:salir_proveedores' %}" class="btn btn-primary">
              <span class="fa fa-sign-out"></span>
            </a>
        </form>
@@ -31,9 +31,9 @@
 <script type="text/javascript">
 
   function set_proveedor(id){
-    $.get("{% url 'Conta:set_proveedor_none'  %}"+id, function(res){
+    $.get("{% url 'conta:set_proveedor_none'  %}"+id, function(res){
         if (res == "perfect"){
-            location.href = "{% url 'Conta:lista_albaranes' %}";
+            location.href = "{% url 'conta:lista_albaranes' %}";
          }
     });
   }
@@ -41,7 +41,7 @@
 
   function get_proveedores(){
     datos = $("#form_find").serialize();
-    $.post("{% url 'Conta:find_proveedores'  %}", datos, function(res){
+    $.post("{% url 'conta:find_proveedores'  %}", datos, function(res){
          $("#content_main").removeClass("collapse");
          $("#content_main").empty().append(res);
     });

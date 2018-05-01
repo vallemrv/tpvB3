@@ -5,7 +5,7 @@
 # @Email:  valle.mrv@gmail.com
 # @Filename: admin_extras.py
 # @Last modified by:   valle
-# @Last modified time: 10-Mar-2018
+# @Last modified time: 29-Mar-2018
 # @License: Apache license vesion 2.0
 
 from django import template
@@ -40,6 +40,8 @@ def addcss(field, css):
 def brand(tipo):
     if tipo == "title":
         return settings.BRAND_TITLE
+    elif tipo == "meta":
+        return settings.BRAND_META
     else:
         return settings.BRAND
 

@@ -1,4 +1,5 @@
 {% load global_tag %}
+{% load pedido_tag %}
 {% if query %}
   <div id="content_main" class="bg-light p-3 mb-3 content-table">
     <table class="table table-striped">
@@ -7,6 +8,7 @@
           <th>Fecha</th>
           <th>Importe</th>
           <th>Descripcion</th>
+          <th>Recepcionado</th>
           <th class="text-center">Acciones</th>
         </tr>
       </thead>
@@ -16,6 +18,7 @@
           <td>{{ c.fecha }}</td>
           <td>{{ c.total }}</td>
           <td>{{ c.para_llevar }}, avisador: {{ c.num_avisador }}</td>
+          <td>{{ c|recepcionado }}</td>
           <td class="text-center">
             <a  class="btn btn-primary btn-accion "  data-toggle="collapse" href="#linea_{{c.id}}">
               <span class="fa fa-search"></span></a>
@@ -38,7 +41,7 @@
                               <tr>
                                 <td>{{ l.cant }}</td>
                                 <td class="text-uppercase">{{ l.tipo }}</td>
-                                <td>{{ l.des }}</td>
+                                <td><p>{{l.text}}</p>{{ l.des }}</td>
                                 <td>{{ l.servido|bool_to_str }}</td>
                               </tr>
                              {% endfor %}

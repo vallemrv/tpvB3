@@ -61,7 +61,7 @@ def ingresos(request, id=-1):
             reg.save()
         else:
             print("[ Error en ingresos ] %s" % f.errors)
-        return redirect("Conta:lista_ingresos")
+        return redirect("conta:lista_ingresos")
     else:
         f = IngresosForm(request.POST)
         if f.is_valid():
@@ -69,7 +69,7 @@ def ingresos(request, id=-1):
             obj.save()
         else:
             print("[ Error en ingresos ] %s" % f.errors)
-        return redirect("Conta:lista_ingresos")
+        return redirect("conta:lista_ingresos")
 
 
 @login_required(login_url='login_tk')
@@ -80,7 +80,7 @@ def rm_ingreso(request, id):
     except Exception as e:
         print("[ Error en rm_ingreso ] %s" % e)
 
-    return redirect("Conta:lista_ingresos")
+    return redirect("conta:lista_ingresos")
 
 
 @login_required(login_url='login_tk')

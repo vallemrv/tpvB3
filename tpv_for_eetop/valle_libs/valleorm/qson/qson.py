@@ -4,7 +4,7 @@
 # @Date:   25-Dec-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 13-Mar-2018
+# @Last modified time: 16-Mar-2018
 # @License: Apache license vesion 2.0
 
 from kivy.network.urlrequest import UrlRequest
@@ -59,6 +59,9 @@ class QSonSender:
     def __init__(self, **args):
         self.qson_sender = {}
 
+    def __on_success__(self, req, result):
+        Logger.debug("got success {0}".format(req.url))
+
     def __got_error__(self, req,  *args):
         req._resp_status = "Error"
         Logger.debug("got error {0}".format(req.url))
@@ -72,7 +75,9 @@ class QSonSender:
         Logger.debug("got redirect {0}".format(req.url))
 
 
-    def send(self, on_success, wait=True):
+    def send(self, on_success=None, wait=True):
+        if on_success == None:
+            on_success = self.__on_success__
 
         SEND_DATA = {'data':json.dumps(self.qson_sender)}
         data = urllib.urlencode(SEND_DATA)
@@ -90,6 +95,8 @@ class QSonSender:
 
 
     def send_data(self, on_success, send_data):
+        if on_success == None:
+            on_success = self.__on_success__
         data = urllib.urlencode(send_data)
         headers = {'Content-type': 'application/x-www-form-urlencoded',
                    'Accept': 'text/json'}

@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 02-Mar-2018
+# @Last modified time: 16-Mar-2018
 # @License: Apache license vesion 2.0
 
 from kivy.uix.anchorlayout import AnchorLayout
@@ -88,39 +88,33 @@ class Tpv(AnchorLayout):
                 self.pedido.nuevo_pedido(btn.tag)
 
     def pedir_domicilio(self, dbCliente):
-        dbCliente.save()
         self.content.clear_widgets()
         self.pedido.pedido_domicilio(dbCliente)
         self.content.add_widget(self.pedido)
 
 
-    def imprimirTicket(self, pd):
-        if type(pd) == dict:
-            self.pd = pd.get("db")
-        else:
-            self.pd = pd
-        threading.Thread(target=self.imprimir).start()
+    def imprimirTicket(self, pd, result):
+        if result["success"] == True:
+            pd = result["add"]["pedidos"]
+            for p in pd:
+                cl = p["clientes"] if "clientes" in p else None
+                self.docPrint.imprimirTicket("caja", p["id"],
+                                             p["lineaspedido"], p["fecha"],
+                                             float(p["total"]), float(p["entrega"]),
+                                             float(p['cambio']), cl)
 
-    def imprimir(self):
-        llevar = self.pd.para_llevar
-        cl = None
-        if llevar == "Domicilio":
-            cl = self.pd.clientes_set.get()
-
-        self.docPrint.imprimirTicket("caja", self.pd.id,
-                                     self.pd.lineaspedido_set.get(), self.pd.fecha,
-                                     self.pd.total, float(self.pd.entrega),
-                                     float(self.pd.cambio), cl)
-
+    def imprimir_directo(self, pd):
+        cl = pd["clientes"] if "clientes" in pd else None
+        self.docPrint.imprimirTicket("caja", pd["id"],
+                                     pd["lineaspedido"], pd["fecha"],
+                                     float(pd["total"]), float(pd["entrega"]),
+                                     float(pd['cambio']), cl)
 
     def abrir_cajon(self):
-        threading.Thread(target=self.cash_asincrono).start()
+        threading.Thread(target=self.cash_asynchrono).start()
 
-
-    def cash_asincrono(self):
+    def cash_asynchrono(self):
         self.docPrint.abrir_cajon('caja')
-
-
 
     def recuperar_pedido(self, db):
         self.pedido.recuperar_pedido(db)
@@ -128,8 +122,8 @@ class Tpv(AnchorLayout):
         self.content.add_widget(self.pedido)
 
     def mostrar_inicio(self):
-        self.sync_db()
         self.content.clear_widgets()
+        self.inicio.show_button_inicio()
         self.content.add_widget(self.inicio)
 
     def mostrar_pedidos(self):
@@ -163,15 +157,8 @@ class Tpv(AnchorLayout):
         self.content.remove_widget(self.inicio)
         self.content.add_widget(self.parking)
 
-    def sync_db(self):
-        osc.sendMsg('/sync_service', ['sync', ], port=config.PORT_SERVICE)
-        #threading.Thread(target=self.run_sync_db).start()
-
-    def run_sync_db(self):
-        import os
-        os.system("python ./syncdb_send.py")
-
-
+    def run_sync_db(self, dt):
+        self.inicio.show_button_inicio()
 
     def refresh(self):
         threading.Thread(target=self.run_refresh).start()
@@ -179,3 +166,4 @@ class Tpv(AnchorLayout):
     def run_refresh(self):
         import os
         os.system("python ./syncdb.py")
+        Clock.schedule_once(self.run_sync_db, .1)

@@ -26,7 +26,7 @@
   <div class="p-3">
     <h3>{{mensaje}}</h3>
   </div>
-  <form method="post" action="{% url 'Conta:ingresos' id=pk %}" >
+  <form method="post" action="{% url 'conta:ingresos' id=pk %}" >
     {% csrf_token %}
     <div class="form-row">
         {% for field in form %}
@@ -61,7 +61,7 @@
 <script type="text/javascript">
     function calcular_ingreso(){
         fecha = $("#id_fecha").val();
-        $.get("{% url 'Conta:calcular_ingreso_none' %}", {"fecha":fecha}, function(res){
+        $.get("{% url 'conta:calcular_ingreso_none' %}", {"fecha":fecha}, function(res){
           console.log(res.success)
            if(res.success){
              $("#id_importe").val(res.total);
@@ -72,7 +72,7 @@
 
     function get_ingresos(){
       datos = $("#form_find").serialize();
-      $.post("{% url 'Conta:find_ingreso' %}", datos, function(res){
+      $.post("{% url 'conta:find_ingreso' %}", datos, function(res){
           $("#content_main").html(res)
       });
       return false;

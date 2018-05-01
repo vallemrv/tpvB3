@@ -4,7 +4,7 @@
 # @Date:   01-Jan-2018
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 10-Mar-2018
+# @Last modified time: 23-Mar-2018
 # @License: Apache license vesion 2.0
 
 from django.db.models import Q
@@ -57,7 +57,7 @@ def albaranes(request, id=-1):
             reg.save()
         else:
             print("[ Error en form ] %s" % f.errors)
-        return redirect("Conta:lista_albaranes")
+        return redirect("conta:lista_albaranes")
     else:
         f = AlbaranForm(request.POST, request.FILES)
         if f.is_valid():
@@ -66,7 +66,7 @@ def albaranes(request, id=-1):
             obj.save()
         else:
             print("[ Error en form ] %s" % f.errors)
-        return redirect("Conta:lista_albaranes")
+        return redirect("conta:lista_albaranes")
 
 
 @login_required(login_url='login_tk')
@@ -79,7 +79,7 @@ def rm_albaran(request, id):
     except Exception as e:
         print("[ Error en rm_albaran ] %s" % e)
 
-    return redirect("Conta:lista_albaranes")
+    return redirect("conta:lista_albaranes")
 
 
 @login_required(login_url='login_tk')

@@ -2,13 +2,13 @@
 # @Date:   01-Jan-2018
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 10-Mar-2018
+# @Last modified time: 23-Mar-2018
 # @License: Apache license vesion 2.0
 
 from django.conf.urls import url, include
 from . import views
 
-app_name = "Conta"
+app_name = "conta"
 GASTOS = [
     url(r"^gastos/$", views.gastos, name="gastos"),
     url(r"^elegir_cuenta/$", views.elegir_cuenta, name="elegir_cuenta"),
@@ -78,5 +78,5 @@ SUBCUENTAS = [
 ]
 
 urlpatterns = [
-    url(r"^$", views.inicio, name="inicio")
+    url(r"^$", views.inicio, name="menu")
 ]+ PROVEEDORES + ALBARANES + CUENTAS + GASTOS + INGRESOS + SUBCUENTAS

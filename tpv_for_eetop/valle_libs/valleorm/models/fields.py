@@ -5,7 +5,7 @@
 # @Email:  valle.mrv@gmail.com
 # @Filename: field.py
 # @Last modified by:   valle
-# @Last modified time: 02-Mar-2018
+# @Last modified time: 16-Mar-2018
 # @License: Apache license vesion 2.0
 
 import importlib
@@ -34,10 +34,12 @@ class Field(object):
 
 
     def get_pack_dato(self, dato=None):
-        if dato==None:
+        if dato == None:
             dato = self.get_dato()
+            
         if self.null == False and dato == None:
-            print ValueError("No se puden guardar valores nulos")
+            print(ValueError("No se puden guardar valores nulos"))
+            return 'NULL'
         elif self.null == True and dato == None:
             return 'NULL'
         elif self.tipo in  ["TEXT", "VARCHAR"]:
@@ -128,7 +130,8 @@ class EmailField(CharField):
 
     def set_dato(self, value):
         if value != None and value != "" and not ("@" in value and "." in value):
-            print ValueError('Formato email no valido')
+            print(ValueError('Formato email no valido'))
+
         self.dato = value
 
 

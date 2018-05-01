@@ -51,12 +51,12 @@ def proveedores(request, id=-1):
             reg.active = True
             reg.save()
 
-        return redirect("Conta:lista_proveedores")
+        return redirect("conta:lista_proveedores")
     else:
         f = ProveedoresForm(request.POST)
         if f.is_valid():
             proveedor = f.save()
-        return redirect("Conta:lista_proveedores")
+        return redirect("conta:lista_proveedores")
 
 
 @login_required(login_url='login_tk')
@@ -68,7 +68,7 @@ def rm_proveedores(request, id):
     except Exception as e:
         print("[Error  ] %s" % e)
 
-    return redirect("Conta:lista_proveedores")
+    return redirect("conta:lista_proveedores")
 
 
 @login_required(login_url='login_tk')
@@ -118,7 +118,7 @@ def set_proveedor(request, id):
 @login_required(login_url='login_tk')
 def salir_proveedores(request):
     vaciar_sesison_proveedor(request)
-    return redirect("Conta:lista_proveedores")
+    return redirect("conta:lista_proveedores")
 
 def vaciar_sesison_proveedor(request):
     if "accion_pk_proveedor" in request.session:

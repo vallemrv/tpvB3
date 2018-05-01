@@ -4,7 +4,7 @@
 # @Date:   01-Jan-2018
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 10-Mar-2018
+# @Last modified time: 23-Mar-2018
 # @License: Apache license vesion 2.0
 
 from django.db.models import Q
@@ -49,12 +49,12 @@ def cuentas(request, id=-1):
             reg.active = True
             reg.save()
 
-        return redirect("Conta:lista_cuentas")
+        return redirect("conta:lista_cuentas")
     else:
         f = CuentasGastosForm(request.POST)
         if f.is_valid():
             obj = f.save()
-        return redirect("Conta:lista_cuentas")
+        return redirect("conta:lista_cuentas")
 
 
 @login_required(login_url='login_tk')
@@ -66,7 +66,7 @@ def rm_cuentas(request, id):
     except Exception as e:
         print("[ERROR  ] %s" % e)
 
-    return redirect("Conta:lista_cuentas")
+    return redirect("conta:lista_cuentas")
 
 
 @login_required(login_url='login_tk')
@@ -111,4 +111,4 @@ def set_cuenta(request, id):
 def salir_cuentas(request):
     vaciar_sesison_subcuentas(request)
     vaciar_sesison_cuentas(request)
-    return redirect("Conta:lista_cuentas")
+    return redirect("conta:lista_cuentas")

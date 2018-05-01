@@ -5,7 +5,7 @@
 # @Email:  valle.mrv@gmail.com
 # @Filename: admin_extras.py
 # @Last modified by:   valle
-# @Last modified time: 10-Mar-2018
+# @Last modified time: 19-Mar-2018
 # @License: Apache license vesion 2.0
 
 from django import template
@@ -20,7 +20,7 @@ def efectivo(arq):
     importe = 0
     for e in extras:
         importe += e.importe
-    return arq.efectivo - importe
+    return (arq.efectivo + arq.total_gastos) - importe
 
 @register.filter(name='tarjeta')
 def tarjeta(arq):
@@ -46,6 +46,14 @@ def total_conteo(arq):
     for c in conteo:
         importe += c.can * c.tipo
     return importe
+
+@register.filter(name='retirado')
+def retirado(arq):
+    conteo = arq.conteo.all()
+    importe = 0
+    for c in conteo:
+        importe += c.can * c.tipo
+    return importe - arq.cambio
 
 @register.filter(name='total_extra')
 def total_extra(arq):

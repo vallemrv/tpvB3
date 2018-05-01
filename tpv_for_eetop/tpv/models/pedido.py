@@ -3,18 +3,19 @@
 # @Date:   04-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 26-Feb-2018
+# @Last modified time: 17-Mar-2018
 # @License: Apache license vesion 2.0
 
 from kivy.event import EventDispatcher
 from kivy.properties import NumericProperty, StringProperty
 from models.lineapedido import Constructor
 from models.lineapedido import Linea
-from models.db.pedidos import *
+from models.db import VentasSender, Pedidos, LineasPedido, QSon
 from kivy.storage.jsonstore import JsonStore
 from copy import deepcopy
 from datetime import datetime
 import os
+import threading
 
 
 class Pedido(EventDispatcher):
@@ -102,33 +103,47 @@ class Pedido(EventDispatcher):
         for item in self.lineas_pedido:
             self.total = self.total + item.getTotal()
 
+    def on_success(self, req, result):
+        print("[DBG  ] %s" % result)
 
-    def set_list_pedidos(self, db):
+
+    def send_pedido(self, on_success):
+        db = Pedidos(total=self.total,
+                modo_pago=self.modo_pago,
+                para_llevar=self.para_llevar,
+                num_avisador=self.num_avisador,
+                entrega=self.efectivo,
+                cambio=self.cambio)
+        qsonsender = VentasSender()
+        if self.num_avisador in ("Para recoger", "Domicilio", "Para llevar"):
+            db.estado = "NPG_NO"
+
+        qson = QSon("Pedidos", reg=db.toDICT())
+        if self.dbCliente:
+            cl = QSon("Clientes", reg=self.dbCliente.toDICT())
+            for d in self.dbCliente.direcciones:
+                cl.append_child(QSon("Direcciones", reg=d))
+            qson.append_child(cl)
+            db.estado = "NPG_NO"
+
         for obj in self.lineas_pedido:
-            linea = LineasPedido()
             linea = LineasPedido(**{'text': obj.obj.get('text'),
                                     'des': obj.getDescripcion(),
                                     'cant': obj.obj.get('cant'),
                                     'precio': obj.getPrecio(),
                                     'total': obj.getTotal(),
                                     'tipo': obj.obj.get("tipo")})
-            db.lineaspedido_set.add(linea)
+            qson.append_child(QSon("LineasPedido", reg=linea.toDICT()))
 
-    def guardar_pedido(self):
-        db = Pedidos()
-        db.save(total=self.total,
-                modo_pago=self.modo_pago,
-                para_llevar=self.para_llevar,
-                num_avisador=self.num_avisador,
-                entrega=self.efectivo,
-                cambio=self.cambio)
-        self.set_list_pedidos(db)
-        if self.num_avisador == "Para recoger":
-            db.save(estado = "NPG_NO")
-        if self.dbCliente:
-            self.dbCliente.pedidos.add(db)
-            db.save(estado = "NPG_NO")
-        return db
+        qsonsender.save(qson)
+        qsonsender.send(on_success)
+
+
+    def guardar_pedido(self, on_success=None):
+        if on_success == None:
+            on_success = self.on_success
+        threading.Thread(target=self.send_pedido, args=(on_success,)).start()
+
 
     def aparcar_pedido(self):
         fecha = str(datetime.now())

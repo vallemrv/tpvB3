@@ -4,7 +4,7 @@
 # @Date:   29-Aug-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 26-Feb-2018
+# @Last modified time: 16-Mar-2018
 # @License: Apache license vesion 2.0
 
 from datetime import date, datetime
@@ -184,7 +184,14 @@ class Model(object):
     def __cargar_datos__(self, **datos):
         for k, v in datos.items():
             if k not in self.lstCampos:
-                raise AttributeError("El atributo %s no esta en el modelo"% k)
+                print('[DEBUG]  %s' % AttributeError("El atributo %s no esta en el modelo"% k))
+                continue
+            setattr(self, k, v)
+
+    def load_data(self, **datos):
+        for k, v in datos.items():
+            if k not in self.lstCampos:
+                continue
             setattr(self, k, v)
 
 

@@ -2,7 +2,7 @@
 # @Date:   13-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 06-Mar-2018
+# @Last modified time: 09-Apr-2018
 # @License: Apache license vesion 2.0
 
 
@@ -29,14 +29,14 @@ class Pedidos(models.Model):
 
     class Meta:
         verbose_name = "Pedido"
-        ordering = ["-modify"]
+        ordering = ["-id"]
 
 class Clientes(models.Model):
     nombre = models.CharField(max_length=50,null=True, blank=True, default="")
-    apellido = models.CharField(max_length=100,null=True, default="0")
-    email = models.EmailField(max_length=100, null=True, blank=True, default="0")
-    telefono = models.CharField(max_length=20, null=True, blank=True, default="0")
-    nota = models.TextField(null=True, blank=True, default="0")
+    apellido = models.CharField(max_length=100,null=True, default="")
+    email = models.EmailField(max_length=100, null=True, blank=True, default="")
+    telefono = models.CharField(max_length=20, null=True, blank=True, default="")
+    nota = models.TextField(null=True, blank=True, default="")
     pedidos = models.ManyToManyField(Pedidos)
     fecha_add = models.DateField(auto_now_add=True)
     modify = models.DateTimeField(auto_now=True)
@@ -53,6 +53,7 @@ class Clientes(models.Model):
 
     class Meta:
         verbose_name = "Cliente"
+        ordering = ["apellido", "nombre"]
 
 class Direcciones(models.Model):
     direccion = models.CharField(max_length=150)
@@ -62,6 +63,7 @@ class Direcciones(models.Model):
     modify = models.DateTimeField(auto_now=True)
     def __unicode__(self):
         return u"{0}".format(self.direccion)
+
     class Meta:
         verbose_name = "Direccion"
 
@@ -75,6 +77,9 @@ class LineasPedido(models.Model):
     pedidos = models.ForeignKey(Pedidos, on_delete=models.CASCADE)
     modify = models.DateTimeField(auto_now=True)
     servido = models.BooleanField(default=False)
+    promocion  = models.CharField(max_length=150, default="", blank=True)
+    sug = models.CharField(max_length=50, default="", blank=True)
+
     def __unicode__(self):
         return u"{0} - {1} - {2} - {3}".format(self.cant, self.text, self.precio, self.total)
 

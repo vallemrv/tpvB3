@@ -27,32 +27,32 @@
       <div class="card-header">
         <div class="row">
           <div class="col-8"><b>Total caja:</b></div>
-          <div class="col-4">{{query.caja_dia}}</div>
+          <div class="col-4 text-right">{{query.caja_dia}} €</div>
       </div>
       </div>
       <ul data-spy="scroll" class="list-group list-group-flush view-informes-small">
         <li class="list-group-item">
           <div class="row">
             <div class="col-8"><b>Ef. Local:</b></div>
-            <div class="col-4">{{query|efectivo}}</div>
+            <div class="col-4 text-right">{{query|efectivo}} €</div>
           </div>
         </li>
         <li class="list-group-item">
           <div class="row">
             <div class="col-8"><b>Tj. Local:</b></div>
-            <div class="col-4">{{query|tarjeta}}</div>
-          </div>
-        </li>
-        <li class="list-group-item">
-          <div class="row">
-            <div class="col-8"><b>Tj. Extras:</b></div>
-            <div class="col-4">{{query|extra}}</div>
+            <div class="col-4 text-right">{{query|tarjeta}} €</div>
           </div>
         </li>
         <li class="list-group-item">
           <div class="row">
             <div class="col-8"><b>Ef. Extras:</b></div>
-            <div class="col-4">{{query|tarjeta_extra}}</div>
+            <div class="col-4 text-right">{{query|extra}} €</div>
+          </div>
+        </li>
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-8"><b>Tj. Extras:</b></div>
+            <div class="col-4 text-right">{{query|tarjeta_extra}} €</div>
           </div>
         </li>
       </ul>
@@ -64,16 +64,16 @@
       <div class="card-header">
         <div class="row">
           <div class="col-8"><b>T. Extras:</b></div>
-          <div class="col-4">{{query|total_extra}}</div>
+          <div class="col-4 text-right">{{query|total_extra}} €</div>
         </div>
       </div>
       <ul data-spy="scroll" class="list-group list-group-flush view-informes-small">
         {% for c in query.pedidosextra.all %}
             <li class="list-group-item">
               <div class="row">
-                <div class="col-4">{{c.numero_pedido}}</div>
-                <div class="col-4">{{c.modo_pago}}</div>
-                <div class="col-4">{{c.importe}}</div>
+                <div class="col-2 text-right">{{c.numero_pedido}}</div>
+                <div class="col-6">{{c.modo_pago}}</div>
+                <div class="col-4 text-right">{{c.importe}} €</div>
               </div>
             </li>
         {% endfor %}
@@ -87,7 +87,7 @@
       <div class="card-header">
         <div class="row">
           <div class="col-8"><b>T. Gastos:</b></div>
-          <div class="col-4">{{query.total_gastos}}</div>
+          <div class="col-4 text-right">{{query.total_gastos}} €</div>
         </div>
       </div>
       <ul data-spy="scroll" class="list-group list-group-flush view-informes-small">
@@ -95,7 +95,7 @@
             <li class="list-group-item">
               <div class="row">
                 <div class="col-8">{{c.des}}</div>
-                <div class="col-4">{{c.gasto}}</div>
+                <div class="col-4 text-right">{{c.gasto}} €</div>
               </div>
             </li>
         {% endfor %}
@@ -109,18 +109,20 @@
       <div class="card-header">
         <div class="row">
           <div class="col-8"><b>T. Conteo:</b></div>
-          <div class="col-4">{{query|total_conteo}}</div>
+          <div class="col-4 text-right">{{query|total_conteo}} €</div>
           <div class="col-8"><b>Cambio:</b></div>
-          <div class="col-4">{{query.cambio}}</div>
+          <div class="col-4 text-right">- {{query.cambio}} €</div>
+          <div class="col-8"><b>Retirado:</b></div>
+          <div class="col-4 text-right">{{query|retirado}} €</div>
         </div>
       </div>
       <ul data-spy="scroll" class="list-group list-group-flush view-informes-large">
         {% for c in query.conteo.all %}
             <li class="list-group-item">
               <div class="row">
-                <div class="col-4">{{c.can}}</div>
-                <div class="col-4">{{c.tipo}}</div>
-                <div class="col-4">{{c|total}}</div>
+                <div class="col-2 text-right">{{c.can}}</div>
+                <div class="col-4 text-right">{{c.tipo}}</div>
+                <div class="col-6 text-right">{{c|total}} €</div>
               </div>
             </li>
         {% endfor %}

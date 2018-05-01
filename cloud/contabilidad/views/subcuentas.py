@@ -49,12 +49,12 @@ def subcuentas(request, id=-1):
             reg.active = True
             reg.save()
 
-        return redirect("Conta:lista_subcuentas")
+        return redirect("conta:lista_subcuentas")
     else:
         f = SubCuentaGastosForm(request.POST)
         if f.is_valid():
             obj = f.save()
-        return redirect("Conta:lista_subcuentas")
+        return redirect("conta:lista_subcuentas")
 
 
 @login_required(login_url='login_tk')
@@ -66,7 +66,7 @@ def rm_subcuentas(request, id):
     except Exception as e:
         print("[ Error en subcuentas ] %s" % e)
 
-    return redirect("Conta:lista_subcuentas")
+    return redirect("conta:lista_subcuentas")
 
 
 @login_required(login_url='login_tk')
@@ -111,4 +111,4 @@ def set_subcuenta(request, id):
 def salir_subcuentas(request):
     vaciar_sesison_subcuentas(request)
     vaciar_sesison_cuentas(request)
-    return redirect("Conta:lista_cuentas")
+    return redirect("conta:lista_cuentas")

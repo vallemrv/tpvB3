@@ -12,7 +12,7 @@
            {% csrf_token %}
            <input class="form-control mr-sm-2" type="text" name="filter" placeholder="Buscar" aria-label="Search">
            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
-           <a href="{% url 'Conta:salir_cuentas' %}" class="btn btn-primary">
+           <a href="{% url 'conta:salir_cuentas' %}" class="btn btn-primary">
              <span class="fa fa-sign-out"></span>
            </a>
        </form>
@@ -31,16 +31,16 @@
 <script type="text/javascript">
 
   function set_cuenta(id){
-    $.get("{% url 'Conta:set_cuenta'  %}"+id, function(res){
+    $.get("{% url 'conta:set_cuenta'  %}"+id, function(res){
         if (res == "perfect"){
-            location.href = "{% url 'Conta:lista_gastos' %}";
+            location.href = "{% url 'conta:lista_gastos' %}";
          }
     });
   }
 
   function get_cuenta(){
     datos = $("#form_find").serialize();
-    $.post("{% url 'Conta:find_cuentas'  %}", datos, function(res){
+    $.post("{% url 'conta:find_cuentas'  %}", datos, function(res){
          $("#content_main").removeClass("collapse");
          $("#content_main").empty().append(res);
     });

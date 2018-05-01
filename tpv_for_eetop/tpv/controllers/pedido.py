@@ -3,7 +3,7 @@
 # @Date:   10-May-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 26-Sep-2017
+# @Last modified time: 09-Apr-2018
 # @License: Apache license vesion 2.0
 
 from kivy.uix.boxlayout import BoxLayout
@@ -68,7 +68,7 @@ class PedidoController(BoxLayout):
                 else:
                     self.pedido.cambio = 0.00
                     self.pedido.efectivo = 0.00
-                    self.tpv.imprimirTicket(self.pedido.guardar_pedido())
+                    self.pedido.guardar_pedido(self.tpv.imprimirTicket)
                     self.tpv.mostrar_inicio()
 
             elif tipo == 'llevar':
@@ -127,7 +127,7 @@ class PedidoController(BoxLayout):
                         db = "../db/preguntas/%s.json" %  name
                         self.puntero += 1
                         if 'ignore' in btn.tag:
-                            if db not in btn.tag.get('ignore'):
+                            if name not in btn.tag.get('ignore'):
                                 igDb = False
                                 break
                             else:
@@ -160,7 +160,7 @@ class PedidoController(BoxLayout):
         else:
             self.pedido.efectivo = self.efectivo.efectivo.replace("€", "")
             self.pedido.cambio = self.efectivo.cambio.replace("€", "")
-            self.tpv.imprimirTicket(self.pedido.guardar_pedido())
+            self.pedido.guardar_pedido(self.tpv.imprimirTicket)
             self.tpv.abrir_cajon()
             self.tpv.mostrar_inicio()
             self.tpv.mostrar_men_cobro("Cambio "+ self.efectivo.cambio)
@@ -173,9 +173,6 @@ class PedidoController(BoxLayout):
                 ln.obj["sug"] = []
 
             ln.obj["sug"].append(txt)
-            db = JsonStore("../db/sugerencias.json")
-            sug = self.modal.sug
-            db.put(ln.obj.get("text").lower(), db=sug)
             self.rf_parcial(w, ln)
         self.modal.dismiss()
 
@@ -183,17 +180,14 @@ class PedidoController(BoxLayout):
     def sugerencia(self, w, linea):
         try:
             name = linea.obj.get('text').lower()
-            db = JsonStore("../db/sugerencias.json")
-            if not db.exists(name):
-                db.put(name, db=[])
-            self.modal.sug = db[name].get("db")
             self.modal.des = "{0}  {1:.2f}".format(linea.getTexto(),
                                                    linea.getTotal())
             self.modal.clear_text()
             self.modal.tag = linea
             self.modal.content = w
             self.modal.open()
-        except:
+        except Exception as e:
+            print(e)
             self.modal.content = None
 
 
@@ -349,7 +343,7 @@ class PedidoController(BoxLayout):
                 self.pedido.dbCliente = self.dbCliente
                 self.pedido.num_avisador = "Domicilio"
                 self.pedido.modo_pago = "Efectivo"
-                self.tpv.imprimirTicket(self.pedido.guardar_pedido())
+                self.pedido.guardar_pedido(self.tpv.imprimirTicket)
                 self.tpv.mostrar_inicio()
 
             else:

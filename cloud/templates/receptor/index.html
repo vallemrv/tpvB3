@@ -8,37 +8,25 @@
 <div class="text-center" id="sonido">
   <p>
     <audio controls  id="audio" class="mt-2" >
-      <source src="{% static 'sound/a1.wav' %}" type="audio/wav">
+      <source src="{% static 'sound/w1.mp3' %}" type="audio/wav">
           Your browser does not support the audio element.
     </audio>
 </p>
   <p>
-  <button type="button" class="btn btn-success float-re" onclick="empezar();">Empezar</button>
+     <button type="button" class="btn btn-success float-re" onclick="empezar();">Empezar</button>
   </p>
 </div>
 
 <script type="text/javascript">
-$(function () {
-         // Correctly decide between ws:// and wss://
-         var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-         var ws_path = ws_scheme + '://' + window.location.host + "/receptor/get";
-         console.log("Connecting to " + ws_path);
-         var socket = new ReconnectingWebSocket(ws_path);
 
-         // Handle incoming messages
-         socket.onmessage = function (message) {
-             // Decode the JSON
-             console.log("Got websocket message " + message.data);
-         };
-
-         // Helpful debugging
-         socket.onopen = function () {
-             console.log("Connected to receptor socket");
-         };
-         socket.onclose = function () {
-             console.log("Disconnected from receptor socket");
-         }
-     });
+  $(function(){
+    $.ajaxSetup(
+      {
+        timeout: 1000,
+      }
+    );
+    empezar();
+  });
 
   function empezar(){
     $.get("{% url 'all_pedidos' %}", function(res){
@@ -50,16 +38,21 @@ $(function () {
     });
   }
 
+
   function get_pedidos(){
-       $.get("{% url 'get_pedidos' %}", function(res){
-           if (res.trim() !== ""){
-              $("#main").append(res);
-              $("#audio")[0].play();
-           }
-           //setTimeout(get_pedidos, 5000);
-
-
-       });
+    var jqxhr = $.ajax( "{% url 'get_pedidos' %}" )
+      .done(function(res) {
+            if (res.trim() !== ""){
+               $("#main").append(res);
+               $("#audio")[0].play();
+            }
+        })
+        .fail(function() {
+          console.log( "error" );
+        })
+        .always(function() {
+        setTimeout(get_pedidos, 3000);
+      });
   }
 
   function servir_pedido(id){

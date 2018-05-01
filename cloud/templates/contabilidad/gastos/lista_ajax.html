@@ -28,9 +28,9 @@
           <td class="text-center">
             <a href="{% url 'en_construccion' %}" class="btn btn-primary btn-accion ">
               <span class="fa fa-search"></span></a>
-            <a href="{% url 'Conta:gastos' id=c.id %}" class="btn btn-primary btn-accion">
+            <a href="{% url 'conta:gastos' id=c.id %}" class="btn btn-primary btn-accion">
               <span class="fa fa-edit"></span></a>
-            <button onclick='show_borrar("{% url 'Conta:rm_gasto' id=c.id %}");' class="btn btn-primary btn-accion">
+            <button onclick='show_borrar("{% url 'conta:rm_gasto' id=c.id %}");' class="btn btn-primary btn-accion">
                 <span class="fa fa-trash"></span></button>
           </td>
         </tr>

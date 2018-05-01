@@ -2,14 +2,29 @@
 # @Date:   02-Sep-2017
 # @Email:  valle.mrv@gmail.com
 # @Last modified by:   valle
-# @Last modified time: 26-Feb-2018
+# @Last modified time: 09-Apr-2018
 # @License: Apache license vesion 2.0
 
-import config
+import sys
+import os
+try:
+    reload(sys)
+    sys.setdefaultencoding('UTF8')
+except:
+    from importlib import reload
+    reload(sys)
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(BASE_DIR)
+os.chdir(BASE_DIR)
+sys.path.append(ROOT_DIR)
+sys.path.insert(0, os.path.join(ROOT_DIR, "valle_libs"))
+
+
 import json
 from kivy.storage.jsonstore import JsonStore
 from valleorm.qson import  QSonSender, QSon
-
+from config import config
 
 
 class ClasesSender(QSonSender):
@@ -50,8 +65,10 @@ def on_success(obj, result):
             }
             if "precio" in pro:
                 row["precio"] = pro["precio"]
-            if "promocion" in clase:
-                row["promocion"] = clase["promocion"]
+            if "promocion" in pro:
+                row["promocion"] = pro["promocion"]
+            if "ignore" in pro:
+                row["ignore"] = pro["ignore"]
 
             if len(pro['ingredientes']) > 0:
                 row["ingredientes"] = pro['nombre']
@@ -101,6 +118,7 @@ def get_clases():
     qson_p = QSon("ClasesPreguntas")
     qson_p.append_child(QSon("Preguntas"))
     qson.append_child(qson_p)
-    sender.filter(on_success, qson=(qson,), wait=True)
+    sender.filter(qson)
+    sender.send(on_success)
 
 get_clases()
